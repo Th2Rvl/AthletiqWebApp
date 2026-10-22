@@ -9,7 +9,7 @@ import {
   output,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
@@ -47,7 +47,7 @@ export class OrganisationFormComponent {
   protected readonly descriptionMax = DESCRIPTION_MAX;
   protected readonly form = inject(NonNullableFormBuilder).group({
     name: ['', [trimmedLength(NAME_MIN, NAME_MAX)]],
-    description: ['', [Validators.maxLength(DESCRIPTION_MAX)]],
+    description: ['', [trimmedLength(0, DESCRIPTION_MAX)]],
   });
 
   private readonly value = toSignal(
@@ -83,7 +83,7 @@ export class OrganisationFormComponent {
 
   protected readonly descriptionError = computed(() => {
     this.value();
-    if (this.form.controls.description.hasError('maxlength')) {
+    if (this.form.controls.description.hasError('trimmedLength')) {
       return `La description ne doit pas dépasser ${DESCRIPTION_MAX} caractères`;
     }
     return this.visibleServerErrors()['description'] ?? null;

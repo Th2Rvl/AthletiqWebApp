@@ -63,6 +63,18 @@ describe('OrganisationFormComponent', () => {
     expect(element.textContent).toContain('La description ne doit pas dépasser 500 caractères');
   });
 
+  it("compte la description après trim, comme l'API", async () => {
+    await setup();
+    type('#organisation-name', 'Trail Club du Morbihan');
+    const description = 'x'.repeat(500);
+    type('#organisation-description', `   ${description}   `);
+
+    expect(submitButton().disabled).toBe(false);
+    expect(element.textContent).not.toContain('La description ne doit pas dépasser');
+    submitButton().click();
+    expect(submitted).toEqual([{ name: 'Trail Club du Morbihan', description }]);
+  });
+
   it('émet des valeurs normalisées : trim et description vide à null', async () => {
     await setup();
     type('#organisation-name', '  Nantes Métropole Athlétisme  ');

@@ -37,6 +37,29 @@ describe('InvitationFormComponent', () => {
     expect(element.textContent).toContain("L'e-mail est obligatoire");
   });
 
+  /** E-mail valide de `length` caractères : partie locale courte, domaine en labels de 60. */
+  function emailOfLength(length: number): string {
+    const prefix = 'coach@';
+    const suffix = '.fr';
+    const domain = Array.from({ length: length - prefix.length - suffix.length }, (_, index) =>
+      (index + 1) % 61 === 0 ? '.' : 'a',
+    ).join('');
+    return prefix + domain + suffix;
+  }
+
+  it('refuse un e-mail de plus de 254 caractères et accepte 254', () => {
+    type(emailOfLength(255));
+    expect(submitButton().disabled).toBe(true);
+    expect(element.textContent).toContain("L'e-mail ne doit pas dépasser 254 caractères");
+
+    const atLimit = emailOfLength(254);
+    expect(atLimit).toHaveLength(254);
+    type(atLimit);
+    expect(submitButton().disabled).toBe(false);
+    submitButton().click();
+    expect(submitted).toEqual([atLimit]);
+  });
+
   it("émet l'e-mail en minuscules", () => {
     type('Sophie.Bernard@Nantes-Metropole-Athle.fr');
     submitButton().click();

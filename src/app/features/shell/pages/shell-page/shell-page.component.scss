@@ -16,7 +16,6 @@
   color: var(--ath-primary);
   font-family: var(--ath-font-display);
   font-size: var(--ath-text-lead);
-  font-weight: 800;
   text-decoration: none;
 }
 
@@ -37,7 +36,6 @@
 
   &--active {
     color: var(--ath-text);
-    font-weight: 600;
     text-decoration: underline;
     text-decoration-color: var(--ath-primary);
     text-decoration-thickness: var(--ath-focus-width);

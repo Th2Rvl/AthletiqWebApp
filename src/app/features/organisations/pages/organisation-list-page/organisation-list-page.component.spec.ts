@@ -224,6 +224,25 @@ describe('OrganisationListPageComponent', () => {
     expect(api.list).toHaveBeenCalledTimes(2);
   });
 
+  it('signale une organisation déjà supprimée à la suppression puis recharge la liste', async () => {
+    await setup(of(pageOf([RENNES])));
+    api.delete.mockReturnValue(
+      problem(404, { status: 404, code: 'ORGANISATION_NOT_FOUND', detail: 'x' }),
+    );
+    api.list.mockReturnValue(of(pageOf([])));
+
+    buttonByText('Supprimer').click();
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(api.delete).toHaveBeenCalledWith('org-1');
+    expect(messages.add).toHaveBeenCalledWith(
+      expect.objectContaining({ summary: "Cette organisation n'existe plus" }),
+    );
+    expect(api.list).toHaveBeenCalledTimes(2);
+    expect(element.textContent).not.toContain('Stade Rennais Athlétisme');
+  });
+
   it('ne supprime rien si la confirmation est annulée', async () => {
     await setup(of(pageOf([RENNES])));
     buttonByText('Supprimer').click();

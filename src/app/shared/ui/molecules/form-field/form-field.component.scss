@@ -5,14 +5,14 @@
 }
 
 .form-field__label {
-  font-weight: 600;
+  // Pas de token de graisse : le libellé se distingue par la police de titre, pas par le gras.
+  font-family: var(--ath-font-display);
 }
 
 .form-field__optional,
 .form-field__hint {
   color: var(--ath-text-muted);
   font-size: var(--ath-text-small);
-  font-weight: normal;
 }
 
 .form-field__optional {

@@ -51,11 +51,12 @@ export class InvitationFormComponent {
       if (control.hasError('required')) {
         return "L'e-mail est obligatoire";
       }
-      if (control.hasError('email')) {
-        return "L'e-mail n'est pas valide";
-      }
+      // La longueur d'abord : le validateur `email` d'Angular refuse aussi au-delà de 254.
       if (control.hasError('maxlength')) {
         return `L'e-mail ne doit pas dépasser ${EMAIL_MAX} caractères`;
+      }
+      if (control.hasError('email')) {
+        return "L'e-mail n'est pas valide";
       }
     }
     return this.visibleServerErrors()['email'] ?? null;

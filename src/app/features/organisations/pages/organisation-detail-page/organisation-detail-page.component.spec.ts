@@ -172,6 +172,66 @@ describe('OrganisationDetailPageComponent', () => {
     expect(element.textContent).toContain("Aucun athlète pour l'instant");
   });
 
+  it("propose « Inviter un coach » dans l'état vide des coachs et ouvre l'invitation", async () => {
+    await setup(of({ ...RENNES, coachCount: 0 }));
+    api.listCoaches.mockReturnValue(of(pageOf([])));
+    fixture.componentInstance['coaches'].reload();
+    await fixture.whenStable();
+
+    const emptyState = element.querySelector('app-coach-member-table app-empty-state')!;
+    expect(emptyState.textContent).toContain('Aucun coach dans cette organisation');
+    expect(document.querySelector('#invitation-email')).toBeNull();
+
+    buttonByText('Inviter un coach', emptyState).click();
+    await fixture.whenStable();
+
+    expect(document.querySelector('#invitation-email')).not.toBeNull();
+  });
+
+  it("affiche un état d'erreur si la fiche ne se charge pas, puis réessaie", async () => {
+    await setup(problem(500, { code: 'INTERNAL_ERROR' }));
+
+    const errorState = element.querySelector('app-error-state');
+    expect(errorState?.textContent).toContain('erreur inattendue');
+    expect(element.textContent).not.toContain('Organisation introuvable');
+
+    api.get.mockReturnValue(of(RENNES));
+    buttonByText('Réessayer').click();
+    await fixture.whenStable();
+
+    expect(api.get).toHaveBeenCalledTimes(2);
+    expect(element.querySelector('h1')?.textContent).toContain('Stade Rennais Athlétisme');
+  });
+
+  it("affiche un état d'erreur dans l'onglet Coachs, puis réessaie", async () => {
+    await setup();
+    api.listCoaches.mockReturnValueOnce(throwError(() => new HttpErrorResponse({ status: 0 })));
+    fixture.componentInstance['coaches'].reload();
+    await fixture.whenStable();
+
+    const tab = element.querySelector('p-tabpanel[value="coaches"]')!;
+    expect(tab.querySelector('app-error-state')?.textContent).toContain('Le serveur ne répond pas');
+    expect(element.querySelector('h1')?.textContent).toContain('Stade Rennais Athlétisme');
+
+    buttonByText('Réessayer', tab).click();
+    await fixture.whenStable();
+
+    expect(tab.querySelector('app-error-state')).toBeNull();
+    expect(tab.textContent).toContain('Claire Martin');
+  });
+
+  it('ne retire rien si la confirmation de retrait est annulée', async () => {
+    await setup();
+
+    buttonByText('Retirer').click();
+    expect(confirmations).toHaveLength(1);
+    confirmations[0].reject?.();
+    await fixture.whenStable();
+
+    expect(api.removeCoach).not.toHaveBeenCalled();
+    expect(element.textContent).toContain('Claire Martin');
+  });
+
   it('rattache un coach existant et recharge les coachs', async () => {
     await setup();
     api.inviteCoach.mockReturnValue(
