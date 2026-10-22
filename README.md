@@ -18,7 +18,7 @@ npm run build
 ```
 src/
 ├── app/
-│   ├── core/              (services transverses : api, auth, icons)
+│   ├── core/              (services transverses : api, auth, icons, theme)
 │   ├── shared/ui/
 │   │   ├── atoms/         (uniquement si aucun composant PrimeNG ne convient)
 │   │   ├── molecules/
