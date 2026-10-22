@@ -1,0 +1,22 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+input {
+  width: 100%;
+}
+
+/* Les prénom et nom sur une seule ligne, la place reste rare sur mobile. */
+.signup-form__names {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ath-space-4);
+}
+
+@media (max-width: 30rem) {
+  .signup-form__names {
+    grid-template-columns: 1fr;
+  }
+}

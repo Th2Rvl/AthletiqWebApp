@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { problemMessage } from '../../../../core/api/api-problem';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Credentials, LoginFormComponent } from '../../organisms/login-form/login-form.component';
@@ -8,7 +8,7 @@ import { Credentials, LoginFormComponent } from '../../organisms/login-form/logi
 /** Page de connexion. Après succès, retour à l'URL demandée (`returnUrl`) ou à l'accueil. */
 @Component({
   selector: 'app-login-page',
-  imports: [LoginFormComponent],
+  imports: [LoginFormComponent, RouterLink],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

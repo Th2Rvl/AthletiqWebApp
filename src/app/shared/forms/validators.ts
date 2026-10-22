@@ -18,3 +18,26 @@ export function trimmedLength(min: number, max: number): ValidatorFn {
     return null;
   };
 }
+
+/**
+ * Robustesse du mot de passe (RM2) : au moins 12 caractères, une lettre et un chiffre.
+ * Même règle que l'API, qui reste la source de vérité : le web aligne son message, il ne
+ * remplace pas le contrôle du serveur.
+ */
+export function passwordStrength(control: AbstractControl<string | null>): ValidationErrors | null {
+  const password = control.value ?? '';
+  if (password.length === 0) {
+    return null;
+  }
+  const errors: ValidationErrors = {};
+  if (password.length < 12) {
+    errors['passwordLength'] = { min: 12, actual: password.length };
+  }
+  if (!/\p{L}/u.test(password)) {
+    errors['passwordLetter'] = true;
+  }
+  if (!/\d/.test(password)) {
+    errors['passwordDigit'] = true;
+  }
+  return Object.keys(errors).length > 0 ? errors : null;
+}

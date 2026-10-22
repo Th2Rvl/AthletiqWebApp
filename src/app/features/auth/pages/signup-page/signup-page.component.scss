@@ -1,0 +1,31 @@
+.account {
+  display: flex;
+  min-height: 100vh;
+  padding: var(--ath-space-7) var(--ath-space-4);
+  box-sizing: border-box;
+}
+
+.account__panel {
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+  margin-block-start: var(--ath-space-7);
+}
+
+.account__brand {
+  margin: 0;
+  color: var(--ath-primary);
+  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-lead);
+}
+
+.account__title {
+  margin: var(--ath-space-2) 0 var(--ath-space-6);
+  font-size: var(--ath-text-h2);
+}
+
+.account__aside {
+  margin: var(--ath-space-5) 0 0;
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}

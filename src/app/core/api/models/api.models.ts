@@ -87,6 +87,53 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
+/** Corps de `POST /auth/register` : création d'un compte coach (US06). */
+export interface RegisterCoachPayload {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+/** Corps de `POST /auth/password/forgot` (US08). */
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+/**
+ * Réponse à une demande de réinitialisation. `resetToken` ne porte le jeton que si l'API
+ * l'expose (hors production) : en production, le parcours passe par un e-mail.
+ */
+export interface ForgotPasswordResponse {
+  accepted: boolean;
+  message: string;
+  resetToken?: string | null;
+}
+
+/** Corps de `POST /auth/password/reset` (US08). */
+export interface ResetPasswordPayload {
+  token: string;
+  password: string;
+  passwordConfirmation: string;
+}
+
+/** Profil du coach connecté (US09). */
+export interface CoachProfile {
+  id: Uuid;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: Role;
+  createdAt: IsoInstant;
+}
+
+/** Corps de `PATCH /profile`. Un champ absent ou `null` est inchangé. */
+export interface UpdateProfilePayload {
+  email?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+}
+
 /** Erreur au format `ProblemDetail`, enrichie de `code`, `field` et `errors` (contrat §3). */
 export interface ApiProblem {
   type: string;

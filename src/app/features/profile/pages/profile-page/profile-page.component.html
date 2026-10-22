@@ -1,0 +1,31 @@
+<main class="profile">
+  <h1 class="page-title">Mon profil</h1>
+
+  @if (loading()) {
+    <p class="profile__state">Chargement du profil…</p>
+  } @else if (profile(); as current) {
+    <dl class="profile__summary">
+      <div class="profile__summary-item">
+        <dt>Rôle</dt>
+        <dd>{{ current.role === 'COACH' ? 'Coach' : 'Administrateur' }}</dd>
+      </div>
+      <div class="profile__summary-item">
+        <dt>Compte créé le</dt>
+        <dd>{{ current.createdAt.slice(0, 10) }}</dd>
+      </div>
+    </dl>
+
+    @if (success(); as text) {
+      <p-message severity="success" role="status">{{ text }}</p-message>
+    }
+
+    <app-profile-form
+      [profile]="current"
+      [submitting]="submitting()"
+      [error]="error()"
+      (submitted)="save($event)"
+    />
+  } @else {
+    <p class="profile__state">{{ error() }}</p>
+  }
+</main>

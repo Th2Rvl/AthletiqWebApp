@@ -1,0 +1,33 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+.profile__summary {
+  display: flex;
+  gap: var(--ath-space-7);
+  margin: 0;
+  padding: var(--ath-space-4) 0;
+  border-bottom: 1px solid var(--ath-line);
+}
+
+.profile__summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-1);
+}
+
+.profile__summary dt {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.profile__summary dd {
+  margin: 0;
+  font-size: var(--ath-text-body);
+}
+
+.profile__state {
+  color: var(--ath-text-muted);
+}

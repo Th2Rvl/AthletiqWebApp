@@ -3,5 +3,11 @@
     <p class="login__brand">Athletiq</p>
     <h1 class="login__title">Connexion</h1>
     <app-login-form [submitting]="submitting()" [error]="error()" (submitted)="login($event)" />
+    <p class="login__aside">
+      <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>
+    </p>
+    <p class="login__aside">
+      Pas encore de compte ? <a routerLink="/inscription">Créer un compte coach</a>
+    </p>
   </div>
 </main>

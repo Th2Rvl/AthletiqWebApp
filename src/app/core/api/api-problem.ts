@@ -15,6 +15,11 @@ const MESSAGES: Record<string, string> = {
   ACCOUNT_NOT_COACH: "Ce compte n'est pas un compte coach",
   INVITATION_NOT_FOUND: "Cette invitation n'existe plus",
   INVITATION_NOT_PENDING: "Cette invitation n'est plus en attente",
+  EMAIL_ALREADY_EXISTS: 'Un compte existe déjà avec cet e-mail',
+  PASSWORD_RULE_VIOLATION:
+    'Le mot de passe doit contenir au moins 12 caractères, une lettre et un chiffre',
+  RESET_TOKEN_INVALID: 'Ce lien de réinitialisation n\'est plus valable',
+  PASSWORD_CONFIRMATION_MISMATCH: 'Les deux mots de passe ne correspondent pas',
 };
 
 const UNREACHABLE = 'Le serveur ne répond pas. Vérifiez votre connexion puis réessayez.';

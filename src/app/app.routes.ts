@@ -14,6 +14,33 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'inscription',
+    title: 'Créer un compte · Athletiq',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/signup-page/signup-page.component').then(
+        (m) => m.SignupPageComponent,
+      ),
+  },
+  {
+    path: 'mot-de-passe-oublie',
+    title: 'Mot de passe oublié · Athletiq',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/forgot-password-page/forgot-password-page.component').then(
+        (m) => m.ForgotPasswordPageComponent,
+      ),
+  },
+  {
+    path: 'reinitialiser-mot-de-passe',
+    title: 'Nouveau mot de passe · Athletiq',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/pages/reset-password-page/reset-password-page.component').then(
+        (m) => m.ResetPasswordPageComponent,
+      ),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -48,6 +75,14 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+      {
+        path: 'profil',
+        title: 'Mon profil · Athletiq',
+        loadComponent: () =>
+          import('./features/profile/pages/profile-page/profile-page.component').then(
+            (m) => m.ProfilePageComponent,
+          ),
       },
       {
         path: 'acces-refuse',
