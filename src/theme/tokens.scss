@@ -1,0 +1,129 @@
+// Design tokens communs d'Athletiq.
+//
+// Source : maquette « Athletiq — Charte, design system et maquettes » (v0.2, 22 octobre 2026),
+// ressource grepo « Maquette mobile & web claude design ».
+// Ce fichier est IDENTIQUE dans Th2Rvl/AthletiqWebApp et Th2Rvl/AthletiqApp :
+// toute modification se fait dans les deux dépôts.
+//
+// Thème sombre : classe `ath-dark` (web) ou `ion-palette-dark` (mobile) posée sur <html>.
+
+:root {
+  // Tartan, couleur d'ancrage (rampe primitive)
+  --ath-tartan-50: #FCEDE6;
+  --ath-tartan-100: #F8DDD0;
+  --ath-tartan-200: #F4B79C;
+  --ath-tartan-300: #E58F6C;
+  --ath-tartan-400: #E0643A;
+  --ath-tartan-500: #C2491D;
+  --ath-tartan-600: #A63D17;
+  --ath-tartan-700: #873212;
+  --ath-tartan-800: #6E270D;
+  --ath-tartan-900: #4F1C0A;
+
+  // Typographie : échelle à ratio 1,25 sur une base de 16 px
+  --ath-font-display: 'Manrope Variable', 'Manrope', 'Segoe UI', sans-serif;
+  --ath-font-text: 'Public Sans Variable', 'Public Sans', 'Segoe UI', sans-serif;
+  --ath-font-mono: ui-monospace, monospace;
+  --ath-text-display: 3.052rem;
+  --ath-text-h1: 2.441rem;
+  --ath-text-h2: 1.953rem;
+  --ath-text-h3: 1.563rem;
+  --ath-text-lead: 1.25rem;
+  --ath-text-body: 1rem;
+  --ath-text-small: 0.8rem;
+  --ath-line-height-body: 1.5;
+
+  // Arrondis : grandissent avec la taille de l'élément
+  --ath-radius-none: 0;     // tableaux, grilles
+  --ath-radius-sm: 6px;     // tag, champ, bouton web
+  --ath-radius-md: 12px;    // bloc, liste, bouton mobile
+  --ath-radius-lg: 20px;    // modale, feuille mobile
+
+  // Espacements (base 4 px)
+  --ath-space-1: 4px;
+  --ath-space-2: 8px;
+  --ath-space-3: 12px;
+  --ath-space-4: 16px;
+  --ath-space-5: 24px;
+  --ath-space-6: 32px;
+  --ath-space-7: 48px;
+  --ath-space-8: 64px;
+
+  // Focus : anneau de 2 px en couleur primaire, décalé de 2 px
+  --ath-focus-width: 2px;
+  --ath-focus-offset: 2px;
+
+  // Tokens sémantiques : thème clair
+  --ath-bg: #F4F3EF;
+  --ath-surface: #FFFFFF;
+  --ath-surface-sunken: #F0EEE9;
+  --ath-line: #E2DFD8;
+  --ath-line-strong: #C9C5BC;
+  --ath-text: #1C1B19;
+  --ath-text-muted: #5E5A54;
+  --ath-primary: #C2491D;
+  --ath-primary-hover: #A63D17;
+  --ath-on-primary: #FFFFFF;
+  --ath-primary-soft: #FCEDE6;
+  --ath-primary-soft-text: #873212;
+  --ath-link: #A63D17;
+  --ath-success: #2E7550;
+  --ath-success-soft: #E3F0E8;
+  --ath-success-text: #1F5638;
+  --ath-warning: #93600F;
+  --ath-warning-soft: #F8ECD6;
+  --ath-warning-text: #6E480B;
+  --ath-danger: #A11D3F;
+  --ath-danger-soft: #F7E1E6;
+  --ath-danger-text: #8A1835;
+  --ath-skeleton: #E9E7E1;
+  --ath-shadow-overlay: 0 16px 40px rgba(28, 27, 25, 0.16); // uniquement ce qui flotte (menu, modale)
+
+  // Échelle de RPE, seul dégradé admis : 1–3 facile, 4–6 modéré, 7–8 difficile, 9–10 maximal
+  --ath-rpe-easy-bg: #F8DDD0;
+  --ath-rpe-easy-text: #6E270D;
+  --ath-rpe-moderate-bg: #E58F6C;
+  --ath-rpe-moderate-text: #4F1C0A;
+  --ath-rpe-hard-bg: #C2491D;
+  --ath-rpe-hard-text: #FFFFFF;
+  --ath-rpe-max-bg: #6E270D;
+  --ath-rpe-max-text: #FFFFFF;
+}
+
+// Thème sombre : conçu, pas inversé
+:root.ath-dark,
+:root.ion-palette-dark {
+  --ath-bg: #131210;
+  --ath-surface: #1C1B18;
+  --ath-surface-sunken: #25231F;
+  --ath-line: #2F2C27;
+  --ath-line-strong: #47433C;
+  --ath-text: #F1EFEA;
+  --ath-text-muted: #A9A49A;
+  --ath-primary: #E0643A;
+  --ath-primary-hover: #EB7A52;
+  --ath-on-primary: #1A0C06;
+  --ath-primary-soft: #3A2117;
+  --ath-primary-soft-text: #F4B79C;
+  --ath-link: #F0956F;
+  --ath-success: #5DB383;
+  --ath-success-soft: #1B3326;
+  --ath-success-text: #8FD1AB;
+  --ath-warning: #D9A23F;
+  --ath-warning-soft: #382B13;
+  --ath-warning-text: #E9C27A;
+  --ath-danger: #E8637F;
+  --ath-danger-soft: #3B1A22;
+  --ath-danger-text: #F29AAD;
+  --ath-skeleton: #2A2824;
+  --ath-shadow-overlay: 0 16px 40px rgba(0, 0, 0, 0.5);
+
+  --ath-rpe-easy-bg: #4A2A1C;
+  --ath-rpe-easy-text: #F8DDD0;
+  --ath-rpe-moderate-bg: #E58F6C;
+  --ath-rpe-moderate-text: #4F1C0A;
+  --ath-rpe-hard-bg: #E0643A;
+  --ath-rpe-hard-text: #1A0C06;
+  --ath-rpe-max-bg: #A3361A;
+  --ath-rpe-max-text: #FFFFFF;
+}

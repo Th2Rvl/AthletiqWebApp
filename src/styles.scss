@@ -1,0 +1,17 @@
+/* Styles globaux. Couleurs, polices, arrondis et espacements : uniquement via les design tokens. */
+@use '@fontsource-variable/manrope';
+@use '@fontsource-variable/public-sans';
+@use './theme/tokens';
+
+body {
+  margin: 0;
+  background: var(--ath-bg);
+  color: var(--ath-text);
+  font-family: var(--ath-font-text);
+  font-size: var(--ath-text-body);
+  line-height: var(--ath-line-height-body);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--ath-font-display);
+}
