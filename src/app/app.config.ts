@@ -10,6 +10,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withFetch()),
-    providePrimeNG({ theme: { preset: AthletiqPreset } }),
+    providePrimeNG({
+      theme: {
+        preset: AthletiqPreset,
+        options: { darkModeSelector: '.ath-dark' },
+      },
+    }),
   ]
 };
