@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+
+.organisation-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ath-space-3);
+  margin-block-end: var(--ath-space-4);
+}
+
+.organisation-table__name {
+  color: var(--ath-link);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.organisation-table__description {
+  max-width: 32rem;
+  color: var(--ath-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.organisation-table__actions {
+  white-space: nowrap;
+  text-align: end;
+}

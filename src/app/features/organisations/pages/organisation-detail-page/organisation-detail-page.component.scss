@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ath-space-1);
+  align-self: flex-start;
+  color: var(--ath-link);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.summary-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}

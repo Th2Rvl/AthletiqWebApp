@@ -1,10 +1,12 @@
 import { addIcons } from 'ionicons';
 import { defineCustomElement } from 'ionicons/components/ion-icon.js';
 import {
+  arrowBackOutline,
   barbellOutline,
   calendarOutline,
   moonOutline,
   peopleOutline,
+  searchOutline,
   statsChartOutline,
   trophyOutline,
 } from 'ionicons/icons';
@@ -17,10 +19,12 @@ import {
 export function registerIcons(): void {
   defineCustomElement();
   addIcons({
+    arrowBackOutline,
     barbellOutline,
     calendarOutline,
     moonOutline,
     peopleOutline,
+    searchOutline,
     statsChartOutline,
     trophyOutline,
   });
