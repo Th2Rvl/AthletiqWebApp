@@ -1,0 +1,30 @@
+<header class="shell__bar">
+  <a class="shell__brand" routerLink="/">Athletiq</a>
+  <nav class="shell__nav" aria-label="Navigation principale">
+    @if (isAdmin()) {
+      <a
+        class="shell__link"
+        routerLink="/organisations"
+        routerLinkActive="shell__link--active"
+        ariaCurrentWhenActive="page"
+      >
+        Organisations
+      </a>
+    }
+  </nav>
+  @if (user(); as current) {
+    <div class="shell__user">
+      <span class="shell__user-name">{{ current.firstName }} {{ current.lastName }}</span>
+      <button pButton type="button" size="small" severity="secondary" text (click)="logout()">
+        Se déconnecter
+      </button>
+    </div>
+  }
+</header>
+
+<main class="shell__content">
+  <router-outlet />
+</main>
+
+<p-toast position="bottom-right" />
+<p-confirmdialog [style]="{ width: 'min(30rem, 100vw)' }" />

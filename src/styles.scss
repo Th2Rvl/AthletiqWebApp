@@ -15,3 +15,29 @@ body {
 h1, h2, h3, h4 {
   font-family: var(--ath-font-display);
 }
+
+.page-title {
+  margin: 0 0 var(--ath-space-5);
+  font-size: var(--ath-text-h1);
+}
+
+/* Chiffres alignés à droite et à chasse fixe dans les tableaux (charges, effectifs…). */
+.numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  text-align: end;
+}
+
+/* Texte lu par les lecteurs d'écran mais masqué à l'affichage. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

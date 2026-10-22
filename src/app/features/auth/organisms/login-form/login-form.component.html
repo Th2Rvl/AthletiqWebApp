@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <app-form-field label="E-mail" inputId="login-email">
+    <input
+      pInputText
+      id="login-email"
+      type="email"
+      formControlName="email"
+      autocomplete="username"
+    />
+  </app-form-field>
+
+  <app-form-field label="Mot de passe" inputId="login-password">
+    <input
+      pInputText
+      id="login-password"
+      type="password"
+      formControlName="password"
+      autocomplete="current-password"
+    />
+  </app-form-field>
+
+  @if (error(); as message) {
+    <p-message severity="error" role="alert">{{ message }}</p-message>
+  }
+
+  <button pButton type="submit" [disabled]="!canSubmit()" [loading]="submitting()">
+    Se connecter
+  </button>
+</form>

@@ -1,0 +1,26 @@
+.login {
+  display: flex;
+  min-height: 100vh;
+  padding: var(--ath-space-7) var(--ath-space-4);
+  box-sizing: border-box;
+}
+
+.login__panel {
+  width: 100%;
+  max-width: 24rem;
+  margin-inline: auto;
+  margin-block-start: var(--ath-space-8);
+}
+
+.login__brand {
+  margin: 0;
+  color: var(--ath-primary);
+  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-lead);
+  font-weight: 800;
+}
+
+.login__title {
+  margin: var(--ath-space-2) 0 var(--ath-space-6);
+  font-size: var(--ath-text-h2);
+}

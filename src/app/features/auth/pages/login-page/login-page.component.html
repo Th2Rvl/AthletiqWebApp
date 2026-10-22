@@ -1,0 +1,7 @@
+<main class="login">
+  <div class="login__panel">
+    <p class="login__brand">Athletiq</p>
+    <h1 class="login__title">Connexion</h1>
+    <app-login-form [submitting]="submitting()" [error]="error()" (submitted)="login($event)" />
+  </div>
+</main>

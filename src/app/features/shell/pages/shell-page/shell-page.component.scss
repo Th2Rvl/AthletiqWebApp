@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.shell__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-6);
+  padding: var(--ath-space-3) var(--ath-space-5);
+  background: var(--ath-surface);
+}
+
+.shell__brand {
+  color: var(--ath-primary);
+  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-lead);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.shell__nav {
+  display: flex;
+  gap: var(--ath-space-4);
+  flex: 1;
+}
+
+.shell__link {
+  padding-block: var(--ath-space-1);
+  color: var(--ath-text-muted);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--ath-text);
+  }
+
+  &--active {
+    color: var(--ath-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--ath-primary);
+    text-decoration-thickness: var(--ath-focus-width);
+    text-underline-offset: var(--ath-space-2);
+  }
+}
+
+.shell__user {
+  display: flex;
+  align-items: center;
+  gap: var(--ath-space-2);
+}
+
+.shell__user-name {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.shell__content {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: var(--ath-space-6) var(--ath-space-5);
+}
