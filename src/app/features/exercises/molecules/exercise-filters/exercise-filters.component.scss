@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-3);
+  align-items: center;
+}
+
+p-iconfield,
+p-select {
+  flex: 1 1 14rem;
+}
+
+input[type='search'] {
+  flex: 1 1 12rem;
+  min-width: 0;
+}

@@ -40,6 +40,16 @@ describe('ShellPageComponent', () => {
     expect(nav).toContain('Groupes');
   });
 
+  it("montre « Exercices » à un coach", async () => {
+    const nav = (await render('COACH')).querySelector('nav')?.textContent;
+    expect(nav).toContain('Exercices');
+  });
+
+  it("cache « Exercices » à un administrateur", async () => {
+    const nav = (await render('ADMIN')).querySelector('nav')?.textContent;
+    expect(nav).not.toContain('Exercices');
+  });
+
   it("cache « Athlètes » et « Groupes » à un administrateur et à un athlète", async () => {
     const nav = (await render('ADMIN')).querySelector('nav')?.textContent;
     expect(nav).not.toContain('Athlètes');

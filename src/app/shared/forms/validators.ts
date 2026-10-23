@@ -41,3 +41,20 @@ export function passwordStrength(control: AbstractControl<string | null>): Valid
   }
   return Object.keys(errors).length > 0 ? errors : null;
 }
+
+/**
+ * Adresse web `http` ou `https` absolue, vérifiée après trim. Une valeur vide n'est pas
+ * contrôlée ici : un champ facultatif se combine avec `trimmedLength(0, max)`.
+ */
+export function httpUrl(control: AbstractControl<string | null>): ValidationErrors | null {
+  const value = (control.value ?? '').trim();
+  if (value.length === 0) {
+    return null;
+  }
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? null : { httpUrl: true };
+  } catch {
+    return { httpUrl: true };
+  }
+}

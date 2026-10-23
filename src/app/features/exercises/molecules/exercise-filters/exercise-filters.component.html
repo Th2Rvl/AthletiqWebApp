@@ -1,0 +1,34 @@
+<p-iconfield>
+  <p-inputicon>
+    <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+  </p-inputicon>
+  <input
+    pInputText
+    type="search"
+    placeholder="Rechercher par nom"
+    aria-label="Rechercher un exercice par nom"
+    maxlength="200"
+    [value]="query()"
+    (input)="onQueryInput($event)"
+  />
+</p-iconfield>
+<p-select
+  [options]="muscleGroupOptions"
+  optionLabel="label"
+  optionValue="value"
+  [showClear]="true"
+  placeholder="Tous les groupes musculaires"
+  ariaLabel="Filtrer par groupe musculaire"
+  [ngModel]="muscleGroup()"
+  (onChange)="muscleGroupChange.emit($event.value ?? null)"
+  (onClear)="muscleGroupChange.emit(null)"
+/>
+<input
+  pInputText
+  type="search"
+  placeholder="Matériel (ex. barre)"
+  aria-label="Filtrer par matériel"
+  maxlength="100"
+  [value]="equipment()"
+  (input)="onEquipmentInput($event)"
+/>
