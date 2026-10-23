@@ -1,0 +1,21 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <app-form-field label="Prénom" inputId="profile-first-name">
+    <input pInputText id="profile-first-name" formControlName="firstName" autocomplete="given-name" />
+  </app-form-field>
+
+  <app-form-field label="Nom" inputId="profile-last-name">
+    <input pInputText id="profile-last-name" formControlName="lastName" autocomplete="family-name" />
+  </app-form-field>
+
+  <app-form-field label="E-mail" inputId="profile-email">
+    <input pInputText id="profile-email" type="email" formControlName="email" autocomplete="email" />
+  </app-form-field>
+
+  @if (error(); as message) {
+    <p-message severity="error" role="alert">{{ message }}</p-message>
+  }
+
+  <button pButton type="submit" [disabled]="!canSubmit()" [loading]="submitting()">
+    Enregistrer les modifications
+  </button>
+</form>

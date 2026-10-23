@@ -1,0 +1,15 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+input {
+  width: 100%;
+}
+
+.invitation-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ath-space-2);
+}

@@ -1,0 +1,35 @@
+@let org = organisation();
+<header class="summary__header">
+  <div class="summary__identity">
+    <h1 class="summary__name">{{ org.name }}</h1>
+    @if (org.description) {
+      <p class="summary__description">{{ org.description }}</p>
+    } @else {
+      <p class="summary__description summary__description--empty">Aucune description</p>
+    }
+  </div>
+  <div class="summary__actions">
+    <button pButton type="button" severity="secondary" text (click)="edit.emit()">Modifier</button>
+    <button pButton type="button" severity="danger" text (click)="remove.emit()">Supprimer</button>
+    <button pButton type="button" (click)="invite.emit()">Inviter un coach</button>
+  </div>
+</header>
+
+<dl class="summary__figures">
+  <div class="summary__figure summary__figure--main">
+    <dt>Coachs</dt>
+    <dd>{{ org.coachCount }}</dd>
+  </div>
+  <div class="summary__figure">
+    <dt>Athlètes</dt>
+    <dd>{{ org.athleteCount }}</dd>
+  </div>
+  <div class="summary__figure">
+    <dt>Invitations en attente</dt>
+    <dd>{{ org.pendingInvitationCount }}</dd>
+  </div>
+  <div class="summary__figure">
+    <dt>Créée le</dt>
+    <dd class="summary__date">{{ org.createdAt | date: 'd MMMM y' }}</dd>
+  </div>
+</dl>

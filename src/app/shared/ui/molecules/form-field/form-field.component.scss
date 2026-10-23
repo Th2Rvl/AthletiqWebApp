@@ -1,0 +1,20 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+}
+
+.form-field__label {
+  // Pas de token de graisse : le libellé se distingue par la police de titre, pas par le gras.
+  font-family: var(--ath-font-display);
+}
+
+.form-field__optional,
+.form-field__hint {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.form-field__optional {
+  margin-inline-start: var(--ath-space-1);
+}

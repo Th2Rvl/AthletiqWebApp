@@ -1,0 +1,10 @@
+<main class="account">
+  <div class="account__panel">
+    <p class="account__brand">Athletiq</p>
+    <h1 class="account__title">Créer un compte coach</h1>
+    <app-signup-form [submitting]="submitting()" [error]="error()" (submitted)="register($event)" />
+    <p class="account__aside">
+      Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a>
+    </p>
+  </div>
+</main>

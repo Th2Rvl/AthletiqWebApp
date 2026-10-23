@@ -1,0 +1,14 @@
+<label class="form-field__label" [for]="inputId()">
+  {{ label() }}
+  @if (optional()) {
+    <span class="form-field__optional">facultatif</span>
+  }
+</label>
+<ng-content />
+@if (error(); as message) {
+  <p-message [attr.id]="inputId() + '-error'" severity="error" variant="simple" size="small">
+    {{ message }}
+  </p-message>
+} @else if (hint(); as text) {
+  <small class="form-field__hint" [id]="inputId() + '-hint'">{{ text }}</small>
+}

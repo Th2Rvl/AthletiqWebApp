@@ -1,0 +1,39 @@
+<h1 class="page-title">Organisations</h1>
+
+@if (list.error() && !list.loading()) {
+  <app-error-state [message]="errorMessage()" (retry)="list.reload()" />
+} @else {
+  <app-organisation-table
+    [organisations]="list.items()"
+    [totalRecords]="list.total()"
+    [loading]="list.loading()"
+    [loaded]="list.loaded()"
+    [first]="list.first()"
+    [rows]="list.rows()"
+    [query]="query()"
+    (stateChange)="onTableState($event)"
+    (queryChange)="onQueryChange($event)"
+    (create)="openCreate()"
+    (edit)="openEdit($event)"
+    (remove)="confirmRemove($event)"
+  />
+}
+
+<p-dialog
+  [header]="editing() ? 'Modifier l\'organisation' : 'Créer une organisation'"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(36rem, 100vw)' }"
+>
+  @if (dialogVisible()) {
+    <app-organisation-form
+      [organisation]="editing()"
+      [saving]="saving()"
+      [serverErrors]="serverErrors()"
+      (submitted)="save($event)"
+      (cancelled)="closeDialog()"
+    />
+  }
+</p-dialog>

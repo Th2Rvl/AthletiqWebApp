@@ -1,0 +1,28 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <app-form-field
+    label="E-mail du coach"
+    inputId="invitation-email"
+    [error]="emailError()"
+    hint="Un coach qui a déjà un compte est rattaché tout de suite. Sinon, l'invitation reste en attente."
+  >
+    <input
+      pInputText
+      id="invitation-email"
+      type="email"
+      formControlName="email"
+      autocomplete="off"
+      [invalid]="emailError() !== null"
+      [attr.aria-invalid]="emailError() !== null"
+      [attr.aria-describedby]="emailError() ? 'invitation-email-error' : 'invitation-email-hint'"
+    />
+  </app-form-field>
+
+  <div class="invitation-form__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+      Inviter le coach
+    </button>
+  </div>
+</form>

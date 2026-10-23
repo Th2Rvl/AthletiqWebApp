@@ -1,0 +1,135 @@
+<a class="back-link" routerLink="/organisations">
+  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+  Organisations
+</a>
+
+@if (notFound()) {
+  <app-empty-state
+    message="Organisation introuvable"
+    detail="Elle a peut-être été supprimée, ou le lien est incorrect."
+    actionLabel="Retour à la liste des organisations"
+    (action)="backToList()"
+  />
+} @else if (organisationError()) {
+  <app-error-state [message]="organisationErrorMessage()" (retry)="loadAll()" />
+} @else {
+  @if (organisation(); as org) {
+    <app-organisation-summary
+      [organisation]="org"
+      (invite)="openInvite()"
+      (edit)="openEdit()"
+      (remove)="confirmRemove()"
+    />
+  } @else {
+    <div class="summary-skeleton" aria-busy="true" aria-label="Chargement de l'organisation">
+      <p-skeleton width="20rem" height="2.5rem" />
+      <p-skeleton width="28rem" />
+      <p-skeleton width="16rem" height="3rem" />
+    </div>
+  }
+
+  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+    <p-tablist>
+      <p-tab value="coaches">Coachs</p-tab>
+      <p-tab value="athletes">Athlètes</p-tab>
+      <p-tab value="invitations">Invitations en attente</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="coaches">
+        @if (coaches.error() && !coaches.loading()) {
+          <app-error-state
+            [message]="listErrorMessage(coaches.error())"
+            (retry)="coaches.reload()"
+          />
+        } @else {
+          <app-coach-member-table
+            [coaches]="coaches.items()"
+            [totalRecords]="coaches.total()"
+            [loading]="coaches.loading()"
+            [loaded]="coaches.loaded()"
+            [first]="coaches.first()"
+            [rows]="coaches.rows()"
+            (pageChange)="onPage(coaches, $event)"
+            (invite)="openInvite()"
+            (remove)="confirmRemoveCoach($event)"
+          />
+        }
+      </p-tabpanel>
+      <p-tabpanel value="athletes">
+        @if (athletes.error() && !athletes.loading()) {
+          <app-error-state
+            [message]="listErrorMessage(athletes.error())"
+            (retry)="athletes.reload()"
+          />
+        } @else {
+          <app-athlete-member-table
+            [athletes]="athletes.items()"
+            [totalRecords]="athletes.total()"
+            [loading]="athletes.loading()"
+            [loaded]="athletes.loaded()"
+            [first]="athletes.first()"
+            [rows]="athletes.rows()"
+            (pageChange)="onPage(athletes, $event)"
+          />
+        }
+      </p-tabpanel>
+      <p-tabpanel value="invitations">
+        @if (invitations.error() && !invitations.loading()) {
+          <app-error-state
+            [message]="listErrorMessage(invitations.error())"
+            (retry)="invitations.reload()"
+          />
+        } @else {
+          <app-invitation-table
+            [invitations]="invitations.items()"
+            [totalRecords]="invitations.total()"
+            [loading]="invitations.loading()"
+            [loaded]="invitations.loaded()"
+            [first]="invitations.first()"
+            [rows]="invitations.rows()"
+            (pageChange)="onPage(invitations, $event)"
+            (invite)="openInvite()"
+            (cancel)="confirmCancelInvitation($event)"
+          />
+        }
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+}
+
+<p-dialog
+  header="Inviter un coach"
+  [visible]="inviteVisible()"
+  (visibleChange)="inviteVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(32rem, 100vw)' }"
+>
+  @if (inviteVisible()) {
+    <app-invitation-form
+      [saving]="inviting()"
+      [serverErrors]="inviteErrors()"
+      (submitted)="invite($event)"
+      (cancelled)="inviteVisible.set(false)"
+    />
+  }
+</p-dialog>
+
+<p-dialog
+  header="Modifier l'organisation"
+  [visible]="editVisible()"
+  (visibleChange)="editVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(36rem, 100vw)' }"
+>
+  @if (editVisible()) {
+    <app-organisation-form
+      [organisation]="organisation()"
+      [saving]="saving()"
+      [serverErrors]="editErrors()"
+      (submitted)="save($event)"
+      (cancelled)="editVisible.set(false)"
+    />
+  }
+</p-dialog>

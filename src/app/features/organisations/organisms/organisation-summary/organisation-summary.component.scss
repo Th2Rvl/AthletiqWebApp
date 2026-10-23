@@ -1,0 +1,74 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+.summary__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--ath-space-4);
+}
+
+.summary__identity {
+  min-width: 0;
+  max-width: 48rem;
+}
+
+.summary__name {
+  margin: 0;
+  font-size: var(--ath-text-h2);
+  overflow-wrap: anywhere;
+}
+
+.summary__description {
+  margin: var(--ath-space-2) 0 0;
+  color: var(--ath-text-muted);
+  overflow-wrap: anywhere;
+
+  &--empty {
+    font-style: italic;
+  }
+}
+
+.summary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-2);
+}
+
+.summary__figures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--ath-space-6);
+  margin: 0;
+}
+
+.summary__figure {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--ath-space-1);
+
+  dt {
+    color: var(--ath-text-muted);
+    font-size: var(--ath-text-small);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--ath-font-display);
+    font-size: var(--ath-text-lead);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--main dd {
+    font-size: var(--ath-text-h2);
+  }
+}
+
+.summary__date {
+  font-family: var(--ath-font-text);
+}
