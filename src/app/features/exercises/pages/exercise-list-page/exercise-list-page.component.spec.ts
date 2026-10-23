@@ -39,9 +39,13 @@ function pageOf<T>(content: T[]): Page<T> {
   return { content, page: { size: 20, number: 0, totalElements: content.length, totalPages: 1 } };
 }
 
-function problem(status: number): Observable<never> {
+function problem(
+  status: number,
+  code = 'X',
+  extra: Record<string, unknown> = {},
+): Observable<never> {
   return throwError(
-    () => new HttpErrorResponse({ status, error: { status, code: 'X', detail: 'x' } }),
+    () => new HttpErrorResponse({ status, error: { status, code, detail: 'x', ...extra } }),
   );
 }
 
@@ -221,7 +225,9 @@ describe('ExerciseListPageComponent', () => {
 
   it('affiche « Vous avez déjà un exercice de ce nom » sous le champ sur un 409', async () => {
     await setup(of(pageOf([SQUAT])));
-    api.create.mockReturnValue(problem(409));
+    api.create.mockReturnValue(
+      problem(409, 'EXERCISE_NAME_ALREADY_EXISTS', { field: 'name' }),
+    );
 
     buttonByText('Créer un exercice').click();
     await fixture.whenStable();
@@ -311,5 +317,40 @@ describe('ExerciseListPageComponent', () => {
       summary: "Cet exercice n'existe plus",
     });
     expect(api.list).toHaveBeenCalledTimes(2);
+  });
+
+  it('signale EXERCISE_IN_USE avec le nombre de séances, sans rien supprimer', async () => {
+    await setup(of(pageOf([SQUAT])));
+    api.delete.mockReturnValue(problem(409, 'EXERCISE_IN_USE', { workoutCount: 3 }));
+
+    buttonByText('Supprimer').click();
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(messages.add).toHaveBeenCalledWith(
+      expect.objectContaining({
+        severity: 'warn',
+        summary: 'Cet exercice est utilisé dans 3 séances',
+      }),
+    );
+    expect(messages.add).not.toHaveBeenCalledWith(
+      expect.objectContaining({ summary: 'Exercice supprimé' }),
+    );
+    expect(element.textContent).toContain('Squat arrière');
+    expect(api.list).toHaveBeenCalledTimes(1);
+  });
+
+  it('ne confond pas EXERCISE_IN_USE avec le nom en double', async () => {
+    await setup(of(pageOf([SQUAT])));
+    api.delete.mockReturnValue(problem(409, 'EXERCISE_IN_USE', { workoutCount: 1 }));
+
+    buttonByText('Supprimer').click();
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(messages.add).toHaveBeenCalledWith(
+      expect.objectContaining({ summary: 'Cet exercice est utilisé dans 1 séance' }),
+    );
+    expect(document.body.textContent).not.toContain('Vous avez déjà un exercice de ce nom');
   });
 });

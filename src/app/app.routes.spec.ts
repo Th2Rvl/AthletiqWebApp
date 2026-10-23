@@ -36,4 +36,24 @@ describe('routes', () => {
 
     expect(router.url).toBe('/organisations');
   });
+
+  it('réserve /seances au coach : un administrateur arrive sur « Accès refusé »', async () => {
+    const router = signedInAs('ADMIN');
+
+    await router.navigateByUrl('/seances/nouvelle');
+
+    expect(router.url).toBe('/acces-refuse');
+  });
+
+  it("protège l'éditeur de séance par la garde de sortie", () => {
+    const seances = routes
+      .flatMap((route) => route.children ?? [])
+      .find((route) => route.path === 'seances')!;
+    const editors = seances.children!.filter((route) => route.path !== '');
+
+    expect(editors.map((route) => route.path)).toEqual(['nouvelle', ':workoutId']);
+    for (const route of editors) {
+      expect(route.canDeactivate?.length).toBe(1);
+    }
+  });
 });

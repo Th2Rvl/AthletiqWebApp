@@ -1,0 +1,67 @@
+<fieldset class="bulk-sets" [formGroup]="form">
+  <legend class="bulk-sets__legend">Séries identiques</legend>
+  <div class="bulk-sets__fields">
+    <p-inputnumber
+      [inputId]="idPrefix() + '-count'"
+      formControlName="count"
+      [min]="1"
+      [max]="setsMax"
+      [useGrouping]="false"
+      [maxFractionDigits]="0"
+      placeholder="Séries"
+      fluid
+      [ariaLabel]="'Nombre de séries identiques, ' + exerciseName()"
+    />
+    <span class="bulk-sets__word" aria-hidden="true">×</span>
+    <p-inputnumber
+      [inputId]="idPrefix() + '-reps'"
+      formControlName="reps"
+      [min]="repsMin"
+      [max]="repsMax"
+      [useGrouping]="false"
+      [maxFractionDigits]="0"
+      placeholder="Répétitions"
+      fluid
+      [ariaLabel]="'Répétitions par série, ' + exerciseName()"
+    />
+    <span class="bulk-sets__word" aria-hidden="true">à</span>
+    <p-inputnumber
+      [inputId]="idPrefix() + '-load'"
+      formControlName="loadKg"
+      mode="decimal"
+      locale="fr-FR"
+      [min]="0"
+      [max]="loadMax"
+      [step]="loadStep"
+      [minFractionDigits]="0"
+      [maxFractionDigits]="1"
+      [useGrouping]="false"
+      placeholder="Charge (kg)"
+      fluid
+      [ariaLabel]="'Charge en kilos, facultative, ' + exerciseName()"
+    />
+    <p-inputnumber
+      [inputId]="idPrefix() + '-rest'"
+      formControlName="restSeconds"
+      [min]="0"
+      [max]="restMax"
+      [useGrouping]="false"
+      [maxFractionDigits]="0"
+      placeholder="Repos (s)"
+      fluid
+      [ariaLabel]="'Repos en secondes, facultatif, ' + exerciseName()"
+    />
+    <button
+      pButton
+      type="button"
+      size="small"
+      severity="secondary"
+      outlined
+      [disabled]="!valid() || disabled()"
+      (click)="submit()"
+    >
+      {{ count() && count()! > 1 ? 'Créer ' + count() + ' séries' : 'Créer les séries' }}
+    </button>
+  </div>
+  <small class="bulk-sets__hint">Remplace les séries de l'exercice. Charge vide : poids du corps.</small>
+</fieldset>

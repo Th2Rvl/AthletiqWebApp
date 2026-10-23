@@ -1,0 +1,22 @@
+<h1 class="page-title">Séances</h1>
+
+@if (workouts.error() && !workouts.loading()) {
+  <app-error-state [message]="errorMessage()" (retry)="workouts.reload()" />
+} @else {
+  <app-workout-table
+    [workouts]="workouts.items()"
+    [totalRecords]="workouts.total()"
+    [loading]="workouts.loading()"
+    [loaded]="workouts.loaded()"
+    [first]="workouts.first()"
+    [rows]="workouts.rows()"
+    [query]="query()"
+    [duplicatingId]="duplicatingId()"
+    (pageChange)="onPage($event)"
+    (queryChange)="onQueryChange($event)"
+    (create)="openCreate()"
+    (edit)="openEdit($event)"
+    (duplicate)="duplicate($event)"
+    (remove)="confirmRemove($event)"
+  />
+}

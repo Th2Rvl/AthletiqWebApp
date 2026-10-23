@@ -1,0 +1,141 @@
+.workout-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-6);
+}
+
+.workout-editor__general {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+  max-width: 40rem;
+}
+
+input,
+textarea {
+  width: 100%;
+}
+
+.workout-editor__exercises {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+}
+
+.workout-editor__exercises-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ath-space-3);
+}
+
+.workout-editor__title {
+  margin: 0;
+  font-size: var(--ath-text-h3);
+}
+
+.workout-editor__count,
+.workout-editor__position {
+  color: var(--ath-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-editor__muted {
+  margin: 0;
+  color: var(--ath-text-muted);
+}
+
+.workout-editor__library-empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+  padding: var(--ath-space-4);
+  border-radius: var(--ath-radius-md);
+  background: var(--ath-warning-soft);
+  color: var(--ath-warning-text);
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: var(--ath-link);
+  }
+}
+
+.workout-editor__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workout-editor__exercise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+  padding: var(--ath-space-4);
+  border: 1px solid var(--ath-line);
+  border-radius: var(--ath-radius-md);
+  background: var(--ath-surface);
+}
+
+/* Élévation réelle : seul l'exercice en cours de déplacement porte une ombre. */
+.workout-editor__exercise.cdk-drag-preview {
+  box-shadow: var(--ath-shadow-overlay);
+}
+
+.workout-editor__exercise.cdk-drag-placeholder {
+  border-style: dashed;
+  border-color: var(--ath-line-strong);
+  background: var(--ath-surface-sunken);
+
+  > * {
+    visibility: hidden;
+  }
+}
+
+.workout-editor__exercise-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-2) var(--ath-space-3);
+}
+
+.workout-editor__handle {
+  display: inline-flex;
+  padding: var(--ath-space-1);
+  color: var(--ath-text-muted);
+  cursor: grab;
+}
+
+.workout-editor__exercise-name {
+  margin: 0;
+  font-size: var(--ath-text-lead);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.workout-editor__exercise-actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-inline-start: auto;
+}
+
+.workout-editor__sets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+.workout-editor__add-set,
+.workout-editor__add {
+  align-self: flex-start;
+}
+
+.workout-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ath-space-2);
+}

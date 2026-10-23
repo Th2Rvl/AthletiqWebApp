@@ -1,0 +1,221 @@
+<form class="workout-editor" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <section class="workout-editor__general" aria-label="Informations de la séance">
+    <app-form-field label="Nom" inputId="workout-name" [error]="nameError()">
+      <input
+        pInputText
+        id="workout-name"
+        formControlName="name"
+        autocomplete="off"
+        [attr.maxlength]="nameMax + 20"
+        [invalid]="nameError() !== null"
+        [attr.aria-invalid]="nameError() !== null"
+        [attr.aria-describedby]="nameError() ? 'workout-name-error' : null"
+      />
+    </app-form-field>
+
+    <app-form-field
+      label="Consignes"
+      inputId="workout-description"
+      [optional]="true"
+      [error]="descriptionError()"
+      [hint]="form.controls.description.value.length + ' / ' + descriptionMax + ' caractères'"
+    >
+      <textarea
+        pTextarea
+        id="workout-description"
+        formControlName="description"
+        rows="3"
+        [invalid]="descriptionError() !== null"
+        [attr.aria-invalid]="descriptionError() !== null"
+      ></textarea>
+    </app-form-field>
+  </section>
+
+  <section class="workout-editor__exercises" aria-labelledby="workout-exercises-title">
+    <div class="workout-editor__exercises-header">
+      <h2 id="workout-exercises-title" class="workout-editor__title">Exercices</h2>
+      <span class="workout-editor__count">{{ exercises.length }} / {{ exercisesMax }}</span>
+    </div>
+
+    @if (libraryEmpty()) {
+      <div class="workout-editor__library-empty" role="status">
+        <p>
+          Votre bibliothèque d'exercices est vide. Créez d'abord vos exercices pour pouvoir les
+          ajouter à une séance.
+        </p>
+        <a routerLink="/exercices">Aller aux exercices</a>
+      </div>
+    }
+
+    @if (exercisesError(); as message) {
+      <p-message id="workout-exercises-error" severity="error" variant="simple" size="small">
+        {{ message }}
+      </p-message>
+    }
+
+    @if (exercises.length === 0 && !libraryEmpty()) {
+      <p class="workout-editor__muted">Aucun exercice dans cette séance pour l'instant.</p>
+    }
+
+    <ol
+      class="workout-editor__list"
+      cdkDropList
+      cdkDropListLockAxis="y"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (group of exercises.controls; track group.controls.key.value; let i = $index, first = $first, last = $last) {
+        @let key = group.controls.key.value;
+        @let ref = group.controls.exercise.value;
+        <li
+          class="workout-editor__exercise"
+          cdkDrag
+          cdkDragPreviewContainer="parent"
+          [formGroup]="group"
+          [attr.aria-labelledby]="'workout-exercise-' + key + '-name'"
+        >
+          <div class="workout-editor__exercise-header">
+            <span class="workout-editor__handle" cdkDragHandle title="Glisser pour déplacer">
+              <ion-icon name="reorder-two-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Glisser pour déplacer (souris)</span>
+            </span>
+            <span class="workout-editor__position" aria-hidden="true">{{ i + 1 }}</span>
+            <h3 class="workout-editor__exercise-name" [id]="'workout-exercise-' + key + '-name'" tabindex="-1">
+              <span class="visually-hidden">Exercice {{ i + 1 }} :</span>
+              {{ ref.name }}
+            </h3>
+            <p-tag severity="secondary" [value]="muscleGroupLabel(ref.muscleGroup)" />
+            <div class="workout-editor__exercise-actions">
+              <button
+                pButton
+                type="button"
+                size="small"
+                severity="secondary"
+                text
+                [id]="'workout-exercise-' + key + '-up'"
+                [disabled]="first"
+                [attr.aria-label]="'Monter ' + ref.name"
+                (click)="move(i, -1)"
+              >
+                Monter
+              </button>
+              <button
+                pButton
+                type="button"
+                size="small"
+                severity="secondary"
+                text
+                [id]="'workout-exercise-' + key + '-down'"
+                [disabled]="last"
+                [attr.aria-label]="'Descendre ' + ref.name"
+                (click)="move(i, 1)"
+              >
+                Descendre
+              </button>
+              <button
+                pButton
+                type="button"
+                size="small"
+                severity="danger"
+                text
+                [attr.aria-label]="'Retirer ' + ref.name + ' de la séance'"
+                (click)="removeExercise(i)"
+              >
+                Retirer
+              </button>
+            </div>
+          </div>
+
+          @if (exerciseError(i); as message) {
+            <p-message severity="error" variant="simple" size="small">{{ message }}</p-message>
+          }
+
+          <app-form-field
+            label="Note"
+            [inputId]="'workout-exercise-' + key + '-note'"
+            [optional]="true"
+            hint="Par exemple : tempo, consigne technique"
+            [error]="noteError(i)"
+          >
+            <input
+              pInputText
+              [id]="'workout-exercise-' + key + '-note'"
+              formControlName="note"
+              autocomplete="off"
+              [invalid]="noteError(i) !== null"
+              [attr.aria-invalid]="noteError(i) !== null"
+            />
+          </app-form-field>
+
+          <div class="workout-editor__sets">
+            @for (set of group.controls.sets.controls; track set; let j = $index) {
+              <app-planned-set-row
+                [group]="set"
+                [index]="j"
+                [idPrefix]="'workout-exercise-' + key + '-set-' + j"
+                [exerciseName]="ref.name"
+                [errors]="setErrors(i, j)"
+                [restSeconds]="set.controls.restSeconds.value"
+                (remove)="removeSet(i, j)"
+              />
+            } @empty {
+              <p class="workout-editor__muted">
+                Aucune série : créez des séries identiques ou ajoutez-les une par une.
+              </p>
+            }
+            @if (setsError(i); as message) {
+              <p-message severity="error" variant="simple" size="small">{{ message }}</p-message>
+            }
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              class="workout-editor__add-set"
+              [disabled]="group.controls.sets.length >= setsMax"
+              [attr.aria-label]="'Ajouter une série à ' + ref.name"
+              (click)="addSet(i)"
+            >
+              Ajouter une série
+            </button>
+          </div>
+
+          <app-bulk-sets-input
+            [idPrefix]="'workout-exercise-' + key + '-bulk'"
+            [exerciseName]="ref.name"
+            (apply)="applyBulk(i, $event)"
+          />
+        </li>
+      }
+    </ol>
+
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      outlined
+      class="workout-editor__add"
+      [disabled]="libraryEmpty() || exercises.length >= exercisesMax"
+      (click)="addRequested.emit()"
+    >
+      Ajouter des exercices
+    </button>
+  </section>
+
+  @if (hasErrors()) {
+    <p-message severity="error" size="small">
+      La séance n'est pas enregistrée : corrigez les champs signalés.
+    </p-message>
+  }
+
+  <div class="workout-editor__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [loading]="saving()" [disabled]="saving()">
+      Enregistrer la séance
+    </button>
+  </div>
+</form>
+
+<div class="visually-hidden" aria-live="polite" role="status">{{ announcement() }}</div>

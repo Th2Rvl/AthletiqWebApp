@@ -25,6 +25,11 @@ const MESSAGES: Record<string, string> = {
     'Le mot de passe doit contenir au moins 12 caractères, une lettre et un chiffre',
   RESET_TOKEN_INVALID: 'Ce lien de réinitialisation n\'est plus valable',
   PASSWORD_CONFIRMATION_MISMATCH: 'Les deux mots de passe ne correspondent pas',
+  EXERCISE_NOT_FOUND: "Un exercice de la séance n'existe plus",
+  EXERCISE_NAME_ALREADY_EXISTS: 'Vous avez déjà un exercice de ce nom',
+  EXERCISE_IN_USE: 'Cet exercice est utilisé dans une séance',
+  WORKOUT_NOT_FOUND: "Cette séance n'existe plus",
+  WORKOUT_NAME_ALREADY_EXISTS: 'Vous avez déjà une séance de ce nom',
 };
 
 const UNREACHABLE = 'Le serveur ne répond pas. Vérifiez votre connexion puis réessayez.';
@@ -57,8 +62,24 @@ export function problemMessage(error: unknown): string {
   if (error instanceof HttpErrorResponse && error.status === 0) {
     return UNREACHABLE;
   }
-  const code = problemCode(error);
-  return (code && MESSAGES[code]) || UNEXPECTED;
+  const problem = toApiProblem(error);
+  if (problem?.code === 'EXERCISE_IN_USE') {
+    return exerciseInUseMessage(problem.workoutCount);
+  }
+  return (problem && MESSAGES[problem.code]) || UNEXPECTED;
+}
+
+/**
+ * Libellé de `409 EXERCISE_IN_USE` construit avec `workoutCount` (contrat #5, §10) :
+ * « Cet exercice est utilisé dans 3 séances ». Sans compte exploitable, libellé générique.
+ */
+export function exerciseInUseMessage(workoutCount: number | undefined): string {
+  if (typeof workoutCount !== 'number' || workoutCount < 1) {
+    return MESSAGES['EXERCISE_IN_USE'];
+  }
+  return workoutCount === 1
+    ? 'Cet exercice est utilisé dans 1 séance'
+    : `Cet exercice est utilisé dans ${workoutCount} séances`;
 }
 
 /**

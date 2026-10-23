@@ -12,7 +12,8 @@
 }
 
 .exercise-table__name {
-  font-weight: 600;
+  // Pas de token de graisse : le nom se distingue par la police de titre, pas par le gras.
+  font-family: var(--ath-font-display);
   overflow-wrap: anywhere;
 }
 

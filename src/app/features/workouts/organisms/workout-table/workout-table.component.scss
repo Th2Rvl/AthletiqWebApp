@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.workout-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--ath-space-4);
+
+  p-iconfield {
+    flex: 0 1 24rem;
+    min-width: 0;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.workout-table__name {
+  display: block;
+  font-family: var(--ath-font-display);
+  overflow-wrap: anywhere;
+}
+
+.workout-table__description {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.workout-table__groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-1);
+}
+
+.workout-table__date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}

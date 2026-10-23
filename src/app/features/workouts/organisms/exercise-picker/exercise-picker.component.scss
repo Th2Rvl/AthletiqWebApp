@@ -1,0 +1,49 @@
+.exercise-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+.exercise-picker__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-3);
+
+  p-iconfield,
+  p-select {
+    flex: 1 1 12rem;
+    min-width: 0;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.exercise-picker__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+}
+
+.exercise-picker__name {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.exercise-picker__hint {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.exercise-picker__error {
+  color: var(--ath-danger-text);
+  font-size: var(--ath-text-small);
+}
+
+.exercise-picker__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ath-space-2);
+  margin-block-start: var(--ath-space-3);
+}

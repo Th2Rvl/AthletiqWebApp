@@ -3,7 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { httpStatus, fieldErrors, problemMessage } from '../../../../core/api/api-problem';
+import {
+  fieldErrors,
+  httpStatus,
+  problemCode,
+  problemMessage,
+} from '../../../../core/api/api-problem';
 import { ExerciseApiService } from '../../../../core/api/exercise-api.service';
 import { Exercise, ExercisePayload, MuscleGroup } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
@@ -13,7 +18,6 @@ import { ExerciseFormComponent } from '../../organisms/exercise-form/exercise-fo
 import { ExerciseTableComponent } from '../../organisms/exercise-table/exercise-table.component';
 
 const SEARCH_DEBOUNCE_MS = 300;
-const DUPLICATE_NAME_MESSAGE = 'Vous avez déjà un exercice de ce nom';
 
 /**
  * Page « Exercices » (US15 à US17) : bibliothèque du coach, avec recherche par nom, filtres
@@ -131,8 +135,9 @@ export class ExerciseListPageComponent {
       this.notifyGone();
       return;
     }
-    if (status === 409) {
-      this.serverErrors.set({ name: DUPLICATE_NAME_MESSAGE });
+    // 409 de nom en double : sous le champ nom, distinct du 409 EXERCISE_IN_USE (suppression).
+    if (problemCode(error) === 'EXERCISE_NAME_ALREADY_EXISTS') {
+      this.serverErrors.set({ name: problemMessage(error) });
       return;
     }
     const errors = fieldErrors(error);
@@ -172,6 +177,13 @@ export class ExerciseListPageComponent {
         error: (error: unknown) => {
           if (httpStatus(error) === 404) {
             this.notifyGone();
+          } else if (problemCode(error) === 'EXERCISE_IN_USE') {
+            // Q15 : l'exercice reste dans la bibliothèque tant qu'une séance l'utilise.
+            this.messages.add({
+              severity: 'warn',
+              summary: problemMessage(error),
+              detail: "Retirez-le de ces séances pour pouvoir le supprimer. Rien n'a été supprimé.",
+            });
           } else {
             this.messages.add({ severity: 'error', summary: problemMessage(error) });
           }

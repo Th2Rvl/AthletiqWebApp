@@ -1,0 +1,60 @@
+<a class="back-link" routerLink="/seances">
+  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+  Séances
+</a>
+
+@if (notFound()) {
+  <app-empty-state
+    message="Cette séance n'existe plus"
+    detail="Elle a peut-être été supprimée, ou le lien est incorrect."
+    actionLabel="Retour aux séances"
+    (action)="backToList()"
+  />
+} @else if (loadError()) {
+  <app-error-state [message]="loadErrorMessage()" (retry)="load()" />
+} @else if (loading()) {
+  <div class="editor-skeleton" aria-busy="true" aria-label="Chargement de la séance">
+    <p-skeleton width="18rem" height="2.5rem" />
+    <p-skeleton width="100%" height="2.5rem" />
+    <p-skeleton width="100%" height="10rem" />
+    <p-skeleton width="100%" height="10rem" />
+  </div>
+} @else {
+  <h1 class="page-title editor-title">{{ heading() }}</h1>
+  <app-workout-editor
+    [workout]="workout()"
+    [libraryEmpty]="libraryEmpty()"
+    [saving]="saving()"
+    [serverErrors]="serverErrors()"
+    (submitted)="save($event)"
+    (cancelled)="backToList()"
+    (addRequested)="openPicker()"
+  />
+}
+
+<p-dialog
+  header="Ajouter des exercices"
+  [visible]="pickerVisible()"
+  (visibleChange)="pickerVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(40rem, 100vw)' }"
+>
+  @if (pickerVisible()) {
+    <app-exercise-picker
+      [exercises]="pickerExercises()"
+      [totalRecords]="pickerTotal()"
+      [loaded]="pickerLoaded()"
+      [loading]="pickerLoading()"
+      [errorMessage]="pickerErrorMessage()"
+      [query]="pickerQuery()"
+      [muscleGroup]="pickerMuscleGroup()"
+      [remaining]="pickerRemaining()"
+      (queryChange)="onPickerQuery($event)"
+      (muscleGroupChange)="onPickerMuscleGroup($event)"
+      (picked)="addExercises($event)"
+      (cancelled)="pickerVisible.set(false)"
+      (retry)="loadPicker()"
+    />
+  }
+</p-dialog>
