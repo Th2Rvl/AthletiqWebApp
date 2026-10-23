@@ -1,0 +1,91 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <app-form-field label="Nom" inputId="exercise-name" [error]="nameError()">
+    <input
+      pInputText
+      id="exercise-name"
+      formControlName="name"
+      autocomplete="off"
+      [invalid]="nameError() !== null"
+      [attr.aria-invalid]="nameError() !== null"
+      [attr.aria-describedby]="nameError() ? 'exercise-name-error' : null"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Groupe musculaire"
+    inputId="exercise-muscle-group"
+    [error]="muscleGroupError()"
+  >
+    <p-select
+      inputId="exercise-muscle-group"
+      formControlName="muscleGroup"
+      [options]="muscleGroupOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Choisir un groupe"
+      [invalid]="muscleGroupError() !== null"
+      [attr.aria-invalid]="muscleGroupError() !== null"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Matériel"
+    inputId="exercise-equipment"
+    [optional]="true"
+    hint="Par exemple : barre, haltères, machine, poids du corps"
+    [error]="equipmentError()"
+  >
+    <input
+      pInputText
+      id="exercise-equipment"
+      formControlName="equipment"
+      autocomplete="off"
+      [invalid]="equipmentError() !== null"
+      [attr.aria-invalid]="equipmentError() !== null"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Lien vers une vidéo"
+    inputId="exercise-video-url"
+    [optional]="true"
+    hint="Adresse complète, qui commence par https://"
+    [error]="videoUrlError()"
+  >
+    <input
+      pInputText
+      id="exercise-video-url"
+      type="url"
+      formControlName="videoUrl"
+      autocomplete="off"
+      [invalid]="videoUrlError() !== null"
+      [attr.aria-invalid]="videoUrlError() !== null"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Description"
+    inputId="exercise-description"
+    [optional]="true"
+    [error]="descriptionError()"
+    [hint]="descriptionLength() + ' / ' + descriptionMax + ' caractères'"
+  >
+    <textarea
+      pTextarea
+      id="exercise-description"
+      formControlName="description"
+      rows="4"
+      [invalid]="descriptionError() !== null"
+      [attr.aria-invalid]="descriptionError() !== null"
+    ></textarea>
+  </app-form-field>
+
+  <div class="exercise-form__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+      {{ submitLabel() }}
+    </button>
+  </div>
+</form>

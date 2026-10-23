@@ -208,3 +208,46 @@ export interface ApiProblem {
   field?: string;
   errors?: { field: string; message: string }[];
 }
+
+/** Groupes musculaires figés côté API (contrat #4, ajustement du 23/10) : liste fermée. */
+export type MuscleGroup =
+  | 'PECTORAUX'
+  | 'DOS'
+  | 'EPAULES'
+  | 'BICEPS'
+  | 'TRICEPS'
+  | 'AVANT_BRAS'
+  | 'ABDOMINAUX'
+  | 'QUADRICEPS'
+  | 'ISCHIO_JAMBIERS'
+  | 'FESSIERS'
+  | 'MOLLETS'
+  | 'CORPS_ENTIER';
+
+/** Exercice de la bibliothèque du coach connecté (US15 à US17). */
+export interface Exercise {
+  id: Uuid;
+  name: string;
+  description: string | null;
+  muscleGroup: MuscleGroup;
+  equipment: string | null;
+  videoUrl: string | null;
+  createdAt: IsoInstant;
+  updatedAt: IsoInstant;
+}
+
+/** Corps de `POST /exercises` et `PUT /exercises/{id}` : le PUT remplace tout, un champ `null` est effacé. */
+export interface ExercisePayload {
+  name: string;
+  description: string | null;
+  muscleGroup: MuscleGroup;
+  equipment: string | null;
+  videoUrl: string | null;
+}
+
+/** Paramètres de `GET /exercises` : recherche par nom (`q`) et filtres (contrat #4, ajustements). */
+export interface ExerciseListQuery extends PageQuery {
+  q?: string;
+  muscleGroup?: MuscleGroup;
+  equipment?: string;
+}

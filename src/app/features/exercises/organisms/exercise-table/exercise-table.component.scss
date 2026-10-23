@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.exercise-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--ath-space-4);
+}
+
+.exercise-table__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.exercise-table__none {
+  color: var(--ath-text-muted);
+}
+
+.exercise-table__video {
+  color: var(--ath-link);
+}
+
+.exercise-table__actions {
+  white-space: nowrap;
+  text-align: end;
+}

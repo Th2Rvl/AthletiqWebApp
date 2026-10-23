@@ -71,6 +71,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'exercices',
+        title: 'Exercices · Athletiq',
+        canActivate: [coachGuard],
+        loadComponent: () =>
+          import('./features/exercises/pages/exercise-list-page/exercise-list-page.component').then(
+            (m) => m.ExerciseListPageComponent,
+          ),
+      },
+      {
         path: 'groupes',
         canActivate: [coachGuard],
         children: [

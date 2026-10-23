@@ -42,6 +42,11 @@ export function toApiProblem(error: unknown): ApiProblem | null {
   return null;
 }
 
+/** Statut HTTP de l'erreur, ou `null` si ce n'est pas une erreur HTTP. */
+export function httpStatus(error: unknown): number | null {
+  return error instanceof HttpErrorResponse ? error.status : null;
+}
+
 /** Code métier de l'erreur, s'il y en a un. */
 export function problemCode(error: unknown): string | null {
   return toApiProblem(error)?.code ?? null;
