@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { Observable, of, throwError } from 'rxjs';
 import { AthleteApiService } from '../../../../core/api/athlete-api.service';
@@ -11,6 +12,7 @@ import {
   Group,
   Page,
 } from '../../../../core/api/models/api.models';
+import { AthleteTableComponent } from '../../organisms/athlete-table/athlete-table.component';
 import { AthleteListPageComponent } from './athlete-list-page.component';
 
 const MARION: AthleteSummary = {
@@ -236,5 +238,58 @@ describe('AthleteListPageComponent', () => {
       summary: "Cet athlète n'est plus suivi",
     });
     expect(api.list).toHaveBeenCalledTimes(2);
+  });
+
+  it('recherche : la saisie recharge la liste avec le texte (q)', async () => {
+    await setup(of(pageOf([MARION, LUCAS])));
+
+    const input = element.querySelector<HTMLInputElement>('input[type="search"]')!;
+    input.value = 'mar';
+    input.dispatchEvent(new Event('input'));
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await fixture.whenStable();
+
+    expect(api.list).toHaveBeenLastCalledWith({ page: 0, size: 20, q: 'mar', groupId: undefined });
+  });
+
+  it('filtre par groupe : la liste est rechargée avec le groupeId choisi', async () => {
+    await setup(of(pageOf([MARION, LUCAS])));
+    const table = fixture.debugElement.query(By.directive(AthleteTableComponent))
+      .componentInstance as AthleteTableComponent;
+
+    table.groupIdChange.emit('g-1');
+    await fixture.whenStable();
+
+    expect(api.list).toHaveBeenLastCalledWith({ page: 0, size: 20, q: '', groupId: 'g-1' });
+  });
+
+  it('affiche « Aucun athlète ne correspond à la recherche » quand la recherche ne trouve rien', async () => {
+    await setup(of(pageOf([MARION])));
+    api.list.mockReturnValue(of(pageOf([])));
+
+    const input = element.querySelector<HTMLInputElement>('input[type="search"]')!;
+    input.value = 'zzz';
+    input.dispatchEvent(new Event('input'));
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await fixture.whenStable();
+
+    expect(element.textContent).toContain('Aucun athlète ne correspond à la recherche');
+    expect(element.textContent).not.toContain("Aucun athlète pour l'instant.");
+  });
+
+  it('annuler la confirmation de retrait ne retire rien et ne recharge pas la liste', async () => {
+    await setup(of(pageOf([MARION])));
+
+    buttonByText('Retirer').click();
+    expect(confirmations).toHaveLength(1);
+    confirmations[0].reject?.();
+    await fixture.whenStable();
+
+    expect(api.remove).not.toHaveBeenCalled();
+    expect(api.list).toHaveBeenCalledTimes(1);
+    expect(element.textContent).toContain('Lefèvre Marion');
+    expect(messages.add).not.toHaveBeenCalledWith(
+      expect.objectContaining({ summary: 'Athlète retiré' }),
+    );
   });
 });
