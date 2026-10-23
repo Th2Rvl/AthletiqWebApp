@@ -1,0 +1,95 @@
+<div class="planned-set-row" [formGroup]="group()">
+  <span class="planned-set-row__number">Série {{ number() }}</span>
+
+  <div class="planned-set-row__field">
+    <label class="planned-set-row__label" [for]="idPrefix() + '-reps'">Répétitions</label>
+    <p-inputnumber
+      [inputId]="idPrefix() + '-reps'"
+      formControlName="reps"
+      [min]="repsMin"
+      [max]="repsMax"
+      [useGrouping]="false"
+      [maxFractionDigits]="0"
+      [invalid]="errors().reps !== null"
+      [ariaDescribedBy]="describedBy('reps')"
+      [ariaLabel]="'Répétitions, série ' + number() + ', ' + exerciseName()"
+      fluid
+    />
+    @if (errors().reps; as message) {
+      <p-message [attr.id]="idPrefix() + '-reps-error'" severity="error" variant="simple" size="small">
+        {{ message }}
+      </p-message>
+    }
+  </div>
+
+  <div class="planned-set-row__field">
+    <label class="planned-set-row__label" [for]="idPrefix() + '-load'">Charge (kg)</label>
+    <p-inputnumber
+      [inputId]="idPrefix() + '-load'"
+      formControlName="loadKg"
+      mode="decimal"
+      locale="fr-FR"
+      [min]="0"
+      [max]="loadMax"
+      [step]="loadStep"
+      [minFractionDigits]="0"
+      [maxFractionDigits]="1"
+      [useGrouping]="false"
+      placeholder="Poids du corps"
+      [invalid]="errors().loadKg !== null"
+      [ariaDescribedBy]="describedBy('loadKg')"
+      [ariaLabel]="'Charge en kilos, série ' + number() + ', ' + exerciseName()"
+      fluid
+    />
+    @if (errors().loadKg; as message) {
+      <p-message [attr.id]="idPrefix() + '-loadKg-error'" severity="error" variant="simple" size="small">
+        {{ message }}
+      </p-message>
+    }
+  </div>
+
+  <div class="planned-set-row__field">
+    <label class="planned-set-row__label" [for]="idPrefix() + '-rest'">
+      Repos (s)
+      @if (rest(); as formatted) {
+        <span class="planned-set-row__rest">{{ formatted }}</span>
+      }
+    </label>
+    <p-inputnumber
+      [inputId]="idPrefix() + '-rest'"
+      formControlName="restSeconds"
+      [min]="0"
+      [max]="restMax"
+      [useGrouping]="false"
+      [maxFractionDigits]="0"
+      placeholder="Non précisé"
+      [invalid]="errors().restSeconds !== null"
+      [ariaDescribedBy]="describedBy('restSeconds')"
+      [ariaLabel]="'Repos en secondes, série ' + number() + ', ' + exerciseName()"
+      fluid
+    />
+    @if (errors().restSeconds; as message) {
+      <p-message
+        [attr.id]="idPrefix() + '-restSeconds-error'"
+        severity="error"
+        variant="simple"
+        size="small"
+      >
+        {{ message }}
+      </p-message>
+    }
+  </div>
+
+  <button
+    pButton
+    type="button"
+    size="small"
+    severity="danger"
+    text
+    class="planned-set-row__remove"
+    [attr.aria-label]="'Retirer la série ' + number() + ' de ' + exerciseName()"
+    (click)="remove.emit()"
+  >
+    Retirer
+  </button>
+</div>

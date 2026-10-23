@@ -42,3 +42,44 @@ describe('api-problem', () => {
     expect(fieldErrors(new Error('boom'))).toEqual({});
   });
 });
+
+describe('api-problem : séances (#5)', () => {
+  it('distingue EXERCISE_IN_USE (avec workoutCount) du nom d’exercice déjà pris', () => {
+    const inUse = httpError(409, { code: 'EXERCISE_IN_USE', detail: 'x', workoutCount: 3 });
+    expect(problemMessage(inUse)).toBe('Cet exercice est utilisé dans 3 séances');
+    expect(problemMessage(httpError(409, { code: 'EXERCISE_IN_USE', workoutCount: 1 }))).toBe(
+      'Cet exercice est utilisé dans 1 séance',
+    );
+    expect(problemMessage(httpError(409, { code: 'EXERCISE_IN_USE' }))).toBe(
+      'Cet exercice est utilisé dans une séance',
+    );
+    const duplicate = httpError(409, { code: 'EXERCISE_NAME_ALREADY_EXISTS', field: 'name' });
+    expect(fieldErrors(duplicate)).toEqual({ name: 'Vous avez déjà un exercice de ce nom' });
+  });
+
+  it('a les libellés des nouveaux codes de séance', () => {
+    expect(problemMessage(httpError(404, { code: 'WORKOUT_NOT_FOUND' }))).toBe(
+      "Cette séance n'existe plus",
+    );
+    expect(problemMessage(httpError(404, { code: 'EXERCISE_NOT_FOUND' }))).toBe(
+      "Un exercice de la séance n'existe plus",
+    );
+    expect(
+      fieldErrors(httpError(409, { code: 'WORKOUT_NAME_ALREADY_EXISTS', field: 'name' })),
+    ).toEqual({ name: 'Vous avez déjà une séance de ce nom' });
+  });
+
+  it('reprend les chemins imbriqués des erreurs 400', () => {
+    const error = httpError(400, {
+      code: 'VALIDATION_FAILED',
+      errors: [
+        { field: 'exercises[2].sets[1].reps', message: 'Au moins 1 répétition' },
+        { field: 'exercises[0].sets', message: 'Ajoutez au moins une série' },
+      ],
+    });
+    expect(fieldErrors(error)).toEqual({
+      'exercises[2].sets[1].reps': 'Au moins 1 répétition',
+      'exercises[0].sets': 'Ajoutez au moins une série',
+    });
+  });
+});

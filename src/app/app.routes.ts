@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard, coachGuard, guestGuard } from './core/auth/auth.guards';
 import { AuthService } from './core/auth/auth.service';
+import { unsavedChangesGuard } from './core/navigation/unsaved-changes.guard';
 
 export const routes: Routes = [
   {
@@ -78,6 +79,38 @@ export const routes: Routes = [
           import('./features/exercises/pages/exercise-list-page/exercise-list-page.component').then(
             (m) => m.ExerciseListPageComponent,
           ),
+      },
+      {
+        path: 'seances',
+        canActivate: [coachGuard],
+        children: [
+          {
+            path: '',
+            title: 'Séances · Athletiq',
+            loadComponent: () =>
+              import('./features/workouts/pages/workout-list-page/workout-list-page.component').then(
+                (m) => m.WorkoutListPageComponent,
+              ),
+          },
+          {
+            path: 'nouvelle',
+            title: 'Nouvelle séance · Athletiq',
+            canDeactivate: [unsavedChangesGuard],
+            loadComponent: () =>
+              import('./features/workouts/pages/workout-editor-page/workout-editor-page.component').then(
+                (m) => m.WorkoutEditorPageComponent,
+              ),
+          },
+          {
+            path: ':workoutId',
+            title: 'Séance · Athletiq',
+            canDeactivate: [unsavedChangesGuard],
+            loadComponent: () =>
+              import('./features/workouts/pages/workout-editor-page/workout-editor-page.component').then(
+                (m) => m.WorkoutEditorPageComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'groupes',

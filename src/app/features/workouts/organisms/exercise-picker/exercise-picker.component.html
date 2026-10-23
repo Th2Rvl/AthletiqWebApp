@@ -1,0 +1,83 @@
+<form class="exercise-picker" ngNoForm (submit)="$event.preventDefault(); submit()">
+  <div class="exercise-picker__filters">
+    <p-iconfield>
+      <p-inputicon>
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </p-inputicon>
+      <input
+        pInputText
+        type="search"
+        placeholder="Rechercher par nom"
+        aria-label="Rechercher un exercice par nom"
+        maxlength="100"
+        [value]="query()"
+        (input)="onQueryInput($event)"
+      />
+    </p-iconfield>
+    <p-select
+      [options]="muscleGroupOptions"
+      optionLabel="label"
+      optionValue="value"
+      [showClear]="true"
+      placeholder="Tous les groupes musculaires"
+      ariaLabel="Filtrer par groupe musculaire"
+      appendTo="body"
+      [ngModel]="muscleGroup()"
+      [ngModelOptions]="{ standalone: true }"
+      (onChange)="muscleGroupChange.emit($event.value ?? null)"
+      (onClear)="muscleGroupChange.emit(null)"
+    />
+  </div>
+
+  @if (errorMessage(); as message) {
+    <app-error-state [message]="message" (retry)="retry.emit()" />
+  } @else if (!loaded()) {
+    <div class="exercise-picker__skeleton" aria-busy="true" aria-label="Chargement des exercices">
+      <p-skeleton height="2.5rem" />
+      <p-skeleton height="2.5rem" />
+      <p-skeleton height="2.5rem" />
+    </div>
+  } @else {
+    <p-listbox
+      [options]="exercises()"
+      optionLabel="name"
+      optionValue="id"
+      [multiple]="true"
+      [checkbox]="true"
+      [metaKeySelection]="false"
+      ariaLabel="Exercices de la bibliothèque"
+      emptyMessage="Aucun exercice ne correspond à la recherche"
+      scrollHeight="20rem"
+      [ngModel]="selectedIds()"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="onSelection($event)"
+      [style]="{ width: '100%' }"
+    >
+      <ng-template #item let-exercise>
+        <span class="exercise-picker__name">{{ exercise.name }}</span>
+        <p-tag severity="secondary" [value]="muscleGroupLabel(exercise.muscleGroup)" />
+      </ng-template>
+    </p-listbox>
+    @if (truncated()) {
+      <small class="exercise-picker__hint">
+        {{ exercises().length }} exercices affichés sur {{ totalRecords() }} : affinez la recherche.
+      </small>
+    }
+  }
+
+  @if (tooMany()) {
+    <small class="exercise-picker__error" role="alert">
+      La séance peut encore recevoir {{ remaining() }}
+      {{ remaining() > 1 ? 'exercices' : 'exercice' }} (30 au plus).
+    </small>
+  }
+
+  <div class="exercise-picker__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [disabled]="selectedIds().length === 0 || tooMany()">
+      {{ submitLabel() }}
+    </button>
+  </div>
+</form>

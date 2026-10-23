@@ -207,6 +207,8 @@ export interface ApiProblem {
   code: string;
   field?: string;
   errors?: { field: string; message: string }[];
+  /** `409 EXERCISE_IN_USE` (contrat #5, §8) : nombre de séances qui utilisent l'exercice. */
+  workoutCount?: number;
 }
 
 /** Groupes musculaires figés côté API (contrat #4, ajustement du 23/10) : liste fermée. */
@@ -250,4 +252,74 @@ export interface ExerciseListQuery extends PageQuery {
   q?: string;
   muscleGroup?: MuscleGroup;
   equipment?: string;
+}
+
+/** Exercice tel que référencé dans une séance (contrat #5, §5) : identité et groupe musculaire. */
+export interface ExerciseRef {
+  id: Uuid;
+  name: string;
+  muscleGroup: MuscleGroup;
+}
+
+/** Série prévue : `loadKg` `null` = poids du corps, `restSeconds` `null` = repos non précisé. */
+export interface PlannedSet {
+  position: number;
+  reps: number;
+  loadKg: number | null;
+  restSeconds: number | null;
+}
+
+/** Exercice d'une séance, sans `id` exposé : le `PUT` recrée les exercices et leurs séries. */
+export interface WorkoutExercise {
+  position: number;
+  exercise: ExerciseRef;
+  note: string | null;
+  sets: PlannedSet[];
+}
+
+/** Séance du coach (US18 à US20) : exercices et séries triés par `position`. */
+export interface Workout {
+  id: Uuid;
+  name: string;
+  description: string | null;
+  exercises: WorkoutExercise[];
+  createdAt: IsoInstant;
+  updatedAt: IsoInstant;
+}
+
+/** Élément de la liste des séances. `muscleGroups` est distinct, dans l'ordre de l'enum. */
+export interface WorkoutSummary {
+  id: Uuid;
+  name: string;
+  description: string | null;
+  exerciseCount: number;
+  muscleGroups: MuscleGroup[];
+  createdAt: IsoInstant;
+  updatedAt: IsoInstant;
+}
+
+/** Série envoyée : sa position est son index dans la liste. */
+export interface PlannedSetPayload {
+  reps: number;
+  loadKg: number | null;
+  restSeconds: number | null;
+}
+
+/** Exercice envoyé : sa position est son index dans la liste ; un même exercice peut revenir. */
+export interface WorkoutExercisePayload {
+  exerciseId: Uuid;
+  note: string | null;
+  sets: PlannedSetPayload[];
+}
+
+/** Corps de `POST /workouts` et `PUT /workouts/{id}` (remplacement complet de la séance). */
+export interface WorkoutPayload {
+  name: string;
+  description: string | null;
+  exercises: WorkoutExercisePayload[];
+}
+
+/** Paramètres de `GET /workouts` : recherche par nom ; le tri est fixe (modification décroissante). */
+export interface WorkoutListQuery extends PageQuery {
+  q?: string;
 }

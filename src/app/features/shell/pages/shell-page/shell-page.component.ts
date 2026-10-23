@@ -10,7 +10,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
  * Cadre des écrans connectés : barre de navigation et zone de contenu.
  * C'est une page (composant routé) : elle lit l'utilisateur courant dans `AuthService`.
  * L'entrée « Organisations » n'est affichée qu'à un administrateur (RM10), « Athlètes »,
- * « Groupes » et « Exercices » qu'à un coach.
+ * « Groupes », « Exercices » et « Séances » qu'à un coach.
  * Il porte aussi les toasts et la boîte de confirmation partagés par les pages : chargés avec
  * lui, ils restent hors du bundle initial de la page de connexion.
  */
