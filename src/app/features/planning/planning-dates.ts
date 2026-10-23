@@ -85,7 +85,10 @@ export function calendarWeeks(start: IsoDate, weekCount = CALENDAR_WEEKS): IsoDa
 }
 
 /** Bornes incluses de la période de `weekCount` semaines qui commence au lundi `start`. */
-export function periodOf(start: IsoDate, weekCount = CALENDAR_WEEKS): { from: IsoDate; to: IsoDate } {
+export function periodOf(
+  start: IsoDate,
+  weekCount = CALENDAR_WEEKS,
+): { from: IsoDate; to: IsoDate } {
   const from = mondayOf(start);
   return { from, to: addDays(from, weekCount * 7 - 1) };
 }
@@ -106,7 +109,12 @@ export function longDay(date: IsoDate): string {
 /** « 2 nov. – 29 nov. 2026 », ou « 28 déc. 2026 – 24 janv. 2027 » à cheval sur deux années. */
 export function periodLabel(from: IsoDate, to: IsoDate): string {
   const sameYear = from.slice(0, 4) === to.slice(0, 4);
-  const start = formatDay(from, sameYear ? { day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short', year: 'numeric' });
+  const start = formatDay(
+    from,
+    sameYear
+      ? { day: 'numeric', month: 'short' }
+      : { day: 'numeric', month: 'short', year: 'numeric' },
+  );
   const end = formatDay(to, { day: 'numeric', month: 'short', year: 'numeric' });
   return `${start} – ${end}`;
 }

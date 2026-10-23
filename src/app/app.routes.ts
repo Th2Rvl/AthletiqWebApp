@@ -4,6 +4,11 @@ import { adminGuard, authGuard, coachGuard, guestGuard } from './core/auth/auth.
 import { AuthService } from './core/auth/auth.service';
 import { unsavedChangesGuard } from './core/navigation/unsaved-changes.guard';
 
+const loadPlanningPage = () =>
+  import('./features/planning/pages/planning-page/planning-page.component').then(
+    (m) => m.PlanningPageComponent,
+  );
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -110,6 +115,17 @@ export const routes: Routes = [
                 (m) => m.WorkoutEditorPageComponent,
               ),
           },
+        ],
+      },
+      {
+        // Planification (#6) : calendrier d'un athlète ou d'un groupe, `?debut=AAAA-MM-JJ`.
+        path: 'planning',
+        title: 'Planning · Athletiq',
+        canActivate: [coachGuard],
+        children: [
+          { path: '', loadComponent: loadPlanningPage },
+          { path: 'athletes/:athleteId', loadComponent: loadPlanningPage },
+          { path: 'groupes/:groupId', loadComponent: loadPlanningPage },
         ],
       },
       {

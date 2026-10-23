@@ -1,0 +1,78 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+}
+
+p {
+  margin: 0;
+}
+
+.detail__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+}
+
+.detail__when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-2);
+}
+
+.detail__description,
+.detail__muted,
+.detail__note {
+  color: var(--ath-text-muted);
+}
+
+.detail__exercises {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail__exercise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+}
+
+.detail__exercise-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--ath-space-2);
+  margin: 0;
+  font-size: var(--ath-text-body);
+  overflow-wrap: anywhere;
+}
+
+.detail__muscle {
+  color: var(--ath-text-muted);
+  font-family: var(--ath-font-text);
+  font-size: var(--ath-text-small);
+}
+
+.detail__move {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ath-space-2);
+}
+
+.detail__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}

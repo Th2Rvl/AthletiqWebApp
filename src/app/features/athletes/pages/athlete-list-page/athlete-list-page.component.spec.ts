@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { Confirmation, ConfirmationService, MessageService } from 'primeng/api';
 import { Observable, of, throwError } from 'rxjs';
@@ -12,6 +13,7 @@ import {
   Group,
   Page,
 } from '../../../../core/api/models/api.models';
+import { PlanningApiService } from '../../../../core/api/planning-api.service';
 import { AthleteTableComponent } from '../../organisms/athlete-table/athlete-table.component';
 import { AthleteListPageComponent } from './athlete-list-page.component';
 
@@ -65,6 +67,7 @@ describe('AthleteListPageComponent', () => {
   };
   let messages: MessageService;
   let confirmations: Confirmation[];
+  let upcomingCount: ReturnType<typeof vi.fn>;
 
   async function setup(
     athletes: Observable<Page<AthleteSummary>>,
@@ -77,8 +80,11 @@ describe('AthleteListPageComponent', () => {
       createInvitation: vi.fn(),
       revokeInvitation: vi.fn(),
     };
+    upcomingCount = vi.fn().mockReturnValue(of({ count: 0 }));
     TestBed.configureTestingModule({
       providers: [
+        provideRouter([]),
+        { provide: PlanningApiService, useValue: { upcomingCount } },
         MessageService,
         ConfirmationService,
         { provide: AthleteApiService, useValue: api },
@@ -291,5 +297,33 @@ describe('AthleteListPageComponent', () => {
     expect(messages.add).not.toHaveBeenCalledWith(
       expect.objectContaining({ summary: 'Athlète retiré' }),
     );
+  });
+
+  it('indique dans la confirmation le nombre de séances planifiées à venir supprimées (#6)', async () => {
+    await setup(of(pageOf([MARION])));
+    upcomingCount.mockReturnValue(of({ count: 4 }));
+
+    buttonByText('Retirer').click();
+
+    expect(upcomingCount).toHaveBeenCalledWith('ath-1');
+    expect(confirmations[0].message).toContain('Ses 4 séances planifiées à venir avec vous seront supprimées');
+    expect(confirmations[0].message).toContain('les séances passées sont conservées');
+  });
+
+  it('confirme quand même le retrait si le nombre de séances à venir est indisponible', async () => {
+    await setup(of(pageOf([MARION])));
+    upcomingCount.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 0 })));
+
+    buttonByText('Retirer').click();
+
+    expect(confirmations).toHaveLength(1);
+    expect(confirmations[0].message).toContain('Ses séances planifiées à venir avec vous seront supprimées');
+  });
+
+  it('propose un lien « Calendrier » vers le planning de chaque athlète', async () => {
+    await setup(of(pageOf([MARION])));
+
+    const link = element.querySelector<HTMLAnchorElement>('a[aria-label="Calendrier de Marion Lefèvre"]');
+    expect(link?.getAttribute('href')).toBe('/planning/athletes/ath-1');
   });
 });

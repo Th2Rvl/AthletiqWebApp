@@ -118,6 +118,15 @@ describe('GroupDetailPageComponent', () => {
     expect(element.textContent).toContain('Lefèvre Marion');
   });
 
+  it('propose un lien « Calendrier » vers le planning du groupe (#6)', async () => {
+    await setup();
+
+    const link = [...element.querySelectorAll('a')].find((anchor) =>
+      anchor.textContent?.includes('Calendrier'),
+    );
+    expect(link?.getAttribute('href')).toBe('/planning/groupes/g-1');
+  });
+
   it('affiche l’état vide avec le bouton d’ajout', async () => {
     await setup({ members: of(pageOf([])) });
 

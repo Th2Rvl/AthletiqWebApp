@@ -1,0 +1,55 @@
+import { Translation } from 'primeng/api';
+
+/**
+ * Libellés français des composants PrimeNG (calendrier de `p-datepicker` surtout), donnés à
+ * `providePrimeNG`. La semaine commence le lundi, comme le calendrier de planification.
+ */
+export const PRIMENG_FR: Translation = {
+  dayNames: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+  dayNamesShort: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+  dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+  monthNames: [
+    'janvier',
+    'février',
+    'mars',
+    'avril',
+    'mai',
+    'juin',
+    'juillet',
+    'août',
+    'septembre',
+    'octobre',
+    'novembre',
+    'décembre',
+  ],
+  monthNamesShort: [
+    'janv.',
+    'févr.',
+    'mars',
+    'avr.',
+    'mai',
+    'juin',
+    'juil.',
+    'août',
+    'sept.',
+    'oct.',
+    'nov.',
+    'déc.',
+  ],
+  dateFormat: 'dd/mm/yy',
+  firstDayOfWeek: 1,
+  today: "Aujourd'hui",
+  clear: 'Effacer',
+  weekHeader: 'Sem.',
+  emptyMessage: 'Aucun résultat',
+  emptyFilterMessage: 'Aucun résultat',
+  accept: 'Oui',
+  reject: 'Non',
+  chooseDate: 'Choisir une date',
+  chooseMonth: 'Choisir un mois',
+  chooseYear: 'Choisir une année',
+  prevMonth: 'Mois précédent',
+  nextMonth: 'Mois suivant',
+  prevYear: 'Année précédente',
+  nextYear: 'Année suivante',
+};

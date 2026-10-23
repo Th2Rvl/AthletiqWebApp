@@ -1,0 +1,126 @@
+@if (errorMessage(); as message) {
+  <app-error-state [message]="message" (retry)="retry.emit()" />
+} @else if (session(); as current) {
+  <div class="detail__summary">
+    <p class="detail__when">
+      {{ current.athleteFirstName }} {{ current.athleteLastName }}, {{ dateLabel() }}
+      @if (current.locked) {
+        <p-tag severity="secondary" value="Passée" />
+      }
+    </p>
+    @if (current.description) {
+      <p class="detail__description">{{ current.description }}</p>
+    }
+  </div>
+
+  @if (current.exercises.length === 0) {
+    <p class="detail__muted">Cette séance ne contient aucun exercice.</p>
+  } @else {
+    <ol class="detail__exercises">
+      @for (item of current.exercises; track item.position) {
+        <li class="detail__exercise">
+          <h3 class="detail__exercise-name">
+            {{ item.exercise.name }}
+            <span class="detail__muscle">{{ muscleGroupLabel(item.exercise.muscleGroup) }}</span>
+          </h3>
+          @if (item.note) {
+            <p class="detail__note">{{ item.note }}</p>
+          }
+          <p-table [value]="item.sets" size="small">
+            <ng-template #header>
+              <tr>
+                <th scope="col">Série</th>
+                <th scope="col" class="numeric">Répétitions</th>
+                <th scope="col" class="numeric">Charge</th>
+                <th scope="col" class="numeric">Repos</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-set>
+              <tr>
+                <td class="numeric">{{ set.position + 1 }}</td>
+                <td class="numeric">{{ set.reps }}</td>
+                <td class="numeric">
+                  @if (set.loadKg === null) {
+                    Poids du corps
+                  } @else {
+                    {{ set.loadKg | number: '1.0-1' }} kg
+                  }
+                </td>
+                <td class="numeric">{{ formatRest(set.restSeconds) ?? '–' }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </li>
+      }
+    </ol>
+  }
+
+  @if (current.locked) {
+    <p class="detail__muted">
+      Séance passée ou réalisée : elle ne peut plus être déplacée ni annulée.
+    </p>
+  } @else if (moving()) {
+    <div class="detail__move">
+      <app-form-field
+        label="Nouveau jour"
+        inputId="move-date"
+        [error]="moveError()"
+        hint="Format jj/mm/aaaa"
+      >
+        <p-datepicker
+          inputId="move-date"
+          dateFormat="dd/mm/yy"
+          [firstDayOfWeek]="1"
+          [minDate]="minDate()"
+          [showOnFocus]="true"
+          appendTo="body"
+          [invalid]="moveError() !== null"
+          [ngModel]="pickedDate()"
+          (ngModelChange)="onDate($event)"
+        />
+      </app-form-field>
+      <div class="detail__actions">
+        <button pButton type="button" severity="secondary" text (click)="moving.set(false)">
+          Garder ce jour
+        </button>
+        <button
+          pButton
+          type="button"
+          [disabled]="!canMove()"
+          [loading]="saving()"
+          (click)="confirmMove()"
+        >
+          Déplacer la séance
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="detail__actions">
+      <button
+        pButton
+        type="button"
+        severity="danger"
+        outlined
+        [disabled]="saving()"
+        (click)="cancelSession.emit()"
+      >
+        Annuler la séance
+      </button>
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        [disabled]="saving()"
+        (click)="startMove()"
+      >
+        Déplacer
+      </button>
+    </div>
+  }
+} @else {
+  <div class="detail__loading" aria-busy="true" aria-label="Chargement de la séance planifiée">
+    <p-skeleton width="16rem" />
+    <p-skeleton height="6rem" />
+    <p-skeleton height="6rem" />
+  </div>
+}

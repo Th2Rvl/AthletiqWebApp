@@ -1,0 +1,63 @@
+@if (workoutsError(); as message) {
+  <app-error-state [message]="message" (retry)="retryWorkouts.emit()" />
+} @else if (noWorkout()) {
+  <app-empty-state
+    message="Créez d'abord une séance"
+    detail="La séance planifiée est une copie d'une séance de votre liste."
+    actionLabel="Aller aux séances"
+    (action)="createWorkout.emit()"
+  />
+} @else {
+  <form (ngSubmit)="submit()" novalidate>
+    <p class="plan-form__summary">{{ summary() }}</p>
+
+    <app-form-field label="Jour" inputId="plan-date" [error]="dateError()" hint="Format jj/mm/aaaa">
+      <p-datepicker
+        inputId="plan-date"
+        name="date"
+        dateFormat="dd/mm/yy"
+        [firstDayOfWeek]="1"
+        [minDate]="minDate()"
+        [showOnFocus]="true"
+        appendTo="body"
+        [fluid]="true"
+        [invalid]="dateError() !== null"
+        [ngModel]="pickedDate()"
+        (ngModelChange)="onDate($event)"
+      />
+    </app-form-field>
+
+    <app-form-field label="Séance" inputId="plan-workout" [error]="workoutError()">
+      <p-select
+        inputId="plan-workout"
+        name="workoutId"
+        [options]="workouts()"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [loading]="!workoutsLoaded()"
+        placeholder="Choisir une séance"
+        emptyFilterMessage="Aucune séance ne correspond"
+        appendTo="body"
+        [fluid]="true"
+        [invalid]="workoutError() !== null"
+        [ngModel]="workoutId()"
+        (ngModelChange)="onWorkout($event)"
+      />
+    </app-form-field>
+
+    @if (errorMessage(); as message) {
+      <p-message severity="error">{{ message }}</p-message>
+    }
+
+    <div class="plan-form__actions">
+      <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+        Annuler
+      </button>
+      <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+        Planifier la séance
+      </button>
+    </div>
+  </form>
+}

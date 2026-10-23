@@ -70,7 +70,10 @@ export class PlanningApiService {
     return this.http.get<UpcomingCount>(`${this.athleteUrl(athleteId)}/upcoming-count`);
   }
 
-  duplicateWeekForAthlete(athleteId: Uuid, payload: DuplicateWeekPayload): Observable<CreatedCount> {
+  duplicateWeekForAthlete(
+    athleteId: Uuid,
+    payload: DuplicateWeekPayload,
+  ): Observable<CreatedCount> {
     return this.http.post<CreatedCount>(`${this.athleteUrl(athleteId)}/duplicate-week`, payload);
   }
 

@@ -72,6 +72,16 @@
           }
         </td>
         <td class="athlete-table__actions">
+          <a
+            pButton
+            size="small"
+            severity="secondary"
+            text
+            [routerLink]="['/planning/athletes', athlete.id]"
+            [attr.aria-label]="'Calendrier de ' + athlete.firstName + ' ' + athlete.lastName"
+          >
+            Calendrier
+          </a>
           <button
             pButton
             type="button"

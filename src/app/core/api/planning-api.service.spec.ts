@@ -2,11 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import {
-  AthleteCalendar,
-  GroupCalendar,
-  PlannedSessionDetail,
-} from './models/api.models';
+import { AthleteCalendar, GroupCalendar, PlannedSessionDetail } from './models/api.models';
 import { PlanningApiService } from './planning-api.service';
 
 const API = environment.apiUrl;
@@ -42,7 +38,9 @@ describe('PlanningApiService', () => {
 
   it("lit le calendrier d'un athlète avec from et to en chaînes AAAA-MM-JJ", () => {
     let calendar: AthleteCalendar | undefined;
-    api.athleteCalendar('ath-1', '2026-11-02', '2026-11-29').subscribe((value) => (calendar = value));
+    api
+      .athleteCalendar('ath-1', '2026-11-02', '2026-11-29')
+      .subscribe((value) => (calendar = value));
     const request = http.expectOne((req) => req.url === `${API}/athletes/ath-1/planned-sessions`);
     expect(request.request.method).toBe('GET');
     expect(request.request.params.get('from')).toBe('2026-11-02');

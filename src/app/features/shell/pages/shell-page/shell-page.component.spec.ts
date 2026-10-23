@@ -51,6 +51,12 @@ describe('ShellPageComponent', () => {
     expect((await render('ADMIN')).querySelector('nav')?.textContent).not.toContain('Séances');
   });
 
+  it("montre « Planning » à un coach et la cache à un administrateur", async () => {
+    expect((await render('COACH')).querySelector('nav')?.textContent).toContain('Planning');
+    TestBed.resetTestingModule();
+    expect((await render('ADMIN')).querySelector('nav')?.textContent).not.toContain('Planning');
+  });
+
   it("cache « Exercices » à un administrateur", async () => {
     const nav = (await render('ADMIN')).querySelector('nav')?.textContent;
     expect(nav).not.toContain('Exercices');
