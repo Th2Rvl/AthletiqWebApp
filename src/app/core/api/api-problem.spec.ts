@@ -83,3 +83,49 @@ describe('api-problem : séances (#5)', () => {
     });
   });
 });
+
+describe('api-problem : planification (#6)', () => {
+  function inUse(body: Record<string, unknown>): HttpErrorResponse {
+    return new HttpErrorResponse({ status: 409, error: { status: 409, code: 'EXERCISE_IN_USE', ...body } });
+  }
+
+  it('distingue séances et séances planifiées dans EXERCISE_IN_USE', () => {
+    expect(problemMessage(inUse({ workoutCount: 2, plannedSessionCount: 0 }))).toBe(
+      'Cet exercice est utilisé dans 2 séances',
+    );
+    expect(problemMessage(inUse({ workoutCount: 0, plannedSessionCount: 3 }))).toBe(
+      'Cet exercice est utilisé dans 3 séances planifiées',
+    );
+    expect(problemMessage(inUse({ workoutCount: 2, plannedSessionCount: 3 }))).toBe(
+      'Cet exercice est utilisé dans 2 séances et 3 séances planifiées',
+    );
+    expect(problemMessage(inUse({ workoutCount: 1, plannedSessionCount: 1 }))).toBe(
+      'Cet exercice est utilisé dans 1 séance et 1 séance planifiée',
+    );
+    expect(problemMessage(inUse({ workoutCount: 0, plannedSessionCount: 0 }))).toBe(
+      'Cet exercice est utilisé dans une séance',
+    );
+  });
+
+  it('a les libellés des codes de planification, choisis par code', () => {
+    const conflict = (code: string, field?: string) =>
+      new HttpErrorResponse({ status: 409, error: { status: 409, code, field, detail: 'texte API' } });
+    expect(problemMessage(conflict('PLANNED_SESSION_NOT_FOUND'))).toBe(
+      "Cette séance planifiée n'existe plus",
+    );
+    expect(problemMessage(conflict('PLANNED_SESSION_LOCKED'))).toBe(
+      'Cette séance est passée ou réalisée : elle ne peut plus être modifiée',
+    );
+    expect(problemMessage(conflict('PLANNING_WEEK_EMPTY'))).toBe(
+      'Aucune séance à dupliquer cette semaine',
+    );
+    expect(problemMessage(conflict('GROUP_HAS_NO_MEMBERS'))).toBe(
+      "Ce groupe n'a aucun athlète. Ajoutez-en d'abord",
+    );
+    expect(problemMessage(conflict('PLANNING_BATCH_TOO_LARGE'))).toContain('Réduisez');
+    expect(problemMessage(conflict('INVALID_PARAMETER'))).toBe('Période invalide');
+    expect(fieldErrors(conflict('PLANNING_DATE_IN_PAST', 'date'))).toEqual({
+      date: 'Impossible de planifier à une date passée',
+    });
+  });
+});
