@@ -1,0 +1,113 @@
+@if (noAthleteAtAll()) {
+  <app-empty-state
+    message="Aucun athlète pour l'instant."
+    detail="Partagez votre code d'invitation pour qu'un athlète vous rejoigne."
+  />
+} @else {
+  <div class="athlete-table__toolbar">
+    <p-iconfield>
+      <p-inputicon>
+        <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      </p-inputicon>
+      <input
+        pInputText
+        type="search"
+        placeholder="Rechercher par nom ou e-mail"
+        aria-label="Rechercher un athlète par prénom, nom ou e-mail"
+        maxlength="100"
+        [value]="query()"
+        (input)="onQueryInput($event)"
+      />
+    </p-iconfield>
+    <p-select
+      [options]="groups()"
+      optionLabel="name"
+      optionValue="id"
+      [showClear]="true"
+      placeholder="Tous les groupes"
+      ariaLabel="Filtrer par groupe"
+      [ngModel]="groupId()"
+      (onChange)="groupIdChange.emit($event.value ?? null)"
+      (onClear)="groupIdChange.emit(null)"
+    />
+  </div>
+
+  <p-table
+    [value]="loaded() ? athletes() : []"
+    [lazy]="true"
+    [lazyLoadOnInit]="false"
+    [paginator]="totalRecords() > rows()"
+    [first]="first()"
+    [rows]="rows()"
+    [totalRecords]="totalRecords()"
+    [loading]="loading() && loaded()"
+    [showLoader]="false"
+    dataKey="id"
+    (onLazyLoad)="onLazyLoad($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Rattaché le</th>
+        <th scope="col">Groupes</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-athlete>
+      <tr>
+        <td class="athlete-table__name">{{ athlete.lastName }} {{ athlete.firstName }}</td>
+        <td class="athlete-table__email">{{ athlete.email }}</td>
+        <td>{{ athlete.joinedAt | date: 'd MMM y' }}</td>
+        <td>
+          @if (athlete.groups.length === 0) {
+            <span class="athlete-table__none">Aucun groupe</span>
+          } @else {
+            <span class="athlete-table__groups">
+              @for (group of athlete.groups; track group.id) {
+                <p-tag severity="secondary" [value]="group.name" />
+              }
+            </span>
+          }
+        </td>
+        <td class="athlete-table__actions">
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="danger"
+            text
+            [attr.aria-label]="'Retirer ' + athlete.firstName + ' ' + athlete.lastName"
+            (click)="remove.emit(athlete)"
+          >
+            Retirer
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      @if (loaded()) {
+        <tr>
+          <td colspan="5">
+            <app-empty-state
+              message="Aucun athlète ne correspond à la recherche"
+              detail="Vérifiez l'orthographe ou changez de groupe."
+            />
+          </td>
+        </tr>
+      } @else {
+        @for (row of skeletonRows; track row) {
+          <tr aria-hidden="true">
+            <td><p-skeleton width="10rem" /></td>
+            <td><p-skeleton width="14rem" /></td>
+            <td><p-skeleton width="6rem" /></td>
+            <td><p-skeleton width="8rem" /></td>
+            <td><p-skeleton width="5rem" /></td>
+          </tr>
+        }
+      }
+    </ng-template>
+  </p-table>
+}

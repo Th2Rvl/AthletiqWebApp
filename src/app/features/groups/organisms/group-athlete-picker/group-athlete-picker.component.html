@@ -1,0 +1,42 @@
+<form (submit)="$event.preventDefault(); submit()">
+  @if (errorMessage(); as message) {
+    <app-error-state [message]="message" (retry)="retry.emit()" />
+  } @else if (!loaded()) {
+    <p-skeleton height="2.5rem" aria-busy="true" />
+  } @else if (athletes().length === 0) {
+    <p class="group-athlete-picker__empty">
+      Tous vos athlètes sont déjà dans ce groupe.
+    </p>
+  } @else {
+    <label class="group-athlete-picker__label" for="group-athletes">Athlètes à ajouter</label>
+    <p-multiselect
+      inputId="group-athletes"
+      [options]="options()"
+      optionLabel="label"
+      optionValue="id"
+      [filter]="true"
+      filterPlaceholder="Rechercher un athlète"
+      placeholder="Choisir des athlètes"
+      emptyFilterMessage="Aucun athlète ne correspond à la recherche"
+      [ngModel]="selected()"
+      (ngModelChange)="selected.set($event ?? [])"
+      [ngModelOptions]="{ standalone: true }"
+      [style]="{ width: '100%' }"
+      appendTo="body"
+    />
+  }
+
+  <div class="group-athlete-picker__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button
+      pButton
+      type="submit"
+      [disabled]="selected().length === 0 || saving()"
+      [loading]="saving()"
+    >
+      {{ selected().length > 1 ? 'Ajouter ' + selected().length + ' athlètes' : 'Ajouter au groupe' }}
+    </button>
+  </div>
+</form>

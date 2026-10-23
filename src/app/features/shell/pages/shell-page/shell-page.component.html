@@ -11,6 +11,24 @@
         Organisations
       </a>
     }
+    @if (isCoach()) {
+      <a
+        class="shell__link"
+        routerLink="/athletes"
+        routerLinkActive="shell__link--active"
+        ariaCurrentWhenActive="page"
+      >
+        Athlètes
+      </a>
+      <a
+        class="shell__link"
+        routerLink="/groupes"
+        routerLinkActive="shell__link--active"
+        ariaCurrentWhenActive="page"
+      >
+        Groupes
+      </a>
+    }
   </nav>
   @if (user(); as current) {
     <div class="shell__user">

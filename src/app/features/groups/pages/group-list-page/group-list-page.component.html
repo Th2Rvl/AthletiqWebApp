@@ -1,0 +1,37 @@
+<h1 class="page-title">Groupes</h1>
+
+@if (list.error() && !list.loading()) {
+  <app-error-state [message]="errorMessage()" (retry)="list.reload()" />
+} @else {
+  <app-group-table
+    [groups]="list.items()"
+    [totalRecords]="list.total()"
+    [loading]="list.loading()"
+    [loaded]="list.loaded()"
+    [first]="list.first()"
+    [rows]="list.rows()"
+    (pageChange)="onPage($event)"
+    (create)="openCreate()"
+    (rename)="openRename($event)"
+    (remove)="confirmRemove($event)"
+  />
+}
+
+<p-dialog
+  [header]="editing() ? 'Renommer le groupe' : 'Créer un groupe'"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(30rem, 100vw)' }"
+>
+  @if (dialogVisible()) {
+    <app-group-form
+      [group]="editing()"
+      [saving]="saving()"
+      [serverErrors]="serverErrors()"
+      (submitted)="save($event)"
+      (cancelled)="closeDialog()"
+    />
+  }
+</p-dialog>

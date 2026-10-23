@@ -38,6 +38,7 @@ export class AuthService {
 
   readonly user = computed(() => this.session()?.user ?? null);
   readonly isAdmin = computed(() => this.user()?.role === 'ADMIN');
+  readonly isCoach = computed(() => this.user()?.role === 'COACH');
 
   /** Vrai si une session existe et n'a pas expiré. Une session expirée est effacée. */
   isAuthenticated(): boolean {

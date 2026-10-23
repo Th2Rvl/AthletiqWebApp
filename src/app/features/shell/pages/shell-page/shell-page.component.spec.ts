@@ -34,6 +34,18 @@ describe('ShellPageComponent', () => {
     expect(element.textContent).toContain('Sophie Bernard');
   });
 
+  it("montre « Athlètes » et « Groupes » à un coach", async () => {
+    const nav = (await render('COACH')).querySelector('nav')?.textContent;
+    expect(nav).toContain('Athlètes');
+    expect(nav).toContain('Groupes');
+  });
+
+  it("cache « Athlètes » et « Groupes » à un administrateur et à un athlète", async () => {
+    const nav = (await render('ADMIN')).querySelector('nav')?.textContent;
+    expect(nav).not.toContain('Athlètes');
+    expect(nav).not.toContain('Groupes');
+  });
+
   it('déconnecte et renvoie vers la connexion', async () => {
     const element = await render('ADMIN');
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);

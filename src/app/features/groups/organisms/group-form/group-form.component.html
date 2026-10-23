@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <app-form-field
+    label="Nom du groupe"
+    inputId="group-name"
+    [error]="nameError()"
+    [hint]="'60 caractères au maximum'"
+  >
+    <input
+      pInputText
+      id="group-name"
+      formControlName="name"
+      autocomplete="off"
+      [invalid]="nameError() !== null"
+      [attr.aria-invalid]="nameError() !== null"
+      [attr.aria-describedby]="nameError() ? 'group-name-error' : 'group-name-hint'"
+    />
+  </app-form-field>
+
+  <div class="group-form__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+      {{ submitLabel() }}
+    </button>
+  </div>
+</form>

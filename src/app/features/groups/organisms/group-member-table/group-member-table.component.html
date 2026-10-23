@@ -1,0 +1,72 @@
+@if (noMemberAtAll()) {
+  <app-empty-state
+    message="Aucun athlète dans ce groupe"
+    [detail]="canAdd() ? null : 'Invitez d\'abord des athlètes'"
+    [actionLabel]="canAdd() ? 'Ajouter des athlètes' : null"
+    (action)="add.emit()"
+  />
+} @else {
+  <div class="group-member-table__toolbar">
+    <button pButton type="button" [disabled]="!canAdd()" (click)="add.emit()">
+      Ajouter des athlètes
+    </button>
+    @if (!canAdd()) {
+      <span class="group-member-table__hint">Invitez d'abord des athlètes</span>
+    }
+  </div>
+
+  <p-table
+    [value]="loaded() ? members() : []"
+    [lazy]="true"
+    [lazyLoadOnInit]="false"
+    [paginator]="totalRecords() > rows()"
+    [first]="first()"
+    [rows]="rows()"
+    [totalRecords]="totalRecords()"
+    [loading]="loading() && loaded()"
+    [showLoader]="false"
+    dataKey="athleteId"
+    (onLazyLoad)="onLazyLoad($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Ajouté le</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-member>
+      <tr>
+        <td>{{ member.lastName }} {{ member.firstName }}</td>
+        <td class="group-member-table__email">{{ member.email }}</td>
+        <td>{{ member.addedAt | date: 'd MMM y' }}</td>
+        <td class="group-member-table__actions">
+          <button
+            pButton
+            type="button"
+            size="small"
+            severity="danger"
+            text
+            [attr.aria-label]="'Retirer ' + member.firstName + ' ' + member.lastName + ' du groupe'"
+            (click)="remove.emit(member)"
+          >
+            Retirer du groupe
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      @for (row of skeletonRows; track row) {
+        <tr aria-hidden="true">
+          <td><p-skeleton width="10rem" /></td>
+          <td><p-skeleton width="14rem" /></td>
+          <td><p-skeleton width="6rem" /></td>
+          <td><p-skeleton width="8rem" /></td>
+        </tr>
+      }
+    </ng-template>
+  </p-table>
+}

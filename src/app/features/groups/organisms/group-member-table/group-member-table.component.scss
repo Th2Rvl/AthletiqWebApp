@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.group-member-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-3);
+  margin-block-end: var(--ath-space-4);
+}
+
+.group-member-table__hint,
+.group-member-table__email {
+  color: var(--ath-text-muted);
+}
+
+.group-member-table__email {
+  overflow-wrap: anywhere;
+}
+
+.group-member-table__actions {
+  white-space: nowrap;
+  text-align: end;
+}

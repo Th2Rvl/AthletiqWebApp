@@ -1,0 +1,38 @@
+<h1 class="page-title">Athlètes</h1>
+
+<app-invitation-panel
+  [invitations]="invitations.items()"
+  [loaded]="invitations.loaded()"
+  [loading]="invitations.loading()"
+  [errorMessage]="invitationsErrorMessage()"
+  [creating]="creating()"
+  [serverErrors]="createErrors()"
+  (create)="createInvitation($event)"
+  (copy)="copyCode($event)"
+  (regenerate)="confirmRegenerate($event)"
+  (revoke)="confirmRevoke($event)"
+  (retry)="invitations.reload()"
+/>
+
+<section aria-labelledby="athlete-list-title">
+  <h2 id="athlete-list-title" class="athlete-list__title">Mes athlètes</h2>
+  @if (athletes.error() && !athletes.loading()) {
+    <app-error-state [message]="athletesErrorMessage()" (retry)="athletes.reload()" />
+  } @else {
+    <app-athlete-table
+      [athletes]="athletes.items()"
+      [totalRecords]="athletes.total()"
+      [loading]="athletes.loading()"
+      [loaded]="athletes.loaded()"
+      [first]="athletes.first()"
+      [rows]="athletes.rows()"
+      [query]="query()"
+      [groups]="groups()"
+      [groupId]="groupId()"
+      (pageChange)="onPage($event)"
+      (queryChange)="onQueryChange($event)"
+      (groupIdChange)="onGroupChange($event)"
+      (remove)="confirmRemove($event)"
+    />
+  }
+</section>
