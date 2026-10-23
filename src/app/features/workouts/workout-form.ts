@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ExerciseRef, PlannedSet } from '../../core/api/models/api.models';
+import { trimmedLength } from '../../shared/forms/validators';
 
 /** Bornes du contrat #5 (§4 et §10), identiques à la validation de l'API. */
 export const WORKOUT_NAME_MAX = 100;
@@ -100,7 +101,10 @@ export function createExerciseForm(
   return new FormGroup({
     key: new FormControl(key, { nonNullable: true }),
     exercise: new FormControl(exercise, { nonNullable: true }),
-    note: new FormControl(note ?? '', { nonNullable: true }),
+    note: new FormControl(note ?? '', {
+      nonNullable: true,
+      validators: [trimmedLength(0, WORKOUT_NOTE_MAX)],
+    }),
     sets: new FormArray(
       sets.map((set) =>
         createSetForm({ reps: set.reps, loadKg: set.loadKg, restSeconds: set.restSeconds }),

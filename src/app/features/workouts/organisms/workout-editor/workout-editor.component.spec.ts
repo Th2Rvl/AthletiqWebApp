@@ -214,6 +214,16 @@ describe('WorkoutEditorComponent', () => {
     expect(element.textContent).toContain('Entre 0 et 600 secondes');
   });
 
+  it('bloque une note d’exercice de plus de 500 caractères, comme l’API', async () => {
+    await setup(WORKOUT);
+    form().controls.exercises.at(0).controls.note.setValue('a'.repeat(501));
+
+    await save();
+
+    expect(emitted).toEqual([]);
+    expect(element.textContent).toContain('La note ne doit pas dépasser 500 caractères');
+  });
+
   it('déplace C en tête avec « Monter » au clavier et garde les séries', async () => {
     await setup(WORKOUT);
 
