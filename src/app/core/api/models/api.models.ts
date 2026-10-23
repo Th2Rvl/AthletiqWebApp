@@ -209,6 +209,8 @@ export interface ApiProblem {
   errors?: { field: string; message: string }[];
   /** `409 EXERCISE_IN_USE` (contrat #5, §8) : nombre de séances qui utilisent l'exercice. */
   workoutCount?: number;
+  /** `409 EXERCISE_IN_USE` (contrat #6, §8) : nombre de séances planifiées qui l'utilisent. */
+  plannedSessionCount?: number;
 }
 
 /** Groupes musculaires figés côté API (contrat #4, ajustement du 23/10) : liste fermée. */
@@ -322,4 +324,105 @@ export interface WorkoutPayload {
 /** Paramètres de `GET /workouts` : recherche par nom ; le tri est fixe (modification décroissante). */
 export interface WorkoutListQuery extends PageQuery {
   q?: string;
+}
+
+// --- Planification (contrat #6, §5 et §10) ---
+
+/** Jour sans heure « AAAA-MM-JJ ». Jamais converti via `new Date()` en UTC (décalage d'un jour). */
+export type IsoDate = string;
+
+/**
+ * Séance planifiée dans le calendrier d'un athlète. `name` est celui de l'instantané ;
+ * `locked` (passée ou réalisée) masque Déplacer et Annuler.
+ */
+export interface PlannedSessionSummary {
+  id: Uuid;
+  athleteId: Uuid;
+  date: IsoDate;
+  name: string;
+  exerciseCount: number;
+  setCount: number;
+  groupId: Uuid | null;
+  locked: boolean;
+}
+
+/** `GET /athletes/{id}/planned-sessions` : `today` est « aujourd'hui » à Paris, donné par l'API. */
+export interface AthleteCalendar {
+  athleteId: Uuid;
+  from: IsoDate;
+  to: IsoDate;
+  today: IsoDate;
+  /** Triées par date ; plusieurs séances le même jour sont normales (décision du PO, Q1). */
+  sessions: PlannedSessionSummary[];
+}
+
+export interface GroupCalendarSession {
+  id: Uuid;
+  athleteId: Uuid;
+  firstName: string;
+  lastName: string;
+}
+
+/** Séances d'un même instantané le même jour : « Haut du corps A, 3/4 athlètes ». */
+export interface GroupCalendarEntry {
+  date: IsoDate;
+  snapshotId: Uuid;
+  name: string;
+  /** n : membres actuels qui ont cette séance ce jour-là. */
+  athleteCount: number;
+  /** N : membres actuels du groupe. */
+  memberCount: number;
+  locked: boolean;
+  sessions: GroupCalendarSession[];
+}
+
+export interface GroupCalendar {
+  groupId: Uuid;
+  from: IsoDate;
+  to: IsoDate;
+  today: IsoDate;
+  memberCount: number;
+  entries: GroupCalendarEntry[];
+}
+
+/** Détail d'une séance planifiée : l'instantané copié du modèle, exercices de même forme que #5. */
+export interface PlannedSessionDetail {
+  id: Uuid;
+  athleteId: Uuid;
+  athleteFirstName: string;
+  athleteLastName: string;
+  date: IsoDate;
+  groupId: Uuid | null;
+  sourceWorkoutId: Uuid | null;
+  locked: boolean;
+  name: string;
+  description: string | null;
+  exercises: WorkoutExercise[];
+  createdAt: IsoInstant;
+  updatedAt: IsoInstant;
+}
+
+/** Corps de `POST /athletes/{id}/planned-sessions` et `POST /groups/{id}/planned-sessions`. */
+export interface PlanSessionPayload {
+  workoutId: Uuid;
+  date: IsoDate;
+}
+
+/** Corps de `PATCH /planned-sessions/{id}` (déplacer). */
+export interface MovePlannedSessionPayload {
+  date: IsoDate;
+}
+
+/** Corps de `POST …/planned-sessions/duplicate-week` : `weekStart` est un lundi, 1 à 12 semaines. */
+export interface DuplicateWeekPayload {
+  weekStart: IsoDate;
+  weeks: number;
+}
+
+export interface CreatedCount {
+  created: number;
+}
+
+export interface UpcomingCount {
+  count: number;
 }

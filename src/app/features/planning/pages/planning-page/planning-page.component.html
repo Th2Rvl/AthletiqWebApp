@@ -1,0 +1,174 @@
+<h1 class="page-title">Planning</h1>
+
+<div class="planning-toolbar">
+  <app-planning-target-picker
+    [athletes]="athletes()"
+    [groups]="groups()"
+    [selected]="target()"
+    (targetChange)="selectTarget($event)"
+  />
+  @if (target()) {
+    <app-week-navigator
+      [label]="periodText()"
+      (previous)="shiftWeeks(-1)"
+      (next)="shiftWeeks(1)"
+      (today)="goToToday()"
+    />
+  }
+</div>
+
+@if (targetsError(); as error) {
+  <app-error-state [message]="errorText(error) ?? ''" (retry)="loadTargets()" />
+}
+
+@if (!target()) {
+  @if (noTargetAtAll()) {
+    <app-empty-state
+      message="Aucun athlète à planifier"
+      detail="Invitez un athlète : son calendrier sera ensuite disponible ici."
+      actionLabel="Aller aux athlètes"
+      (action)="goTo('/athletes')"
+    />
+  } @else if (!targetsError()) {
+    <app-empty-state
+      message="Choisissez un athlète ou un groupe"
+      detail="Son calendrier s'affiche sur 4 semaines, du lundi au dimanche."
+    />
+  }
+} @else if (notFound()) {
+  <app-empty-state
+    [message]="notFoundMessage()"
+    detail="Choisissez un autre athlète ou un autre groupe."
+    actionLabel="Retour au planning"
+    (action)="goTo('/planning')"
+  />
+} @else if (calendarError(); as error) {
+  <app-error-state [message]="errorText(error) ?? ''" (retry)="loadCalendar()" />
+} @else {
+  <section class="planning" aria-labelledby="planning-target-title">
+    <header class="planning__header">
+      <h2 id="planning-target-title" class="planning__title">{{ targetName() }}</h2>
+      <div class="planning__actions">
+        <button
+          pButton
+          type="button"
+          severity="secondary"
+          [disabled]="!canPlan()"
+          (click)="openDuplicate()"
+        >
+          Dupliquer une semaine
+        </button>
+        <button pButton type="button" [disabled]="!canPlan()" (click)="openPlan()">
+          Planifier une séance
+        </button>
+      </div>
+    </header>
+
+    @if (groupWithoutMembers()) {
+      <p-message severity="warn">
+        Ajoutez d'abord des athlètes au groupe pour lui planifier des séances.
+        <a class="planning__link" [routerLink]="['/groupes', target()?.id]">Ouvrir le groupe</a>
+      </p-message>
+    } @else if (calendarEmpty()) {
+      <p class="planning__empty">
+        Aucune séance planifiée sur cette période. Choisissez « Planifier » dans un jour pour en
+        ajouter une.
+      </p>
+    }
+
+    <app-planning-calendar
+      [start]="start()"
+      [today]="today()"
+      [items]="items()"
+      [loading]="calendarLoading()"
+      [canPlan]="canPlan()"
+      [label]="'Calendrier de ' + targetPhrase() + ', ' + periodText()"
+      (plan)="openPlan($event)"
+      (open)="openItem($event)"
+    />
+  </section>
+}
+
+<p-dialog
+  header="Planifier une séance"
+  [visible]="planVisible()"
+  (visibleChange)="planVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(32rem, 100vw)' }"
+>
+  @if (planVisible() && planDate() && today()) {
+    <app-plan-session-form
+      [date]="planDate()!"
+      [today]="today()!"
+      [targetLabel]="targetPhrase()"
+      [workouts]="workouts()"
+      [workoutsLoaded]="workoutsLoaded()"
+      [workoutsError]="errorText(workoutsError())"
+      [saving]="planning()"
+      [serverErrors]="planErrors()"
+      [errorMessage]="planError()"
+      (submitted)="submitPlan($event)"
+      (cancelled)="planVisible.set(false)"
+      (retryWorkouts)="retryWorkouts()"
+      (createWorkout)="goTo('/seances')"
+    />
+  }
+</p-dialog>
+
+<p-dialog
+  [header]="detail()?.name ?? 'Séance planifiée'"
+  [visible]="detailVisible()"
+  (visibleChange)="$event ? null : closeDetail()"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(40rem, 100vw)' }"
+>
+  @if (detailVisible() && today()) {
+    <app-planned-session-detail
+      [session]="detail()"
+      [errorMessage]="errorText(detailError())"
+      [today]="today()!"
+      [saving]="detailSaving()"
+      [serverErrors]="detailErrors()"
+      (move)="moveSession($event)"
+      (cancelSession)="confirmCancel()"
+      (retry)="loadDetail()"
+    />
+  }
+</p-dialog>
+
+<p-dialog
+  [header]="groupEntry()?.name ?? ''"
+  [visible]="groupEntry() !== null"
+  (visibleChange)="$event ? null : groupEntry.set(null)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(30rem, 100vw)' }"
+>
+  @if (groupEntry(); as entry) {
+    <app-group-session-list [entry]="entry" (open)="openDetail($event)" />
+  }
+</p-dialog>
+
+<p-dialog
+  header="Dupliquer une semaine"
+  [visible]="duplicateVisible()"
+  (visibleChange)="duplicateVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(32rem, 100vw)' }"
+>
+  @if (duplicateVisible()) {
+    <app-duplicate-week-form
+      [weeks]="weekOptions()"
+      [initialWeekStart]="defaultSourceWeek()"
+      [targetLabel]="targetPhrase()"
+      [saving]="duplicating()"
+      [serverErrors]="duplicateErrors()"
+      [errorMessage]="duplicateError()"
+      (submitted)="submitDuplicate($event)"
+      (cancelled)="duplicateVisible.set(false)"
+    />
+  }
+</p-dialog>

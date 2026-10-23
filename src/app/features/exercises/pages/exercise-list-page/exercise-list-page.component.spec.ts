@@ -340,6 +340,24 @@ describe('ExerciseListPageComponent', () => {
     expect(api.list).toHaveBeenCalledTimes(1);
   });
 
+  it('distingue séances et séances planifiées dans EXERCISE_IN_USE (#6)', async () => {
+    await setup(of(pageOf([SQUAT])));
+    api.delete.mockReturnValue(
+      problem(409, 'EXERCISE_IN_USE', { workoutCount: 2, plannedSessionCount: 3 }),
+    );
+
+    buttonByText('Supprimer').click();
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(messages.add).toHaveBeenCalledWith(
+      expect.objectContaining({
+        severity: 'warn',
+        summary: 'Cet exercice est utilisé dans 2 séances et 3 séances planifiées',
+      }),
+    );
+  });
+
   it('ne confond pas EXERCISE_IN_USE avec le nom en double', async () => {
     await setup(of(pageOf([SQUAT])));
     api.delete.mockReturnValue(problem(409, 'EXERCISE_IN_USE', { workoutCount: 1 }));

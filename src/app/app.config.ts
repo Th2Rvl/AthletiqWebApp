@@ -12,6 +12,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { AthletiqPreset } from '../theme/athletiq-preset';
 import { authInterceptor } from './core/auth/auth.interceptor';
+import { PRIMENG_FR } from './core/i18n/primeng-fr';
 import { ThemeService } from './core/theme/theme.service';
 import { routes } from './app.routes';
 
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
         preset: AthletiqPreset,
         options: { darkModeSelector: '.ath-dark' },
       },
+      translation: PRIMENG_FR,
     }),
     provideAppInitializer(() => {
       inject(ThemeService);

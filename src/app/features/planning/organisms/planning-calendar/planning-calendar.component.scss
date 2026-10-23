@@ -1,0 +1,94 @@
+:host {
+  display: block;
+}
+
+// Sous une largeur utile, la grille défile horizontalement dans son cadre plutôt que d'écraser
+// les 7 colonnes : le coach planifie sur ordinateur, la densité prime.
+.calendar-scroll {
+  overflow-x: auto;
+}
+
+.calendar {
+  min-width: 48rem;
+  border: 1px solid var(--ath-line);
+  border-radius: var(--ath-radius-none);
+  background: var(--ath-surface);
+}
+
+.calendar__row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+
+  & + & {
+    border-top: 1px solid var(--ath-line);
+  }
+}
+
+.calendar__weekday {
+  padding: var(--ath-space-2) var(--ath-space-3);
+  background: var(--ath-surface-sunken);
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.calendar__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+  min-height: 7.5rem;
+  padding: var(--ath-space-2);
+  outline: none;
+
+  & + & {
+    border-left: 1px solid var(--ath-line);
+  }
+
+  &:focus-visible {
+    outline: var(--ath-focus-width) solid var(--ath-primary);
+    outline-offset: calc(-1 * var(--ath-focus-width));
+  }
+
+  &--past {
+    background: var(--ath-surface-sunken);
+  }
+}
+
+.calendar__date {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ath-space-1);
+  font-variant-numeric: tabular-nums;
+
+  .calendar__day--past & {
+    color: var(--ath-text-muted);
+  }
+}
+
+.calendar__number {
+  .calendar__day--today & {
+    padding-inline: var(--ath-space-1);
+    border-radius: var(--ath-radius-sm);
+    background: var(--ath-primary);
+    color: var(--ath-on-primary);
+  }
+}
+
+.calendar__today {
+  color: var(--ath-primary-soft-text);
+  font-size: var(--ath-text-small);
+}
+
+.calendar__sessions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calendar__plan {
+  align-self: flex-start;
+  margin-top: auto;
+}

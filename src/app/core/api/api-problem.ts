@@ -30,6 +30,13 @@ const MESSAGES: Record<string, string> = {
   EXERCISE_IN_USE: 'Cet exercice est utilisé dans une séance',
   WORKOUT_NOT_FOUND: "Cette séance n'existe plus",
   WORKOUT_NAME_ALREADY_EXISTS: 'Vous avez déjà une séance de ce nom',
+  PLANNED_SESSION_NOT_FOUND: "Cette séance planifiée n'existe plus",
+  PLANNING_DATE_IN_PAST: 'Impossible de planifier à une date passée',
+  PLANNED_SESSION_LOCKED: 'Cette séance est passée ou réalisée : elle ne peut plus être modifiée',
+  GROUP_HAS_NO_MEMBERS: "Ce groupe n'a aucun athlète. Ajoutez-en d'abord",
+  PLANNING_WEEK_EMPTY: 'Aucune séance à dupliquer cette semaine',
+  PLANNING_BATCH_TOO_LARGE: "Trop de séances à créer d'un coup. Réduisez le nombre de semaines",
+  INVALID_PARAMETER: 'Période invalide',
 };
 
 const UNREACHABLE = 'Le serveur ne répond pas. Vérifiez votre connexion puis réessayez.';
@@ -64,22 +71,37 @@ export function problemMessage(error: unknown): string {
   }
   const problem = toApiProblem(error);
   if (problem?.code === 'EXERCISE_IN_USE') {
-    return exerciseInUseMessage(problem.workoutCount);
+    return exerciseInUseMessage(problem.workoutCount, problem.plannedSessionCount);
   }
   return (problem && MESSAGES[problem.code]) || UNEXPECTED;
 }
 
 /**
- * Libellé de `409 EXERCISE_IN_USE` construit avec `workoutCount` (contrat #5, §10) :
- * « Cet exercice est utilisé dans 3 séances ». Sans compte exploitable, libellé générique.
+ * Libellé de `409 EXERCISE_IN_USE` construit avec les compteurs (contrat #5 §10, étendu par
+ * #6 §10) : « … dans 2 séances », « … dans 3 séances planifiées », « … dans 2 séances et
+ * 3 séances planifiées », au singulier à 1. Sans compteur exploitable, libellé générique.
  */
-export function exerciseInUseMessage(workoutCount: number | undefined): string {
-  if (typeof workoutCount !== 'number' || workoutCount < 1) {
+export function exerciseInUseMessage(
+  workoutCount: number | undefined,
+  plannedSessionCount?: number,
+): string {
+  const parts: string[] = [];
+  if (isPositiveCount(workoutCount)) {
+    parts.push(`${workoutCount} ${workoutCount === 1 ? 'séance' : 'séances'}`);
+  }
+  if (isPositiveCount(plannedSessionCount)) {
+    parts.push(
+      `${plannedSessionCount} ${plannedSessionCount === 1 ? 'séance planifiée' : 'séances planifiées'}`,
+    );
+  }
+  if (parts.length === 0) {
     return MESSAGES['EXERCISE_IN_USE'];
   }
-  return workoutCount === 1
-    ? 'Cet exercice est utilisé dans 1 séance'
-    : `Cet exercice est utilisé dans ${workoutCount} séances`;
+  return `Cet exercice est utilisé dans ${parts.join(' et ')}`;
+}
+
+function isPositiveCount(value: number | undefined): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value > 0;
 }
 
 /**

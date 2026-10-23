@@ -1,0 +1,19 @@
+<button
+  type="button"
+  class="chip"
+  [class.chip--locked]="locked()"
+  [attr.aria-label]="ariaLabel()"
+  (click)="selected.emit()"
+>
+  <span class="chip__name">{{ name() }}</span>
+  @if (meta() || locked()) {
+    <span class="chip__meta">
+      @if (meta(); as text) {
+        <span>{{ text }}</span>
+      }
+      @if (locked()) {
+        <p-tag severity="secondary" value="Passée" />
+      }
+    </span>
+  }
+</button>

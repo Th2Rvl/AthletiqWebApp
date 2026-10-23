@@ -1,0 +1,72 @@
+<div class="calendar-scroll">
+  <div
+    class="calendar"
+    role="grid"
+    [attr.aria-label]="label()"
+    [attr.aria-busy]="loading()"
+    (keydown)="onKeydown($event)"
+  >
+    <div class="calendar__row" role="row">
+      @for (weekday of weekdays; track weekday) {
+        <div class="calendar__weekday" role="columnheader">{{ weekday }}</div>
+      }
+    </div>
+    @for (week of weeks(); track week[0].date) {
+      <div class="calendar__row" role="row">
+        @for (day of week; track day.date) {
+          <div
+            class="calendar__day"
+            role="gridcell"
+            tabindex="-1"
+            [attr.data-day-index]="day.index"
+            [attr.aria-label]="day.longLabel"
+            [attr.aria-current]="day.isToday ? 'date' : null"
+            [class.calendar__day--today]="day.isToday"
+            [class.calendar__day--past]="day.isPast"
+          >
+            <span class="calendar__date" aria-hidden="true">
+              <span class="calendar__number">{{ day.dayLabel }}</span>
+              @if (day.isToday) {
+                <span class="calendar__today">Aujourd'hui</span>
+              }
+            </span>
+            @if (loading()) {
+              @if (skeleton(day)) {
+                <p-skeleton height="2.5rem" />
+              }
+            } @else {
+              @if (day.items.length > 0) {
+                <ul class="calendar__sessions">
+                  @for (item of day.items; track item.key) {
+                    <li>
+                      <app-planned-session-chip
+                        [name]="item.name"
+                        [meta]="item.meta"
+                        [locked]="item.locked"
+                        [ariaLabel]="chipLabel(item, day)"
+                        (selected)="open.emit(item.key)"
+                      />
+                    </li>
+                  }
+                </ul>
+              }
+              @if (day.canPlan) {
+                <button
+                  pButton
+                  type="button"
+                  size="small"
+                  text
+                  class="calendar__plan"
+                  [attr.aria-label]="'Planifier une séance le ' + day.longLabel"
+                  (click)="plan.emit(day.date)"
+                >
+                  Planifier
+                </button>
+              }
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

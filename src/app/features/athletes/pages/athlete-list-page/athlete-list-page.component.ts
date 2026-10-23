@@ -12,6 +12,7 @@ import {
   Uuid,
 } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
+import { PlanningApiService } from '../../../../core/api/planning-api.service';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { AthleteTableComponent } from '../../organisms/athlete-table/athlete-table.component';
@@ -38,6 +39,7 @@ const INVITATION_PAGE_SIZE = 100;
 export class AthleteListPageComponent {
   private readonly api = inject(AthleteApiService);
   private readonly groupApi = inject(GroupApiService);
+  private readonly planningApi = inject(PlanningApiService);
   private readonly messages = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);
   private readonly destroyRef = inject(DestroyRef);
@@ -211,12 +213,35 @@ export class AthleteListPageComponent {
 
   // --- Retrait d'un athlète (US12) ---
 
+  /**
+   * Avant la confirmation, on lit le nombre de séances planifiées à venir de ce coach pour
+   * l'athlète (`upcoming-count`) : elles seront supprimées avec le lien (#6, P7).
+   */
   protected confirmRemove(athlete: AthleteSummary): void {
+    this.planningApi
+      .upcomingCount(athlete.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ count }) => this.askRemove(athlete, count),
+        error: (error: unknown) => {
+          if (problemCode(error) === 'ATHLETE_NOT_FOUND') {
+            this.messages.add({ severity: 'warn', summary: problemMessage(error) });
+            this.athletes.reload();
+            return;
+          }
+          // Compte indisponible : la confirmation reste possible, avec une phrase générale.
+          this.askRemove(athlete, null);
+        },
+      });
+  }
+
+  private askRemove(athlete: AthleteSummary, upcomingCount: number | null): void {
     const name = `${athlete.firstName} ${athlete.lastName}`;
     this.confirmation.confirm({
       header: `Retirer ${name} ?`,
       message:
         `${name} ne fera plus partie de vos athlètes et sera retiré de tous vos groupes. ` +
+        `${plannedSessionsNotice(upcomingCount)} ` +
         'Son compte et ses liens avec ses autres coachs sont conservés. ' +
         'Il pourra vous rejoindre à nouveau avec un nouveau code.',
       acceptLabel: "Retirer l'athlète",
@@ -263,4 +288,17 @@ export class AthleteListPageComponent {
         error: () => this.groups.set([]),
       });
   }
+}
+
+/** Phrase de la confirmation de retrait sur les séances planifiées à venir supprimées. */
+function plannedSessionsNotice(count: number | null): string {
+  if (count === null) {
+    return 'Ses séances planifiées à venir avec vous seront supprimées ; les séances passées sont conservées.';
+  }
+  if (count === 0) {
+    return "Il n'a aucune séance planifiée à venir avec vous.";
+  }
+  return count === 1
+    ? 'Sa séance planifiée à venir avec vous sera supprimée ; les séances passées sont conservées.'
+    : `Ses ${count} séances planifiées à venir avec vous seront supprimées ; les séances passées sont conservées.`;
 }

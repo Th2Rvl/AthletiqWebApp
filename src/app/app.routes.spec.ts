@@ -45,6 +45,27 @@ describe('routes', () => {
     expect(router.url).toBe('/acces-refuse');
   });
 
+  it('réserve /planning au coach : un administrateur arrive sur « Accès refusé »', async () => {
+    const router = signedInAs('ADMIN');
+
+    await router.navigateByUrl('/planning/athletes/ath-1?debut=2026-11-02');
+
+    expect(router.url).toBe('/acces-refuse');
+  });
+
+  it('déclare les trois routes du planning sous la même page', () => {
+    const planning = routes
+      .flatMap((route) => route.children ?? [])
+      .find((route) => route.path === 'planning')!;
+
+    expect(planning.canActivate?.length).toBe(1);
+    expect(planning.children!.map((route) => route.path)).toEqual([
+      '',
+      'athletes/:athleteId',
+      'groupes/:groupId',
+    ]);
+  });
+
   it("protège l'éditeur de séance par la garde de sortie", () => {
     const seances = routes
       .flatMap((route) => route.children ?? [])

@@ -8,6 +8,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -23,7 +24,8 @@ import { PageChange } from '../../../../shared/ui/page-change';
 const SKELETON_ROWS = Array.from({ length: 5 }, (_, index) => index);
 
 /**
- * Tableau paginé des athlètes du coach (US11, US12) : recherche, filtre par groupe et retrait.
+ * Tableau paginé des athlètes du coach (US11, US12) : recherche, filtre par groupe, lien vers
+ * le calendrier de planification (#6) et retrait.
  * Tri (nom puis prénom) et pagination sont faits par l'API (`p-table` en mode `lazy`).
  */
 @Component({
@@ -31,6 +33,7 @@ const SKELETON_ROWS = Array.from({ length: 5 }, (_, index) => index);
   imports: [
     DatePipe,
     FormsModule,
+    RouterLink,
     ButtonModule,
     IconFieldModule,
     InputIconModule,

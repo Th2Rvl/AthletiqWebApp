@@ -1,0 +1,52 @@
+<form (ngSubmit)="submit()" novalidate>
+  <app-form-field label="Semaine à dupliquer" inputId="duplicate-week" [error]="weekError()">
+    <p-select
+      inputId="duplicate-week"
+      name="weekStart"
+      [options]="weeks()"
+      optionLabel="label"
+      optionValue="weekStart"
+      appendTo="body"
+      [fluid]="true"
+      [invalid]="weekError() !== null"
+      [ngModel]="weekStart()"
+      (ngModelChange)="onWeek($event)"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Nombre de semaines suivantes"
+    inputId="duplicate-count"
+    [error]="countError()"
+    [hint]="'De ' + min + ' à ' + max + ' semaines'"
+  >
+    <p-inputnumber
+      inputId="duplicate-count"
+      name="weeks"
+      [min]="min"
+      [max]="max"
+      [showButtons]="true"
+      [useGrouping]="false"
+      [invalid]="countError() !== null"
+      [ngModel]="count()"
+      (ngModelChange)="onCount($event)"
+    />
+  </app-form-field>
+
+  @if (summary(); as text) {
+    <p class="duplicate-form__summary">{{ text }}</p>
+  }
+
+  @if (errorMessage(); as message) {
+    <p-message severity="error">{{ message }}</p-message>
+  }
+
+  <div class="duplicate-form__actions">
+    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
+      Annuler
+    </button>
+    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+      Dupliquer la semaine
+    </button>
+  </div>
+</form>

@@ -23,6 +23,9 @@
         </p>
       </div>
       <div class="group-header__actions">
+        <a pButton severity="secondary" outlined [routerLink]="['/planning/groupes', current.id]">
+          Calendrier
+        </a>
         <button pButton type="button" severity="secondary" (click)="openRename()">
           Renommer
         </button>
