@@ -134,6 +134,69 @@ export interface UpdateProfilePayload {
   lastName?: string | null;
 }
 
+/**
+ * Invitation d'athlète en attente (#3, contrat §4.1). Nommée `AthleteInvitation` et non
+ * `Invitation` (nom du contrat) pour ne pas la confondre avec l'invitation de coach à une
+ * organisation, déjà modélisée ci-dessus.
+ */
+export interface AthleteInvitation {
+  id: Uuid;
+  label: string;
+  /** 8 caractères sans tiret ; l'affichage « XXXX-XXXX » est fait par le front. */
+  code: string;
+  expiresAt: IsoInstant;
+  createdAt: IsoInstant;
+}
+
+export interface CreateInvitationPayload {
+  label: string;
+}
+
+export interface GroupRef {
+  id: Uuid;
+  name: string;
+}
+
+/** Athlète suivi par le coach connecté ; `groups` ne contient que les groupes de ce coach. */
+export interface AthleteSummary {
+  id: Uuid;
+  firstName: string;
+  lastName: string;
+  email: string;
+  joinedAt: IsoInstant;
+  groups: GroupRef[];
+}
+
+export interface AthleteListQuery extends PageQuery {
+  q?: string;
+  groupId?: Uuid;
+  excludeGroupId?: Uuid;
+}
+
+export interface Group {
+  id: Uuid;
+  name: string;
+  athleteCount: number;
+  createdAt: IsoInstant;
+}
+
+/** Corps de `POST /groups` et `PATCH /groups/{id}`. */
+export interface GroupNamePayload {
+  name: string;
+}
+
+export interface GroupMember {
+  athleteId: Uuid;
+  firstName: string;
+  lastName: string;
+  email: string;
+  addedAt: IsoInstant;
+}
+
+export interface AddGroupMembersPayload {
+  athleteIds: Uuid[];
+}
+
 /** Erreur au format `ProblemDetail`, enrichie de `code`, `field` et `errors` (contrat §3). */
 export interface ApiProblem {
   type: string;

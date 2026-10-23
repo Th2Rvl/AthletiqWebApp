@@ -1,0 +1,82 @@
+<section aria-labelledby="invitation-panel-title">
+  <h2 id="invitation-panel-title" class="invitation-panel__title">Codes d'invitation</h2>
+  <p class="invitation-panel__help">
+    Un code est valable pour un seul athlète. Transmettez-le-lui : il le saisira dans l'application
+    mobile pour rejoindre vos athlètes.
+  </p>
+
+  <form class="invitation-panel__form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <app-form-field label="Libellé de l'athlète" inputId="invitation-label" [error]="labelError()">
+      <input
+        pInputText
+        id="invitation-label"
+        formControlName="label"
+        autocomplete="off"
+        placeholder="Prénom et nom de l'athlète invité"
+        [invalid]="labelError() !== null"
+        [attr.aria-invalid]="labelError() !== null"
+        [attr.aria-describedby]="labelError() ? 'invitation-label-error' : null"
+      />
+    </app-form-field>
+    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="creating()">
+      Générer un code d'invitation
+    </button>
+  </form>
+
+  @if (errorMessage(); as message) {
+    <app-error-state [message]="message" (retry)="retry.emit()" />
+  } @else if (!loaded()) {
+    <div class="invitation-panel__skeleton" aria-busy="true" aria-label="Chargement des codes">
+      <p-skeleton width="100%" height="2.5rem" />
+      <p-skeleton width="100%" height="2.5rem" />
+    </div>
+  } @else if (invitations().length === 0) {
+    <p class="invitation-panel__empty">Aucun code d'invitation actif</p>
+  } @else {
+    <ul class="invitation-panel__list">
+      @for (invitation of invitations(); track invitation.id) {
+        <li class="invitation-panel__item">
+          <span class="invitation-panel__label">{{ invitation.label }}</span>
+          <code class="invitation-panel__code">{{ format(invitation.code) }}</code>
+          <span class="invitation-panel__expiry">
+            Expire le {{ invitation.expiresAt | date: 'd MMM y' }}
+          </span>
+          <span class="invitation-panel__actions">
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              [attr.aria-label]="'Copier le code de ' + invitation.label"
+              (click)="copy.emit(invitation)"
+            >
+              Copier le code
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              [attr.aria-label]="'Générer un nouveau code pour ' + invitation.label"
+              (click)="regenerate.emit(invitation)"
+            >
+              Générer un nouveau code
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="danger"
+              text
+              [attr.aria-label]="'Révoquer le code de ' + invitation.label"
+              (click)="revoke.emit(invitation)"
+            >
+              Révoquer
+            </button>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+</section>

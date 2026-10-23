@@ -1,0 +1,17 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+.group-athlete-picker__empty {
+  margin: 0;
+  color: var(--ath-text-muted);
+}
+
+.group-athlete-picker__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ath-space-2);
+  margin-block-start: var(--ath-space-3);
+}

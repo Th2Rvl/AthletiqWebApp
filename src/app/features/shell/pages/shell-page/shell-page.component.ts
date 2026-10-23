@@ -9,7 +9,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 /**
  * Cadre des écrans connectés : barre de navigation et zone de contenu.
  * C'est une page (composant routé) : elle lit l'utilisateur courant dans `AuthService`.
- * L'entrée « Organisations » n'est affichée qu'à un administrateur (RM10).
+ * L'entrée « Organisations » n'est affichée qu'à un administrateur (RM10), « Athlètes » et
+ * « Groupes » qu'à un coach.
  * Il porte aussi les toasts et la boîte de confirmation partagés par les pages : chargés avec
  * lui, ils restent hors du bundle initial de la page de connexion.
  */
@@ -35,6 +36,7 @@ export class ShellPageComponent {
 
   protected readonly user = this.auth.user;
   protected readonly isAdmin = this.auth.isAdmin;
+  protected readonly isCoach = this.auth.isCoach;
 
   protected logout(): void {
     this.auth.logout();

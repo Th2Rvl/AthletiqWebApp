@@ -2,13 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot,
+  CanActivateFn,
   Router,
   RouterStateSnapshot,
   UrlTree,
   provideRouter,
 } from '@angular/router';
 import { Role } from '../api/models/api.models';
-import { adminGuard, authGuard, guestGuard } from './auth.guards';
+import { adminGuard, authGuard, coachGuard, guestGuard } from './auth.guards';
 import { SESSION_STORAGE_KEY } from './auth.service';
 
 function signIn(role: Role): void {
@@ -22,7 +23,7 @@ function signIn(role: Role): void {
   );
 }
 
-function run(guard: typeof adminGuard, url = '/organisations'): boolean | UrlTree {
+function run(guard: CanActivateFn, url = '/organisations'): boolean | UrlTree {
   TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient()] });
   return TestBed.runInInjectionContext(() =>
     guard({} as ActivatedRouteSnapshot, { url } as RouterStateSnapshot),
@@ -51,6 +52,22 @@ describe('guards', () => {
       expect(serialize(run(adminGuard, '/organisations/42'))).toBe(
         '/login?returnUrl=%2Forganisations%2F42',
       );
+    });
+  });
+
+  describe('coachGuard', () => {
+    it('laisse passer un coach', () => {
+      signIn('COACH');
+      expect(run(coachGuard, '/athletes')).toBe(true);
+    });
+
+    it.each<Role>(['ADMIN', 'ATHLETE'])('renvoie le rôle %s vers « Accès refusé »', (role) => {
+      signIn(role);
+      expect(serialize(run(coachGuard, '/athletes'))).toBe('/acces-refuse');
+    });
+
+    it('renvoie un visiteur non connecté vers la connexion, avec l’URL demandée', () => {
+      expect(serialize(run(coachGuard, '/groupes/42'))).toBe('/login?returnUrl=%2Fgroupes%2F42');
     });
   });
 

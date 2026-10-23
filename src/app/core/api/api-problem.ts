@@ -14,6 +14,11 @@ const MESSAGES: Record<string, string> = {
   INVITATION_ALREADY_PENDING: 'Une invitation est déjà en attente pour cet e-mail',
   ACCOUNT_NOT_COACH: "Ce compte n'est pas un compte coach",
   INVITATION_NOT_FOUND: "Cette invitation n'existe plus",
+  ATHLETE_NOT_FOUND: "Cet athlète n'est plus suivi",
+  GROUP_NOT_FOUND: "Ce groupe n'existe plus",
+  GROUP_MEMBER_NOT_FOUND: "Cet athlète n'est pas dans ce groupe",
+  GROUP_NAME_ALREADY_EXISTS: 'Vous avez déjà un groupe de ce nom',
+  ACCESS_DENIED: "Vous n'avez pas accès à cette ressource",
   INVITATION_NOT_PENDING: "Cette invitation n'est plus en attente",
   EMAIL_ALREADY_EXISTS: 'Un compte existe déjà avec cet e-mail',
   PASSWORD_RULE_VIOLATION:

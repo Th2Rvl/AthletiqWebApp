@@ -1,0 +1,97 @@
+<a class="back-link" routerLink="/groupes">
+  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
+  Groupes
+</a>
+
+@if (notFound()) {
+  <app-empty-state
+    message="Ce groupe n'existe plus"
+    detail="Il a peut-être été supprimé, ou le lien est incorrect."
+    actionLabel="Retour à la liste des groupes"
+    (action)="backToList()"
+  />
+} @else if (groupError()) {
+  <app-error-state [message]="groupErrorMessage()" (retry)="loadAll()" />
+} @else {
+  @if (group(); as current) {
+    <header class="group-header">
+      <div class="group-header__identity">
+        <h1 class="group-header__name">{{ current.name }}</h1>
+        <p class="group-header__count">
+          {{ current.athleteCount }}
+          {{ current.athleteCount > 1 ? 'athlètes' : 'athlète' }}
+        </p>
+      </div>
+      <div class="group-header__actions">
+        <button pButton type="button" severity="secondary" (click)="openRename()">
+          Renommer
+        </button>
+        <button pButton type="button" severity="danger" outlined (click)="confirmRemoveGroup()">
+          Supprimer
+        </button>
+      </div>
+    </header>
+  } @else {
+    <div class="group-skeleton" aria-busy="true" aria-label="Chargement du groupe">
+      <p-skeleton width="16rem" height="2.5rem" />
+      <p-skeleton width="6rem" />
+    </div>
+  }
+
+  @if (members.error() && !members.loading()) {
+    <app-error-state [message]="membersErrorMessage()" (retry)="members.reload()" />
+  } @else {
+    <app-group-member-table
+      [members]="members.items()"
+      [totalRecords]="members.total()"
+      [loading]="members.loading()"
+      [loaded]="members.loaded()"
+      [first]="members.first()"
+      [rows]="members.rows()"
+      [canAdd]="coachHasAthletes()"
+      (pageChange)="onPage($event)"
+      (add)="openPicker()"
+      (remove)="confirmRemoveMember($event)"
+    />
+  }
+}
+
+<p-dialog
+  header="Renommer le groupe"
+  [visible]="renameVisible()"
+  (visibleChange)="renameVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(30rem, 100vw)' }"
+>
+  @if (renameVisible()) {
+    <app-group-form
+      [group]="group()"
+      [saving]="renaming()"
+      [serverErrors]="renameErrors()"
+      (submitted)="rename($event)"
+      (cancelled)="renameVisible.set(false)"
+    />
+  }
+</p-dialog>
+
+<p-dialog
+  header="Ajouter des athlètes"
+  [visible]="pickerVisible()"
+  (visibleChange)="pickerVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: 'min(36rem, 100vw)' }"
+>
+  @if (pickerVisible()) {
+    <app-group-athlete-picker
+      [athletes]="candidates()"
+      [loaded]="candidatesLoaded()"
+      [errorMessage]="candidatesErrorMessage()"
+      [saving]="adding()"
+      (submitted)="addMembers($event)"
+      (cancelled)="pickerVisible.set(false)"
+      (retry)="loadCandidates()"
+    />
+  }
+</p-dialog>

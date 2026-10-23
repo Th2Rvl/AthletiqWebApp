@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.athlete-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-3);
+  margin-block-end: var(--ath-space-4);
+}
+
+.athlete-table__name {
+  overflow-wrap: anywhere;
+}
+
+.athlete-table__email {
+  color: var(--ath-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.athlete-table__none {
+  color: var(--ath-text-muted);
+}
+
+.athlete-table__groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-1);
+}
+
+.athlete-table__actions {
+  white-space: nowrap;
+  text-align: end;
+}

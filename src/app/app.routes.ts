@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import { adminGuard, authGuard, guestGuard } from './core/auth/auth.guards';
+import { adminGuard, authGuard, coachGuard, guestGuard } from './core/auth/auth.guards';
 import { AuthService } from './core/auth/auth.service';
 
 export const routes: Routes = [
@@ -49,10 +49,48 @@ export const routes: Routes = [
       ),
     children: [
       {
-        // Pas encore d'accueil coach : l'administrateur arrive sur ses organisations.
+        // Accueil par rôle : le coach arrive sur ses athlètes (jusqu'au tableau de bord, #43),
+        // l'administrateur sur ses organisations.
         path: '',
         pathMatch: 'full',
-        redirectTo: () => (inject(AuthService).isAdmin() ? '/organisations' : '/acces-refuse'),
+        redirectTo: () => {
+          const auth = inject(AuthService);
+          if (auth.isCoach()) {
+            return '/athletes';
+          }
+          return auth.isAdmin() ? '/organisations' : '/acces-refuse';
+        },
+      },
+      {
+        path: 'athletes',
+        title: 'Athlètes · Athletiq',
+        canActivate: [coachGuard],
+        loadComponent: () =>
+          import('./features/athletes/pages/athlete-list-page/athlete-list-page.component').then(
+            (m) => m.AthleteListPageComponent,
+          ),
+      },
+      {
+        path: 'groupes',
+        canActivate: [coachGuard],
+        children: [
+          {
+            path: '',
+            title: 'Groupes · Athletiq',
+            loadComponent: () =>
+              import('./features/groups/pages/group-list-page/group-list-page.component').then(
+                (m) => m.GroupListPageComponent,
+              ),
+          },
+          {
+            path: ':groupId',
+            title: 'Groupe · Athletiq',
+            loadComponent: () =>
+              import('./features/groups/pages/group-detail-page/group-detail-page.component').then(
+                (m) => m.GroupDetailPageComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'organisations',
