@@ -4,15 +4,17 @@
   gap: var(--ath-space-2);
 }
 
+// Libellé de la planche « Composants et états » : Public Sans 13 px, graisse 500.
 .form-field__label {
-  // Pas de token de graisse : le libellé se distingue par la police de titre, pas par le gras.
-  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-small);
+  font-weight: var(--ath-weight-medium);
 }
 
 .form-field__optional,
 .form-field__hint {
   color: var(--ath-text-muted);
   font-size: var(--ath-text-small);
+  font-weight: var(--ath-weight-regular);
 }
 
 .form-field__optional {
