@@ -47,12 +47,14 @@
             pButton
             type="button"
             size="small"
-            severity="danger"
+            severity="secondary"
             text
+            iconOnly
             [attr.aria-label]="'Retirer ' + member.firstName + ' ' + member.lastName + ' du groupe'"
             (click)="remove.emit(member)"
           >
-            Retirer du groupe
+            <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+            <span class="visually-hidden">Retirer du groupe</span>
           </button>
         </td>
       </tr>

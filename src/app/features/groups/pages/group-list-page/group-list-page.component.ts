@@ -1,12 +1,23 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { fieldErrors, problemCode, problemMessage } from '../../../../core/api/api-problem';
 import { GroupApiService } from '../../../../core/api/group-api.service';
 import { Group, GroupNamePayload } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
+import { ATHLETES_AND_GROUPS_TABS } from '../../../../core/navigation/sections';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
+import { SectionTabsComponent } from '../../../../shared/ui/molecules/section-tabs/section-tabs.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { GroupFormComponent } from '../../organisms/group-form/group-form.component';
 import { GroupTableComponent } from '../../organisms/group-table/group-table.component';
@@ -15,11 +26,23 @@ import { confirmGroupDeletion } from '../group-dialogs';
 /** Liste des groupes du coach (US13) : création, renommage et suppression. */
 @Component({
   selector: 'app-group-list-page',
-  imports: [DialogModule, ErrorStateComponent, GroupFormComponent, GroupTableComponent],
+  imports: [
+    ButtonModule,
+    DialogModule,
+    ErrorStateComponent,
+    GroupFormComponent,
+    GroupTableComponent,
+    PageHeaderComponent,
+    SectionTabsComponent,
+  ],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  styleUrl: './group-list-page.component.scss',
   templateUrl: './group-list-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupListPageComponent {
+  protected readonly sectionTabs = ATHLETES_AND_GROUPS_TABS;
   private readonly api = inject(GroupApiService);
   private readonly messages = inject(MessageService);
   private readonly confirmation = inject(ConfirmationService);

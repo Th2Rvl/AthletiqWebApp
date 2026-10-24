@@ -3,13 +3,10 @@
     message="Aucun groupe pour l'instant"
     detail="Un groupe réunit des athlètes que vous planifiez ensemble."
     actionLabel="Créer un groupe"
+    actionIcon="add-outline"
     (action)="create.emit()"
   />
 } @else {
-  <div class="group-table__toolbar">
-    <button pButton type="button" (click)="create.emit()">Créer un groupe</button>
-  </div>
-
   <p-table
     [value]="loaded() ? groups() : []"
     [lazy]="true"
@@ -39,29 +36,35 @@
         </td>
         <td class="numeric">{{ group.athleteCount }}</td>
         <td>{{ group.createdAt | date: 'd MMM y' }}</td>
-        <td class="group-table__actions">
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="secondary"
-            text
-            [attr.aria-label]="'Renommer ' + group.name"
-            (click)="rename.emit(group)"
-          >
-            Renommer
-          </button>
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="danger"
-            text
-            [attr.aria-label]="'Supprimer ' + group.name"
-            (click)="remove.emit(group)"
-          >
-            Supprimer
-          </button>
+        <td class="actions-cell">
+          <span class="row-actions">
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Renommer ' + group.name"
+              (click)="rename.emit(group)"
+            >
+              <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Renommer</span>
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Supprimer ' + group.name"
+              (click)="remove.emit(group)"
+            >
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Supprimer</span>
+            </button>
+          </span>
         </td>
       </tr>
     </ng-template>

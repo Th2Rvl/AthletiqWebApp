@@ -1,8 +1,12 @@
-<main class="profile">
-  <h1 class="page-title">Mon profil</h1>
+<div class="profile">
+  <app-page-header title="Mon profil" />
 
   @if (loading()) {
-    <p class="profile__state">Chargement du profil…</p>
+    <div class="profile__skeleton" aria-busy="true" aria-label="Chargement du profil">
+      <p-skeleton width="16rem" height="3rem" />
+      <p-skeleton width="100%" height="2.5rem" />
+      <p-skeleton width="100%" height="2.5rem" />
+    </div>
   } @else if (profile(); as current) {
     <dl class="profile__summary">
       <div class="profile__summary-item">
@@ -26,6 +30,6 @@
       (submitted)="save($event)"
     />
   } @else {
-    <p class="profile__state">{{ error() }}</p>
+    <app-error-state [message]="error() ?? ''" (retry)="reload()" />
   }
-</main>
+</div>

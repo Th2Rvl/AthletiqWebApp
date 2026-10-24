@@ -1,4 +1,10 @@
-<h1 class="page-title">Groupes</h1>
+<app-page-header title="Groupes">
+  <app-section-tabs label="Athlètes et groupes" [tabs]="sectionTabs" />
+  <button pButton type="button" (click)="openCreate()">
+    <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+    Créer un groupe
+  </button>
+</app-page-header>
 
 @if (list.error() && !list.loading()) {
   <app-error-state [message]="errorMessage()" (retry)="list.reload()" />

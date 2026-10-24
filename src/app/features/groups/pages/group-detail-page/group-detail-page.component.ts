@@ -29,6 +29,7 @@ import {
 import { PagedList } from '../../../../core/api/paged-list';
 import { EmptyStateComponent } from '../../../../shared/ui/molecules/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { GroupAthletePickerComponent } from '../../organisms/group-athlete-picker/group-athlete-picker.component';
 import { GroupFormComponent } from '../../organisms/group-form/group-form.component';
@@ -51,6 +52,7 @@ const PICKER_SIZE = 100;
     SkeletonModule,
     EmptyStateComponent,
     ErrorStateComponent,
+    PageHeaderComponent,
     GroupAthletePickerComponent,
     GroupFormComponent,
     GroupMemberTableComponent,

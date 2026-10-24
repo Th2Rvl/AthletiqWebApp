@@ -65,6 +65,8 @@ export class AthleteTableComponent {
   readonly queryChange = output<string>();
   readonly groupIdChange = output<Uuid | null>();
   readonly remove = output<AthleteSummary>();
+  /** « Inviter un athlète » de l'état vide : la page mène au formulaire de code. */
+  readonly invite = output<void>();
 
   protected readonly skeletonRows = SKELETON_ROWS;
   protected readonly filtered = computed(() => this.query().trim() !== '' || this.groupId() !== null);

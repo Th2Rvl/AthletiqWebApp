@@ -4,11 +4,6 @@
   gap: var(--ath-space-6);
 }
 
-.page-title {
-  margin-block-end: 0;
-}
-
 .athlete-list__title {
-  margin: 0 0 var(--ath-space-4);
-  font-size: var(--ath-text-h2);
+  margin-block-end: var(--ath-space-4);
 }

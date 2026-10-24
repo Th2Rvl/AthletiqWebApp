@@ -1,5 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -17,6 +24,8 @@ const SKELETON_ROWS = Array.from({ length: 5 }, (_, index) => index);
 @Component({
   selector: 'app-group-table',
   imports: [DatePipe, RouterLink, ButtonModule, SkeletonModule, TableModule, EmptyStateComponent],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './group-table.component.html',
   styleUrl: './group-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

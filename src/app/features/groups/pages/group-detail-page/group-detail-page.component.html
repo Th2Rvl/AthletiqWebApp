@@ -1,8 +1,3 @@
-<a class="back-link" routerLink="/groupes">
-  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
-  Groupes
-</a>
-
 @if (notFound()) {
   <app-empty-state
     message="Ce groupe n'existe plus"
@@ -14,30 +9,29 @@
   <app-error-state [message]="groupErrorMessage()" (retry)="loadAll()" />
 } @else {
   @if (group(); as current) {
-    <header class="group-header">
-      <div class="group-header__identity">
-        <h1 class="group-header__name">{{ current.name }}</h1>
-        <p class="group-header__count">
-          {{ current.athleteCount }}
-          {{ current.athleteCount > 1 ? 'athlètes' : 'athlète' }}
-        </p>
-      </div>
-      <div class="group-header__actions">
-        <a pButton severity="secondary" outlined [routerLink]="['/planning/groupes', current.id]">
-          Calendrier
-        </a>
-        <button pButton type="button" severity="secondary" (click)="openRename()">
-          Renommer
-        </button>
-        <button pButton type="button" severity="danger" outlined (click)="confirmRemoveGroup()">
-          Supprimer
-        </button>
-      </div>
-    </header>
+    <app-page-header [title]="current.name">
+      <span pageHeaderContext class="group-breadcrumb">
+        <a routerLink="/groupes">Groupes</a> / Détail
+      </span>
+      <span pageHeaderSummary class="group-count">
+        {{ current.athleteCount }} {{ current.athleteCount > 1 ? 'athlètes' : 'athlète' }}
+      </span>
+      <a pButton severity="secondary" outlined [routerLink]="['/planning/groupes', current.id]">
+        <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+        Calendrier
+      </a>
+      <button pButton type="button" severity="secondary" outlined (click)="openRename()">
+        <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+        Renommer
+      </button>
+      <button pButton type="button" severity="danger" outlined (click)="confirmRemoveGroup()">
+        Supprimer
+      </button>
+    </app-page-header>
   } @else {
     <div class="group-skeleton" aria-busy="true" aria-label="Chargement du groupe">
-      <p-skeleton width="16rem" height="2.5rem" />
       <p-skeleton width="6rem" />
+      <p-skeleton width="16rem" height="2.5rem" />
     </div>
   }
 
