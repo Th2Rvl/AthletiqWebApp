@@ -1,12 +1,30 @@
+import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { Router, Routes, provideRouter } from '@angular/router';
 import { AuthService } from './core/auth/auth.service';
 import { routes } from './app.routes';
+
+@Component({ template: '' })
+class StubPageComponent {}
+
+/**
+ * Les routes de l'app, gardes et redirections comprises, où chaque page chargée à la demande
+ * est remplacée par un composant vide. Ces tests vérifient où le routeur arrive, pas les
+ * pages : sans ce remplacement, la première navigation importait la coquille et la liste des
+ * athlètes (PrimeNG compris), ce qui dépassait le délai de 5 s sur une machine chargée.
+ */
+function withStubPages(source: Routes): Routes {
+  return source.map(({ loadComponent, children, ...route }) => ({
+    ...route,
+    ...(loadComponent ? { component: StubPageComponent } : {}),
+    ...(children ? { children: withStubPages(children) } : {}),
+  }));
+}
 
 function signedInAs(role: 'COACH' | 'ADMIN'): Router {
   TestBed.configureTestingModule({
     providers: [
-      provideRouter(routes),
+      provideRouter(withStubPages(routes)),
       {
         provide: AuthService,
         useValue: {
