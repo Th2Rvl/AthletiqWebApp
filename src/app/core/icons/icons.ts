@@ -1,17 +1,31 @@
 import { addIcons } from 'ionicons';
 import { defineCustomElement } from 'ionicons/components/ion-icon.js';
 import {
+  addOutline,
   arrowBackOutline,
   barbellOutline,
+  businessOutline,
   calendarOutline,
+  checkmarkOutline,
   chevronBackOutline,
+  chevronDownOutline,
   chevronForwardOutline,
+  chevronUpOutline,
+  closeOutline,
+  copyOutline,
+  createOutline,
+  desktopOutline,
+  documentTextOutline,
   moonOutline,
   peopleOutline,
+  personOutline,
   reorderTwoOutline,
   searchOutline,
   statsChartOutline,
+  sunnyOutline,
+  trashOutline,
   trophyOutline,
+  warningOutline,
 } from 'ionicons/icons';
 
 /**
@@ -22,16 +36,30 @@ import {
 export function registerIcons(): void {
   defineCustomElement();
   addIcons({
+    addOutline,
     arrowBackOutline,
     barbellOutline,
+    businessOutline,
     calendarOutline,
+    checkmarkOutline,
     chevronBackOutline,
+    chevronDownOutline,
     chevronForwardOutline,
+    chevronUpOutline,
+    closeOutline,
+    copyOutline,
+    createOutline,
+    desktopOutline,
+    documentTextOutline,
     moonOutline,
     peopleOutline,
+    personOutline,
     reorderTwoOutline,
     searchOutline,
     statsChartOutline,
+    sunnyOutline,
+    trashOutline,
     trophyOutline,
+    warningOutline,
   });
 }
