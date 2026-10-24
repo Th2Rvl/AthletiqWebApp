@@ -1,73 +1,99 @@
-<header class="shell__bar">
-  <a class="shell__brand" routerLink="/">Athletiq</a>
-  <nav class="shell__nav" aria-label="Navigation principale">
-    @if (isAdmin()) {
-      <a
-        class="shell__link"
-        routerLink="/organisations"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Organisations
-      </a>
-    }
-    @if (isCoach()) {
-      <a
-        class="shell__link"
-        routerLink="/athletes"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Athlètes
-      </a>
-      <a
-        class="shell__link"
-        routerLink="/groupes"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Groupes
-      </a>
-      <a
-        class="shell__link"
-        routerLink="/exercices"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Exercices
-      </a>
-      <a
-        class="shell__link"
-        routerLink="/seances"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Séances
-      </a>
-      <a
-        class="shell__link"
-        routerLink="/planning"
-        routerLinkActive="shell__link--active"
-        ariaCurrentWhenActive="page"
-      >
-        Planning
-      </a>
-    }
-  </nav>
-  @if (user(); as current) {
-    <div class="shell__user">
-      <a class="shell__link" routerLink="/profil" routerLinkActive="shell__link--active">Mon profil</a>
-      <span class="shell__user-name">{{ current.firstName }} {{ current.lastName }}</span>
-      <button pButton type="button" size="small" severity="secondary" text (click)="logout()">
-        Se déconnecter
-      </button>
-    </div>
-  }
-</header>
+<div class="shell">
+  <aside class="shell__sidebar">
+    <a class="shell__brand" routerLink="/" aria-label="Athletiq, accueil">athletiq</a>
 
-<main class="shell__content">
-  <router-outlet />
-</main>
+    @if (isCoach()) {
+      <nav class="shell__nav" aria-label="Navigation principale">
+        <a
+          class="shell__link"
+          routerLink="/athletes"
+          [class.shell__link--active]="athletesActive()"
+          [attr.aria-current]="athletesActive() ? 'page' : null"
+        >
+          <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+          Athlètes et groupes
+        </a>
+        <a
+          class="shell__link"
+          routerLink="/exercices"
+          routerLinkActive="shell__link--active"
+          ariaCurrentWhenActive="page"
+        >
+          <ion-icon name="barbell-outline" aria-hidden="true"></ion-icon>
+          Exercices
+        </a>
+        <a
+          class="shell__link"
+          routerLink="/seances"
+          routerLinkActive="shell__link--active"
+          ariaCurrentWhenActive="page"
+        >
+          <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+          Séances
+        </a>
+        <a
+          class="shell__link"
+          routerLink="/planning"
+          routerLinkActive="shell__link--active"
+          ariaCurrentWhenActive="page"
+        >
+          <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+          Planification
+        </a>
+      </nav>
+    }
+
+    <div class="shell__footer">
+      @if (user(); as current) {
+        <span class="shell__user-name">{{ current.firstName }} {{ current.lastName }}</span>
+      }
+      <nav class="shell__account" aria-label="Compte">
+        @if (isAdmin()) {
+          <a
+            class="shell__account-link"
+            routerLink="/organisations"
+            routerLinkActive="shell__account-link--active"
+            ariaCurrentWhenActive="page"
+          >
+            <ion-icon name="business-outline" aria-hidden="true"></ion-icon>
+            Organisations
+          </a>
+        }
+        <a
+          class="shell__account-link"
+          routerLink="/profil"
+          routerLinkActive="shell__account-link--active"
+          ariaCurrentWhenActive="page"
+        >
+          <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+          Mon profil
+        </a>
+        <button type="button" class="shell__logout" (click)="logout()">Se déconnecter</button>
+      </nav>
+      <div class="shell__theme" role="group" aria-labelledby="shell-theme-label">
+        <span id="shell-theme-label" class="shell__theme-label">Thème</span>
+        <p-selectbutton
+          [options]="themeOptions"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [ngModel]="theme()"
+          (ngModelChange)="setTheme($event)"
+          ariaLabelledBy="shell-theme-label"
+        >
+          <ng-template #item let-option>
+            <ion-icon [name]="option.icon" aria-hidden="true"></ion-icon>
+            <span class="visually-hidden">{{ option.label }}</span>
+          </ng-template>
+        </p-selectbutton>
+      </div>
+    </div>
+  </aside>
+
+  <main class="shell__content">
+    <router-outlet />
+  </main>
+</div>
 
 <p-toast position="bottom-right" />
 <p-confirmdialog [style]="{ width: 'min(30rem, 100vw)' }" />
