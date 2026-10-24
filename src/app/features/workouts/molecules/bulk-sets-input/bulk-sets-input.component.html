@@ -9,6 +9,7 @@
       [useGrouping]="false"
       [maxFractionDigits]="0"
       placeholder="Séries"
+      variant="filled"
       fluid
       [ariaLabel]="'Nombre de séries identiques, ' + exerciseName()"
     />
@@ -21,6 +22,7 @@
       [useGrouping]="false"
       [maxFractionDigits]="0"
       placeholder="Répétitions"
+      variant="filled"
       fluid
       [ariaLabel]="'Répétitions par série, ' + exerciseName()"
     />
@@ -37,6 +39,7 @@
       [maxFractionDigits]="1"
       [useGrouping]="false"
       placeholder="Charge (kg)"
+      variant="filled"
       fluid
       [ariaLabel]="'Charge en kilos, facultative, ' + exerciseName()"
     />
@@ -48,6 +51,7 @@
       [useGrouping]="false"
       [maxFractionDigits]="0"
       placeholder="Repos (s)"
+      variant="filled"
       fluid
       [ariaLabel]="'Repos en secondes, facultatif, ' + exerciseName()"
     />
@@ -56,7 +60,6 @@
       type="button"
       size="small"
       severity="secondary"
-      outlined
       [disabled]="!valid() || disabled()"
       (click)="submit()"
     >

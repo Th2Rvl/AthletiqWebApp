@@ -1,4 +1,9 @@
-<h1 class="page-title">Séances</h1>
+<app-page-header title="Séances">
+  <button pButton type="button" (click)="openCreate()">
+    <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+    Créer une séance
+  </button>
+</app-page-header>
 
 @if (workouts.error() && !workouts.loading()) {
   <app-error-state [message]="errorMessage()" (retry)="workouts.reload()" />

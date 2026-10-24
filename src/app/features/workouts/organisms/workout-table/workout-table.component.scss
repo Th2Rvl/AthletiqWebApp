@@ -7,8 +7,7 @@
   flex-wrap: wrap;
   gap: var(--ath-space-3);
   align-items: center;
-  justify-content: space-between;
-  margin-block-end: var(--ath-space-4);
+  margin-block-end: var(--ath-space-3);
 
   p-iconfield {
     flex: 0 1 24rem;
@@ -20,9 +19,14 @@
   }
 }
 
+// Recherche de la planche « Composants » : champ de 40 px sur surface, sans bordure.
+.workout-table__search {
+  border-color: transparent;
+}
+
 .workout-table__name {
   display: block;
-  font-family: var(--ath-font-display);
+  font-weight: var(--ath-weight-medium);
   overflow-wrap: anywhere;
 }
 

@@ -3,6 +3,7 @@
     message="Aucune séance pour l'instant"
     detail="Composez une séance à partir de votre bibliothèque d'exercices."
     actionLabel="Créer une séance"
+    actionIcon="add-outline"
     (action)="create.emit()"
   />
 } @else {
@@ -14,14 +15,14 @@
       <input
         pInputText
         type="search"
-        placeholder="Rechercher par nom"
+        class="workout-table__search"
+        placeholder="Rechercher une séance"
         aria-label="Rechercher une séance par nom"
         maxlength="100"
         [value]="query()"
         (input)="onQueryInput($event)"
       />
     </p-iconfield>
-    <button pButton type="button" (click)="create.emit()">Créer une séance</button>
   </div>
 
   <p-table
@@ -65,41 +66,46 @@
         </td>
         <td class="workout-table__date">{{ workout.updatedAt | date: 'd MMM y, HH:mm' }}</td>
         <td class="actions-cell">
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="secondary"
-            text
-            [attr.aria-label]="'Modifier ' + workout.name"
-            (click)="edit.emit(workout)"
-          >
-            Modifier
-          </button>
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="secondary"
-            text
-            [loading]="duplicatingId() === workout.id"
-            [disabled]="duplicatingId() !== null"
-            [attr.aria-label]="'Dupliquer ' + workout.name"
-            (click)="duplicate.emit(workout)"
-          >
-            Dupliquer
-          </button>
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="danger"
-            text
-            [attr.aria-label]="'Supprimer ' + workout.name"
-            (click)="remove.emit(workout)"
-          >
-            Supprimer
-          </button>
+          <span class="row-actions">
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Modifier ' + workout.name"
+              (click)="edit.emit(workout)"
+            >
+              <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [loading]="duplicatingId() === workout.id"
+              [disabled]="duplicatingId() !== null"
+              [attr.aria-label]="'Dupliquer ' + workout.name"
+              (click)="duplicate.emit(workout)"
+            >
+              <ion-icon name="copy-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Supprimer ' + workout.name"
+              (click)="remove.emit(workout)"
+            >
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </span>
         </td>
       </tr>
     </ng-template>

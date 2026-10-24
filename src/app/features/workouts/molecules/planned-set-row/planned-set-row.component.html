@@ -13,6 +13,7 @@
       [invalid]="errors().reps !== null"
       [ariaDescribedBy]="describedBy('reps')"
       [ariaLabel]="'Répétitions, série ' + number() + ', ' + exerciseName()"
+      variant="filled"
       fluid
     />
     @if (errors().reps; as message) {
@@ -39,6 +40,7 @@
       [invalid]="errors().loadKg !== null"
       [ariaDescribedBy]="describedBy('loadKg')"
       [ariaLabel]="'Charge en kilos, série ' + number() + ', ' + exerciseName()"
+      variant="filled"
       fluid
     />
     @if (errors().loadKg; as message) {
@@ -66,6 +68,7 @@
       [invalid]="errors().restSeconds !== null"
       [ariaDescribedBy]="describedBy('restSeconds')"
       [ariaLabel]="'Repos en secondes, série ' + number() + ', ' + exerciseName()"
+      variant="filled"
       fluid
     />
     @if (errors().restSeconds; as message) {
@@ -84,12 +87,14 @@
     pButton
     type="button"
     size="small"
-    severity="danger"
+    severity="secondary"
     text
+    iconOnly
     class="planned-set-row__remove"
     [attr.aria-label]="'Retirer la série ' + number() + ' de ' + exerciseName()"
     (click)="remove.emit()"
   >
-    Retirer
+    <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+    <span class="visually-hidden">Retirer</span>
   </button>
 </div>

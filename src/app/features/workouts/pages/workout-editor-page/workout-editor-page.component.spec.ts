@@ -66,6 +66,8 @@ describe('WorkoutEditorPageComponent', () => {
     get: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
+    duplicate: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
   };
   let exerciseApi: { list: ReturnType<typeof vi.fn> };
   let messages: MessageService;
@@ -80,6 +82,8 @@ describe('WorkoutEditorPageComponent', () => {
       get: vi.fn().mockReturnValue(options.get ?? of(WORKOUT)),
       create: vi.fn(),
       update: vi.fn(),
+      duplicate: vi.fn(),
+      delete: vi.fn(),
     };
     exerciseApi = { list: vi.fn().mockReturnValue(of(pageOf(options.library ?? [SQUAT]))) };
     TestBed.configureTestingModule({
@@ -319,6 +323,44 @@ describe('WorkoutEditorPageComponent', () => {
     const leaveAnswer = firstValueFrom(page.canLeave() as Observable<boolean>);
     confirmations[1].accept!();
     expect(await leaveAnswer).toBe(true);
+  });
+
+  it('création : ni « Dupliquer » ni « Supprimer » dans l’en-tête', async () => {
+    await setup(undefined);
+
+    expect(() => button('Dupliquer')).toThrow();
+    expect(() => button('Supprimer')).toThrow();
+    expect(element.textContent).toContain('Séances / Nouvelle');
+  });
+
+  it('« Dupliquer » de l’en-tête ouvre la copie', async () => {
+    await setup('w-1');
+    api.duplicate.mockReturnValue(of({ ...WORKOUT, id: 'w-2', name: 'Bas du corps B (copie)' }));
+
+    button('Dupliquer').click();
+    await fixture.whenStable();
+
+    expect(api.duplicate).toHaveBeenCalledWith('w-1');
+    expect(messages.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success', summary: 'Séance dupliquée' }),
+    );
+    expect(navigate).toHaveBeenCalledWith(['/seances', 'w-2']);
+  });
+
+  it('« Supprimer » de l’en-tête demande confirmation, supprime et revient à la liste', async () => {
+    await setup('w-1');
+    api.delete.mockReturnValue(of(undefined));
+
+    button('Supprimer').click();
+    expect(confirmations).toHaveLength(1);
+    expect(api.delete).not.toHaveBeenCalled();
+
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(api.delete).toHaveBeenCalledWith('w-1');
+    expect(navigate).toHaveBeenCalledWith(['/seances']);
+    expect(page.canLeave()).toBe(true);
   });
 
   it('« Annuler » revient à la liste (la garde de sortie décide)', async () => {

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -8,6 +16,7 @@ import { WorkoutSummary } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
 import { WorkoutApiService } from '../../../../core/api/workout-api.service';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { WorkoutTableComponent } from '../../organisms/workout-table/workout-table.component';
 
@@ -19,8 +28,11 @@ const SEARCH_DEBOUNCE_MS = 300;
  */
 @Component({
   selector: 'app-workout-list-page',
-  imports: [ErrorStateComponent, WorkoutTableComponent],
+  imports: [ButtonModule, ErrorStateComponent, PageHeaderComponent, WorkoutTableComponent],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './workout-list-page.component.html',
+  styleUrl: './workout-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkoutListPageComponent {

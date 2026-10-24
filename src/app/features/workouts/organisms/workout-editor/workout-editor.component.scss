@@ -1,42 +1,64 @@
 .workout-editor {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-6);
+  gap: var(--ath-space-5);
 }
 
-.workout-editor__general {
+textarea,
+input {
+  width: 100%;
+}
+
+.workout-editor__breadcrumb {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.workout-editor__title-field {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-5);
-  max-width: 40rem;
+  gap: var(--ath-space-1);
 }
 
-input,
-textarea {
-  width: 100%;
+// Nom de la séance éditable en place, à la taille du titre d'écran (planche W3).
+.workout-editor__name {
+  max-width: 40rem;
+  margin-inline-start: calc(-1 * var(--ath-space-2));
+  padding-inline: var(--ath-space-2);
+  border-color: transparent;
+  background: transparent;
+  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-page-title);
+  font-weight: var(--ath-weight-bold);
+  line-height: var(--ath-line-height-tight);
+  letter-spacing: var(--ath-tracking-tight);
+
+  &:hover {
+    border-color: var(--ath-line-strong);
+  }
+}
+
+.workout-editor__summary,
+.workout-editor__count {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-editor__description {
+  max-width: 40rem;
 }
 
 .workout-editor__exercises {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-4);
+  gap: var(--ath-space-3);
 }
 
 .workout-editor__exercises-header {
   display: flex;
   align-items: baseline;
   gap: var(--ath-space-3);
-}
-
-.workout-editor__title {
-  margin: 0;
-  font-size: var(--ath-text-h3);
-}
-
-.workout-editor__count,
-.workout-editor__position {
-  color: var(--ath-text-muted);
-  font-variant-numeric: tabular-nums;
 }
 
 .workout-editor__muted {
@@ -56,10 +78,6 @@ textarea {
   p {
     margin: 0;
   }
-
-  a {
-    color: var(--ath-link);
-  }
 }
 
 .workout-editor__list {
@@ -71,56 +89,94 @@ textarea {
   list-style: none;
 }
 
+// Bloc d'exercice : surface arrondie de 12 px, sans bordure (planche W3).
 .workout-editor__exercise {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-4);
-  padding: var(--ath-space-4);
-  border: 1px solid var(--ath-line);
+  gap: var(--ath-space-3);
+  padding: var(--ath-space-4) var(--ath-space-5);
   border-radius: var(--ath-radius-md);
   background: var(--ath-surface);
 }
 
-/* Élévation réelle : seul l'exercice en cours de déplacement porte une ombre. */
+// Élévation réelle : seul l'exercice en cours de déplacement porte une ombre et un contour.
 .workout-editor__exercise.cdk-drag-preview {
   box-shadow: var(--ath-shadow-overlay);
+  outline: var(--ath-focus-width) solid var(--ath-primary);
+  outline-offset: calc(-1 * var(--ath-focus-width));
+
+  .workout-editor__dragging {
+    display: inline;
+  }
+
+  .workout-editor__exercise-actions {
+    display: none;
+  }
 }
 
+// Emplacement de dépôt : barre primaire de 3 px.
 .workout-editor__exercise.cdk-drag-placeholder {
-  border-style: dashed;
-  border-color: var(--ath-line-strong);
-  background: var(--ath-surface-sunken);
+  min-height: 0;
+  padding: 0;
+  height: var(--ath-drop-indicator-width);
+  margin-inline: var(--ath-space-5);
+  border-radius: var(--ath-radius-sm);
+  background: var(--ath-primary);
 
   > * {
-    visibility: hidden;
+    display: none;
   }
 }
 
 .workout-editor__exercise-header {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--ath-space-2) var(--ath-space-3);
+  gap: var(--ath-space-3);
 }
 
 .workout-editor__handle {
   display: inline-flex;
-  padding: var(--ath-space-1);
+  padding: var(--ath-space-2) var(--ath-space-1);
+  border-radius: var(--ath-radius-sm);
   color: var(--ath-text-muted);
   cursor: grab;
 }
 
+.workout-editor__position {
+  color: var(--ath-text-muted);
+  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-lead);
+  font-weight: var(--ath-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+}
+
 .workout-editor__exercise-name {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   font-size: var(--ath-text-lead);
+  font-weight: var(--ath-weight-bold);
+  letter-spacing: var(--ath-tracking-snug);
   overflow-wrap: anywhere;
-  min-width: 0;
+}
+
+.workout-editor__dragging {
+  display: none;
+  color: var(--ath-link);
+  font-size: var(--ath-text-small);
 }
 
 .workout-editor__exercise-actions {
   display: flex;
-  flex-wrap: wrap;
-  margin-inline-start: auto;
+  gap: var(--ath-space-1);
+}
+
+// Prescription décalée sous le nom, comme sur la planche.
+.workout-editor__exercise-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+  padding-inline-start: var(--ath-space-7);
 }
 
 .workout-editor__sets {
@@ -129,13 +185,28 @@ textarea {
   gap: var(--ath-space-3);
 }
 
+.workout-editor__note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-1);
+}
+
+.workout-editor__label {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-label);
+}
+
+.workout-editor__optional {
+  margin-inline-start: var(--ath-space-1);
+}
+
 .workout-editor__add-set,
 .workout-editor__add {
   align-self: flex-start;
 }
 
-.workout-editor__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--ath-space-2);
+@media (max-width: 40rem) {
+  .workout-editor__exercise-body {
+    padding-inline-start: 0;
+  }
 }
