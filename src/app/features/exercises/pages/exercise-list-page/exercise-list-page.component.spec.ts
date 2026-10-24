@@ -295,6 +295,41 @@ describe('ExerciseListPageComponent', () => {
     expect(element.textContent).toContain("Aucun exercice pour l'instant");
   });
 
+  it('montre la taille de la bibliothèque au-dessus du titre', async () => {
+    await setup(of(pageOf([SQUAT, TIRAGE])));
+
+    expect(element.querySelector('app-page-header')?.textContent).toContain('2 exercices');
+  });
+
+  it('ouvre la modification dans le panneau latéral et surligne la ligne', async () => {
+    await setup(of(pageOf([SQUAT])));
+
+    buttonByText('Modifier').click();
+    await fixture.whenStable();
+
+    expect(document.body.textContent).toContain('Modifier l’exercice');
+    expect(element.querySelector('.exercise-table__row--editing')?.textContent).toContain(
+      'Squat arrière',
+    );
+  });
+
+  it('supprime depuis le panneau après confirmation, puis ferme le panneau', async () => {
+    await setup(of(pageOf([SQUAT])));
+    api.delete.mockReturnValue(of(undefined));
+
+    buttonByText('Modifier').click();
+    await fixture.whenStable();
+    form().removeRequested.emit();
+    expect(confirmations).toHaveLength(1);
+    expect(confirmations[0].header).toContain('Squat arrière');
+
+    confirmations[0].accept!();
+    await fixture.whenStable();
+
+    expect(api.delete).toHaveBeenCalledWith('ex-1');
+    expect(fixture.debugElement.query(By.directive(ExerciseFormComponent))).toBeNull();
+  });
+
   it('ne supprime pas si la confirmation est annulée', async () => {
     await setup(of(pageOf([SQUAT])));
 

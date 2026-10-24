@@ -131,7 +131,7 @@ describe('ExerciseFormComponent', () => {
 
     expect(element.querySelector<HTMLInputElement>('#exercise-name')!.value).toBe(SQUAT.name);
     expect(element.querySelector<HTMLInputElement>('#exercise-equipment')!.value).toBe('Barre');
-    expect(submitButton().textContent).toContain('Enregistrer les modifications');
+    expect(submitButton().textContent).toContain("Enregistrer l'exercice");
     submitButton().click();
     expect(submitted).toEqual([
       {

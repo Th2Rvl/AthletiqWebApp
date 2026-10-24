@@ -29,6 +29,23 @@
   </app-form-field>
 
   <app-form-field
+    label="Description"
+    inputId="exercise-description"
+    [optional]="true"
+    [error]="descriptionError()"
+    [hint]="descriptionLength() + ' / ' + descriptionMax + ' caractères'"
+  >
+    <textarea
+      pTextarea
+      id="exercise-description"
+      formControlName="description"
+      rows="4"
+      [invalid]="descriptionError() !== null"
+      [attr.aria-invalid]="descriptionError() !== null"
+    ></textarea>
+  </app-form-field>
+
+  <app-form-field
     label="Matériel"
     inputId="exercise-equipment"
     [optional]="true"
@@ -63,28 +80,27 @@
     />
   </app-form-field>
 
-  <app-form-field
-    label="Description"
-    inputId="exercise-description"
-    [optional]="true"
-    [error]="descriptionError()"
-    [hint]="descriptionLength() + ' / ' + descriptionMax + ' caractères'"
-  >
-    <textarea
-      pTextarea
-      id="exercise-description"
-      formControlName="description"
-      rows="4"
-      [invalid]="descriptionError() !== null"
-      [attr.aria-invalid]="descriptionError() !== null"
-    ></textarea>
-  </app-form-field>
 
   <div class="exercise-form__actions">
-    <button pButton type="button" severity="secondary" text (click)="cancelled.emit()">
-      Annuler
-    </button>
-    <button pButton type="submit" [disabled]="!canSubmit()" [loading]="saving()">
+    @if (isEdit()) {
+      <button
+        pButton
+        type="button"
+        severity="danger"
+        outlined
+        [disabled]="saving()"
+        (click)="removeRequested.emit()"
+      >
+        Supprimer
+      </button>
+    }
+    <button
+      pButton
+      type="submit"
+      class="exercise-form__submit"
+      [disabled]="!canSubmit()"
+      [loading]="saving()"
+    >
       {{ submitLabel() }}
     </button>
   </div>
