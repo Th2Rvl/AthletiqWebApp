@@ -119,6 +119,22 @@ export function periodLabel(from: IsoDate, to: IsoDate): string {
   return `${start} – ${end}`;
 }
 
+/** Numéro de semaine ISO 8601 (la semaine 1 contient le premier jeudi de l'année). */
+export function isoWeek(date: IsoDate): number {
+  const thursday = addDays(mondayOf(date), 3);
+  const january1 = `${thursday.slice(0, 4)}-01-01` as IsoDate;
+  const days = Math.round((toUtc(thursday).getTime() - toUtc(january1).getTime()) / 86_400_000);
+  return Math.floor(days / 7) + 1;
+}
+
+/** Bornes d'une semaine en ligne de calendrier : « 19 – 25 oct. », « 26 oct. – 1 nov. ». */
+export function weekRangeLabel(monday: IsoDate): string {
+  const sunday = addDays(monday, 6);
+  const sameMonth = monday.slice(0, 7) === sunday.slice(0, 7);
+  const start = formatDay(monday, sameMonth ? { day: 'numeric' } : { day: 'numeric', month: 'short' });
+  return `${start} – ${formatDay(sunday, { day: 'numeric', month: 'short' })}`;
+}
+
 /**
  * Date locale (minuit, fuseau du navigateur) pour `p-datepicker`, qui manipule des `Date`.
  * Le passage par les composantes locales garde le même jour affiché.

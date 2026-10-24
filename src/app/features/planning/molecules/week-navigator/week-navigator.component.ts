@@ -8,56 +8,58 @@ import {
 import { ButtonModule } from 'primeng/button';
 
 /**
- * Navigation du calendrier par semaine : précédente, « Aujourd'hui », suivante, et la période
- * affichée. Trois `p-button` et un libellé : une seule fonction, changer de période.
+ * Navigation du calendrier par semaine (planche W4) : précédente et suivante en boutons icône
+ * autour de la période affichée, puis « Aujourd'hui » (conservé, décision #70). Trois
+ * `p-button` et un libellé : une seule fonction, changer de période.
  */
 @Component({
   selector: 'app-week-navigator',
   imports: [ButtonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <div class="week-navigator__buttons">
-      <button
-        pButton
-        type="button"
-        severity="secondary"
-        outlined
-        aria-label="Semaine précédente"
-        (click)="previous.emit()"
-      >
-        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
-      </button>
-      <button pButton type="button" severity="secondary" outlined (click)="today.emit()">
-        Aujourd'hui
-      </button>
-      <button
-        pButton
-        type="button"
-        severity="secondary"
-        outlined
-        aria-label="Semaine suivante"
-        (click)="next.emit()"
-      >
-        <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
-      </button>
-    </div>
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      iconOnly
+      class="week-navigator__step"
+      aria-label="Semaine précédente"
+      (click)="previous.emit()"
+    >
+      <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+    </button>
     <p class="week-navigator__label" aria-live="polite">{{ label() }}</p>
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      iconOnly
+      class="week-navigator__step"
+      aria-label="Semaine suivante"
+      (click)="next.emit()"
+    >
+      <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+    </button>
+    <button pButton type="button" severity="secondary" text (click)="today.emit()">
+      Aujourd'hui
+    </button>
   `,
   styles: `
     :host {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: var(--ath-space-4);
+      gap: var(--ath-space-1);
     }
-    .week-navigator__buttons {
-      display: flex;
-      gap: var(--ath-space-2);
+    /* Boutons de période de la planche W4 : 40 × 40 sur surface, sans bordure. */
+    .week-navigator__step {
+      border-color: var(--ath-surface);
+      background: var(--ath-surface);
     }
     .week-navigator__label {
       margin: 0;
-      font-family: var(--ath-font-display);
-      font-size: var(--ath-text-lead);
+      padding-inline: var(--ath-space-3);
+      font-weight: var(--ath-weight-medium);
       font-variant-numeric: tabular-nums;
     }
   `,

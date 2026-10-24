@@ -7,13 +7,20 @@
     (keydown)="onKeydown($event)"
   >
     <div class="calendar__row" role="row">
+      <div class="calendar__corner" role="columnheader">
+        <span class="visually-hidden">Semaine</span>
+      </div>
       @for (weekday of weekdays; track weekday) {
         <div class="calendar__weekday" role="columnheader">{{ weekday }}</div>
       }
     </div>
-    @for (week of weeks(); track week[0].date) {
+    @for (week of weeks(); track week.monday) {
       <div class="calendar__row" role="row">
-        @for (day of week; track day.date) {
+        <div class="calendar__week" role="rowheader">
+          <span class="calendar__week-number">Sem. {{ week.number }}</span>
+          <span class="calendar__week-range">{{ week.range }}</span>
+        </div>
+        @for (day of week.days; track day.date) {
           <div
             class="calendar__day"
             role="gridcell"
@@ -22,17 +29,16 @@
             [attr.aria-label]="day.longLabel"
             [attr.aria-current]="day.isToday ? 'date' : null"
             [class.calendar__day--today]="day.isToday"
-            [class.calendar__day--past]="day.isPast"
           >
             <span class="calendar__date" aria-hidden="true">
-              <span class="calendar__number">{{ day.dayLabel }}</span>
+              {{ day.dayLabel }}
               @if (day.isToday) {
-                <span class="calendar__today">Aujourd'hui</span>
+                <span class="calendar__today">· aujourd'hui</span>
               }
             </span>
             @if (loading()) {
               @if (skeleton(day)) {
-                <p-skeleton height="2.5rem" />
+                <p-skeleton height="2.75rem" />
               }
             } @else {
               @if (day.items.length > 0) {
@@ -60,6 +66,7 @@
                   [attr.aria-label]="'Planifier une séance le ' + day.longLabel"
                   (click)="plan.emit(day.date)"
                 >
+                  <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
                   Planifier
                 </button>
               }

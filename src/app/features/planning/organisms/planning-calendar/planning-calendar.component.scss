@@ -2,33 +2,55 @@
   display: block;
 }
 
-// Sous une largeur utile, la grille défile horizontalement dans son cadre plutôt que d'écraser
-// les 7 colonnes : le coach planifie sur ordinateur, la densité prime.
+// Grille sur surface arrondie de 12 px, sans bordure extérieure (planche W4). Sous une largeur
+// utile, elle défile horizontalement dans son cadre plutôt que d'écraser les 7 colonnes.
 .calendar-scroll {
   overflow-x: auto;
+  border-radius: var(--ath-radius-md);
+  background: var(--ath-surface);
 }
 
 .calendar {
-  min-width: 48rem;
-  border: 1px solid var(--ath-line);
-  border-radius: var(--ath-radius-none);
-  background: var(--ath-surface);
+  min-width: 60rem;
 }
 
 .calendar__row {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: 7rem repeat(7, minmax(0, 1fr));
 
   & + & {
-    border-top: 1px solid var(--ath-line);
+    border-top: var(--ath-line-width) solid var(--ath-line);
   }
 }
 
+.calendar__corner,
 .calendar__weekday {
-  padding: var(--ath-space-2) var(--ath-space-3);
-  background: var(--ath-surface-sunken);
+  padding: var(--ath-space-3);
+}
+
+// Jours en minuscules, 13 px, texte secondaire, sans fond.
+.calendar__weekday {
+  border-left: var(--ath-line-width) solid var(--ath-line);
   color: var(--ath-text-muted);
   font-size: var(--ath-text-small);
+}
+
+.calendar__week {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ath-space-3);
+}
+
+.calendar__week-number {
+  font-family: var(--ath-font-display);
+  font-weight: var(--ath-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__week-range {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+  font-variant-numeric: tabular-nums;
 }
 
 .calendar__day {
@@ -37,46 +59,29 @@
   gap: var(--ath-space-2);
   min-height: 7.5rem;
   padding: var(--ath-space-2);
+  border-left: var(--ath-line-width) solid var(--ath-line);
   outline: none;
-
-  & + & {
-    border-left: 1px solid var(--ath-line);
-  }
 
   &:focus-visible {
     outline: var(--ath-focus-width) solid var(--ath-primary);
     outline-offset: calc(-1 * var(--ath-focus-width));
   }
 
-  &--past {
-    background: var(--ath-surface-sunken);
+  // Jour courant : la case entière en primary-soft.
+  &--today {
+    background: var(--ath-primary-soft);
   }
 }
 
 .calendar__date {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--ath-space-1);
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
   font-variant-numeric: tabular-nums;
 
-  .calendar__day--past & {
-    color: var(--ath-text-muted);
-  }
-}
-
-.calendar__number {
   .calendar__day--today & {
-    padding-inline: var(--ath-space-1);
-    border-radius: var(--ath-radius-sm);
-    background: var(--ath-primary);
-    color: var(--ath-on-primary);
+    color: var(--ath-primary-soft-text);
+    font-weight: var(--ath-weight-bold);
   }
-}
-
-.calendar__today {
-  color: var(--ath-primary-soft-text);
-  font-size: var(--ath-text-small);
 }
 
 .calendar__sessions {

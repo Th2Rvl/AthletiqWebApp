@@ -1,4 +1,5 @@
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
@@ -34,6 +35,7 @@ import { PlanningApiService } from '../../../../core/api/planning-api.service';
 import { WorkoutApiService } from '../../../../core/api/workout-api.service';
 import { EmptyStateComponent } from '../../../../shared/ui/molecules/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import {
   PlanningTarget,
   PlanningTargetOption,
@@ -71,7 +73,7 @@ import {
 const LIST_SIZE = 100;
 
 /**
- * Page « Planning » (US21 à US26) : calendrier de 4 semaines d'un athlète ou d'un groupe,
+ * Page « Planification » (US21 à US26, planche W4) : calendrier de 4 semaines d'un athlète ou d'un groupe,
  * planification, détail, déplacement, annulation et duplication de semaine.
  *
  * Routes : `/planning`, `/planning/athletes/:athleteId`, `/planning/groupes/:groupId`, avec
@@ -90,6 +92,7 @@ const LIST_SIZE = 100;
     MessageModule,
     EmptyStateComponent,
     ErrorStateComponent,
+    PageHeaderComponent,
     PlanningTargetPickerComponent,
     WeekNavigatorComponent,
     PlanningCalendarComponent,
@@ -98,6 +101,8 @@ const LIST_SIZE = 100;
     GroupSessionListComponent,
     DuplicateWeekFormComponent,
   ],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './planning-page.component.html',
   styleUrl: './planning-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -200,6 +205,18 @@ export class PlanningPageComponent {
   );
   /** Groupe sans membre : rien à planifier ni à dupliquer (`409 GROUP_HAS_NO_MEMBERS`). */
   protected readonly groupWithoutMembers = computed(() => this.groupCalendar()?.memberCount === 0);
+  /** Les actions de l'en-tête n'ont de sens qu'avec un calendrier affiché. */
+  protected readonly showCalendar = computed(
+    () => this.target() !== null && !this.notFound() && this.calendarError() === null,
+  );
+  /** « 6 athlètes » à côté du groupe choisi (planche W4). */
+  protected readonly memberCountText = computed(() => {
+    const count = this.groupCalendar()?.memberCount;
+    if (this.target()?.kind !== 'group' || count === undefined) {
+      return null;
+    }
+    return `· ${count} ${count > 1 ? 'athlètes' : 'athlète'}`;
+  });
   protected readonly canPlan = computed(
     () => this.calendarLoaded() && this.today() !== null && !this.groupWithoutMembers(),
   );

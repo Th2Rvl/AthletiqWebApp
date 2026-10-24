@@ -1,4 +1,5 @@
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -11,7 +12,14 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { IsoDate } from '../../../../core/api/models/api.models';
 import { PlannedSessionChipComponent } from '../../molecules/planned-session-chip/planned-session-chip.component';
-import { CALENDAR_WEEKS, calendarWeeks, formatDay, longDay } from '../../planning-dates';
+import {
+  CALENDAR_WEEKS,
+  calendarWeeks,
+  formatDay,
+  isoWeek,
+  longDay,
+  weekRangeLabel,
+} from '../../planning-dates';
 
 /**
  * Une séance (athlète) ou un regroupement de séances (groupe) à placer dans une case.
@@ -37,13 +45,23 @@ interface CalendarDay {
   items: CalendarItem[];
 }
 
-const WEEKDAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+interface CalendarWeek {
+  monday: IsoDate;
+  /** Numéro de semaine ISO, « Sem. 43 ». */
+  number: number;
+  /** « 19 – 25 oct. » */
+  range: string;
+  days: CalendarDay[];
+}
+
+const WEEKDAYS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 const SKELETON_DAYS = new Set([1, 3, 8, 12, 16, 19, 24]);
 
 /**
- * Calendrier de planification : 4 semaines du lundi au dimanche (Q8), chaque case listant
- * 0 à n séances (décision du PO, Q1) et, pour un jour qui n'est pas passé, l'action
- * « Planifier ».
+ * Calendrier de planification (planche W4) : 4 semaines du lundi au dimanche (Q8), une
+ * colonne de semaine (« Sem. 43 », « 19 – 25 oct. »), chaque case listant 0 à n séances
+ * (décision du PO, Q1) et, pour un jour qui n'est pas passé, l'action « Planifier »
+ * (conservée, décision #70). Le jour courant occupe toute sa case en primary-soft.
  *
  * Organisme maison : PrimeNG n'a pas de calendrier de planification. `p-datepicker` choisit
  * une date mais n'affiche pas de contenu par jour, et `p-table` ne donne pas une grille de
@@ -55,6 +73,8 @@ const SKELETON_DAYS = new Set([1, 3, 8, 12, 16, 19, 24]);
 @Component({
   selector: 'app-planning-calendar',
   imports: [ButtonModule, SkeletonModule, PlannedSessionChipComponent],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './planning-calendar.component.html',
   styleUrl: './planning-calendar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,7 +99,7 @@ export class PlanningCalendarComponent {
 
   protected readonly weekdays = WEEKDAYS;
 
-  protected readonly weeks = computed<CalendarDay[][]>(() => {
+  protected readonly weeks = computed<CalendarWeek[]>(() => {
     const today = this.today();
     const byDate = new Map<IsoDate, CalendarItem[]>();
     for (const item of this.items()) {
@@ -88,8 +108,11 @@ export class PlanningCalendarComponent {
       byDate.set(item.date, list);
     }
     let index = 0;
-    return calendarWeeks(this.start(), this.weekCount()).map((week) =>
-      week.map((date) => {
+    return calendarWeeks(this.start(), this.weekCount()).map((week) => ({
+      monday: week[0],
+      number: isoWeek(week[0]),
+      range: weekRangeLabel(week[0]),
+      days: week.map((date) => {
         const isPast = today !== null && date < today;
         return {
           date,
@@ -102,7 +125,7 @@ export class PlanningCalendarComponent {
           items: byDate.get(date) ?? [],
         };
       }),
-    );
+    }));
   });
 
   protected skeleton(day: CalendarDay): boolean {

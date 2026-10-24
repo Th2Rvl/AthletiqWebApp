@@ -5,12 +5,14 @@ import {
   fromPickerDate,
   isIsoDate,
   isMonday,
+  isoWeek,
   longDay,
   mondayOf,
   periodLabel,
   periodOf,
   toPickerDate,
   todayIn,
+  weekRangeLabel,
 } from './planning-dates';
 
 describe('planning-dates', () => {
@@ -78,5 +80,19 @@ describe('planning-dates', () => {
     // Minuit local : en UTC+1, toISOString donnerait le 11. fromPickerDate garde le 12.
     expect(fromPickerDate(new Date(2026, 10, 12, 0, 0))).toBe('2026-11-12');
     expect(fromPickerDate(new Date(2026, 10, 12, 23, 59))).toBe('2026-11-12');
+  });
+
+  it('donne le numéro de semaine ISO, y compris à cheval sur deux années', () => {
+    expect(isoWeek('2026-10-19')).toBe(43);
+    expect(isoWeek('2026-10-25')).toBe(43);
+    expect(isoWeek('2026-10-26')).toBe(44);
+    expect(isoWeek('2026-01-01')).toBe(1);
+    expect(isoWeek('2027-01-01')).toBe(53);
+    expect(isoWeek('2024-12-30')).toBe(1);
+  });
+
+  it("écrit les bornes d'une semaine sans répéter le mois quand il ne change pas", () => {
+    expect(weekRangeLabel('2026-10-19')).toBe('19 – 25 oct.');
+    expect(weekRangeLabel('2026-10-26')).toBe('26 oct. – 1 nov.');
   });
 });
