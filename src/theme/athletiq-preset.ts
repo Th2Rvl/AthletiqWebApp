@@ -110,6 +110,8 @@ const softBlock = (s: ReturnType<typeof state>) => ({
  * l'app mobile Th2Rvl/AthletiqApp). Les tokens sémantiques et ceux des composants pointent
  * vers les variables CSS `--ath-*` : `tokens.scss` reste l'unique source des valeurs et le
  * thème sombre (classe `ath-dark` sur <html>) s'applique sans second jeu de valeurs.
+ * Les dimensions propres au web (hauteur des contrôles, barre latérale, navigation, icônes)
+ * viennent de `src/theme/web-tokens.scss`, qui n'existe que dans ce dépôt.
  * Seules les rampes primitives (tartan, neutres chauds) sont écrites ici en hexadécimal.
  * Toute modification d'une valeur commune doit être répercutée dans `tokens.scss` et dans
  * `src/theme/variables.scss` de l'app mobile.

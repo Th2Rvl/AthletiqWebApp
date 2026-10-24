@@ -77,18 +77,6 @@
   --ath-focus-width: 2px;
   --ath-focus-offset: 2px;
 
-  // Dimensions des contrôles et du cadre. Web : champ et bouton 40 px, bouton icône 36 px,
-  // entrée de navigation 44 px, icône 20 px (14 px dans un statut), barre latérale 232 px.
-  // Le mobile garde ses zones tactiles de 48 à 52 px (skill front-mobile-ionic-atomic-design).
-  --ath-control-height: 2.5rem;
-  --ath-control-height-sm: 2.25rem;
-  --ath-nav-item-height: 2.75rem;
-  --ath-icon-size: 1.25rem;
-  --ath-icon-size-sm: 0.875rem;
-  --ath-sidebar-width: 14.5rem;
-  --ath-line-width: 1px;             // séparateurs et bordures
-  --ath-drop-indicator-width: 3px;   // barre de dépôt d'un glisser-déposer
-
   // Tokens sémantiques : thème clair
   --ath-bg: #F4F3EF;
   --ath-surface: #FFFFFF;
