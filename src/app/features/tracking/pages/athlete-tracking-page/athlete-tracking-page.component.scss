@@ -1,0 +1,31 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+.tracking-breadcrumb {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+}
+
+.tracking-panel,
+.tracking-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+.tracking-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ath-space-3) var(--ath-space-4);
+}
+
+// Sélecteur d'exercice sur surface, sans bordure, comme les filtres des listes.
+.tracking-borderless {
+  min-width: min(20rem, 100%);
+  border-color: transparent;
+}

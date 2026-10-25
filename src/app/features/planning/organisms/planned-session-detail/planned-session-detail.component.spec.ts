@@ -3,6 +3,7 @@ import localeFr from '@angular/common/locales/fr';
 import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { PlannedSessionDetail } from '../../../../core/api/models/api.models';
 import { PlannedSessionDetailComponent } from './planned-session-detail.component';
 
@@ -15,6 +16,7 @@ const SESSION: PlannedSessionDetail = {
   groupId: null,
   sourceWorkoutId: 'w-1',
   locked: false,
+  status: 'UPCOMING',
   name: 'Haut du corps A',
   description: 'Tempo contrôlé à la descente',
   exercises: [
@@ -39,7 +41,9 @@ describe('PlannedSessionDetailComponent', () => {
   async function render(session: PlannedSessionDetail | null = SESSION) {
     // Locale de l'application (app.config) : charges au format français « 62,5 kg ».
     registerLocaleData(localeFr);
-    TestBed.configureTestingModule({ providers: [{ provide: LOCALE_ID, useValue: 'fr-FR' }] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), { provide: LOCALE_ID, useValue: 'fr-FR' }],
+    });
     fixture = TestBed.createComponent(PlannedSessionDetailComponent);
     fixture.componentRef.setInput('session', session);
     fixture.componentRef.setInput('today', '2026-11-05');
@@ -93,13 +97,32 @@ describe('PlannedSessionDetailComponent', () => {
     expect(cancelled).toBe(1);
   });
 
-  it('masque Déplacer et Annuler pour une séance passée ou réalisée', async () => {
-    await render({ ...SESSION, date: '2026-11-02', locked: true });
+  it('masque Déplacer et Annuler pour une séance passée non faite, sans lien vers le réalisé', async () => {
+    await render({ ...SESSION, date: '2026-11-02', locked: true, status: 'MISSED' });
 
     expect(button('Déplacer')).toBeUndefined();
     expect(button('Annuler la séance')).toBeUndefined();
-    expect(element.textContent).toContain('ne peut plus être déplacée ni annulée');
-    expect(element.textContent).toContain('Passée');
+    expect(element.textContent).toContain('Séance passée : elle ne peut plus');
+    expect(element.textContent).toContain('Non faite');
+    expect(element.textContent).not.toContain('Voir le réalisé');
+  });
+
+  it('séance réalisée, même future : verrouillée, avec « Voir le réalisé » (#7)', async () => {
+    await render({ ...SESSION, locked: true, status: 'DONE' });
+
+    expect(button('Déplacer')).toBeUndefined();
+    expect(element.textContent).toContain('Séance réalisée : elle ne peut plus');
+    expect(element.textContent).toContain('Réalisée');
+    const link = [...element.querySelectorAll<HTMLAnchorElement>('a')].find((candidate) =>
+      candidate.textContent?.includes('Voir le réalisé'),
+    );
+    expect(link?.getAttribute('href')).toBe('/athletes/ath-1/seances/ps-1');
+  });
+
+  it('affiche « Planifiée » pour une séance à venir', async () => {
+    await render();
+
+    expect(element.querySelector('p-tag')?.textContent).toContain('Planifiée');
   });
 
   it('affiche un squelette pendant le chargement, et une erreur avec « Réessayer »', async () => {

@@ -8,6 +8,7 @@ const ITEMS: CalendarItem[] = [
     name: 'Haut du corps A',
     meta: '5 exercices, 15 séries',
     locked: false,
+    status: 'UPCOMING',
   },
   {
     key: 'ps-2',
@@ -15,8 +16,24 @@ const ITEMS: CalendarItem[] = [
     name: 'Gainage',
     meta: '3 exercices, 9 séries',
     locked: false,
+    status: 'UPCOMING',
   },
-  { key: 'ps-3', date: '2026-11-03', name: 'Fractionné court', meta: null, locked: true },
+  {
+    key: 'ps-3',
+    date: '2026-11-03',
+    name: 'Fractionné court',
+    meta: null,
+    locked: true,
+    status: 'MISSED',
+  },
+  {
+    key: 'ps-4',
+    date: '2026-11-04',
+    name: 'Seuil',
+    meta: null,
+    locked: true,
+    status: 'DONE',
+  },
 ];
 
 describe('PlanningCalendarComponent', () => {
@@ -96,7 +113,21 @@ describe('PlanningCalendarComponent', () => {
     expect(today.textContent).toContain("aujourd'hui");
     expect(today.querySelector('button.calendar__plan')).not.toBeNull();
     expect(cell('mercredi 4 novembre').querySelector('button.calendar__plan')).toBeNull();
-    expect(cell('mardi 3 novembre').textContent).toContain('Passée');
+  });
+
+  it('affiche le statut de chaque séance : « Planifiée », « Non faite », « Réalisée » (#7)', async () => {
+    await render();
+
+    expect(cell('jeudi 12 novembre').textContent).toContain('Planifiée');
+    const missed = cell('mardi 3 novembre').querySelector('.chip__state')!;
+    expect(missed.textContent).toContain('Non faite');
+    expect(missed.classList).toContain('chip__state--missed');
+    const done = cell('mercredi 4 novembre').querySelector('.chip__state')!;
+    expect(done.textContent).toContain('Réalisée');
+    expect(done.classList).toContain('chip__state--done');
+    expect(
+      cell('mercredi 4 novembre').querySelector('button.chip')!.getAttribute('aria-label'),
+    ).toBe('Seuil, mercredi 4 novembre 2026, réalisée');
   });
 
   it("n'offre aucune action « Planifier » tant que l'API n'a pas donné aujourd'hui, ou si la planification est impossible", async () => {

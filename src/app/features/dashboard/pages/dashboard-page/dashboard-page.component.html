@@ -1,0 +1,63 @@
+<app-page-header title="Tableau de bord" />
+
+@if (noAthlete()) {
+  <app-empty-state
+    message="Aucun athlète suivi"
+    detail="Invitez vos athlètes : leurs taux de réalisation et leurs séances non faites apparaîtront ici."
+    actionLabel="Athlètes"
+    (action)="goToAthletes()"
+  />
+} @else {
+  <div class="dashboard-toolbar">
+    <p-select
+      class="dashboard-borderless"
+      [options]="groups()"
+      optionLabel="name"
+      optionValue="id"
+      [showClear]="true"
+      placeholder="Tous les athlètes"
+      ariaLabel="Filtrer par groupe"
+      [ngModel]="groupId()"
+      (onChange)="onGroupChange($event.value ?? null)"
+      (onClear)="onGroupChange(null)"
+    />
+    <app-period-picker
+      [choices]="weekChoices"
+      [weeks]="weeks()"
+      (weeksChange)="onWeeksChange($event)"
+    />
+  </div>
+
+  @if (error(); as failure) {
+    <app-error-state [message]="errorText(failure)" (retry)="load()" />
+  } @else if (kpis(); as current) {
+    <div class="dashboard" [attr.aria-busy]="loading()">
+      <app-kpi-summary
+        [totals]="current.totals"
+        [weeks]="current.weeks"
+        [from]="current.from"
+        [to]="current.to"
+      />
+
+      @if (emptyGroup()) {
+        <p class="dashboard-hint">Aucun athlète dans ce groupe.</p>
+      } @else {
+        <section class="dashboard-section" aria-labelledby="dashboard-watch-title">
+          <h2 id="dashboard-watch-title" class="section-title">À surveiller</h2>
+          <app-watchlist-table [entries]="current.watchlist" />
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="dashboard-athletes-title">
+          <h2 id="dashboard-athletes-title" class="section-title">Par athlète</h2>
+          <app-athlete-kpi-table [athletes]="current.athletes" />
+        </section>
+      }
+    </div>
+  } @else {
+    <div class="dashboard" aria-busy="true" aria-label="Chargement du tableau de bord">
+      <p-skeleton height="9rem" />
+      <p-skeleton width="10rem" height="1.5rem" />
+      <p-skeleton height="8rem" />
+    </div>
+  }
+}

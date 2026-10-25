@@ -1,0 +1,44 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-6);
+}
+
+p {
+  margin: 0;
+}
+
+.review-breadcrumb {
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+  overflow-wrap: anywhere;
+}
+
+.review-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-2);
+  color: var(--ath-text-muted);
+}
+
+.review-description {
+  max-width: 48rem;
+  color: var(--ath-text-muted);
+}
+
+.review-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-4);
+}
+
+.review-notice {
+  color: var(--ath-text-muted);
+}
+
+.review-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}

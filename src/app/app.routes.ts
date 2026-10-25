@@ -55,26 +55,59 @@ export const routes: Routes = [
       ),
     children: [
       {
-        // Accueil par rôle : le coach arrive sur ses athlètes (jusqu'au tableau de bord, #43),
+        // Accueil par rôle : le coach arrive sur son tableau de bord (#7, Q15),
         // l'administrateur sur ses organisations.
         path: '',
         pathMatch: 'full',
         redirectTo: () => {
           const auth = inject(AuthService);
           if (auth.isCoach()) {
-            return '/athletes';
+            return '/tableau-de-bord';
           }
           return auth.isAdmin() ? '/organisations' : '/acces-refuse';
         },
       },
       {
-        path: 'athletes',
-        title: 'Athlètes · Athletiq',
+        // Tableau de bord des KPI (#7, US32).
+        path: 'tableau-de-bord',
+        title: 'Tableau de bord · Athletiq',
         canActivate: [coachGuard],
         loadComponent: () =>
-          import('./features/athletes/pages/athlete-list-page/athlete-list-page.component').then(
-            (m) => m.AthleteListPageComponent,
+          import('./features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+            (m) => m.DashboardPageComponent,
           ),
+      },
+      {
+        path: 'athletes',
+        canActivate: [coachGuard],
+        children: [
+          {
+            path: '',
+            title: 'Athlètes · Athletiq',
+            loadComponent: () =>
+              import('./features/athletes/pages/athlete-list-page/athlete-list-page.component').then(
+                (m) => m.AthleteListPageComponent,
+              ),
+          },
+          {
+            // Suivi d'un athlète (#7, Q15).
+            path: ':athleteId/suivi',
+            title: 'Suivi · Athletiq',
+            loadComponent: () =>
+              import('./features/tracking/pages/athlete-tracking-page/athlete-tracking-page.component').then(
+                (m) => m.AthleteTrackingPageComponent,
+              ),
+          },
+          {
+            // Prévu / réalisé et ressenti d'une séance (#7, Q15).
+            path: ':athleteId/seances/:plannedSessionId',
+            title: 'Séance de l’athlète · Athletiq',
+            loadComponent: () =>
+              import('./features/tracking/pages/session-review-page/session-review-page.component').then(
+                (m) => m.SessionReviewPageComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'exercices',

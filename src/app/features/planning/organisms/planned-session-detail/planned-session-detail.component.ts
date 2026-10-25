@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { MessageModule } from 'primeng/message';
@@ -18,6 +19,7 @@ import { TagModule } from 'primeng/tag';
 import { IsoDate, PlannedSessionDetail } from '../../../../core/api/models/api.models';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
 import { FormFieldComponent } from '../../../../shared/ui/molecules/form-field/form-field.component';
+import { sessionStatusLabel, sessionStatusSeverity } from '../../../../shared/ui/session-status';
 import { muscleGroupLabel } from '../../../exercises/exercise-labels';
 import { formatRest } from '../../../workouts/workout-form';
 import { fromPickerDate, longDay, toPickerDate } from '../../planning-dates';
@@ -26,13 +28,15 @@ import { fromPickerDate, longDay, toPickerDate } from '../../planning-dates';
  * Détail d'une séance planifiée (US24) : l'instantané copié du modèle (exercices, séries,
  * répétitions, charge, repos) et, si elle n'est pas verrouillée, les actions « Déplacer »
  * (choix du jour au clavier dans `p-datepicker`) et « Annuler la séance » (US25).
- * Une séance passée ou réalisée (`locked`) n'offre aucune action.
+ * Une séance passée ou réalisée (`locked`) n'offre aucune action ; réalisée (#7), elle mène à
+ * son prévu / réalisé (« Voir le réalisé »). Le statut s'affiche avec le badge commun.
  */
 @Component({
   selector: 'app-planned-session-detail',
   imports: [
     DecimalPipe,
     FormsModule,
+    RouterLink,
     ButtonModule,
     DatePickerModule,
     MessageModule,
@@ -92,6 +96,8 @@ export class PlannedSessionDetailComponent {
   });
 
   protected readonly muscleGroupLabel = muscleGroupLabel;
+  protected readonly statusLabel = sessionStatusLabel;
+  protected readonly statusSeverity = sessionStatusSeverity;
   protected readonly formatRest = formatRest;
 
   protected startMove(): void {

@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { GroupCalendarEntry, Uuid } from '../../../../core/api/models/api.models';
+import { sessionStatusLabel, sessionStatusSeverity } from '../../../../shared/ui/session-status';
 import { longDay } from '../../planning-dates';
 
 /**
  * Séance d'un groupe un jour donné (US24, Q8) : « Haut du corps A, 3/4 athlètes » et la liste
- * des membres actuels qui l'ont. Chaque séance planifiée reste individuelle : on l'ouvre pour
- * la voir, la déplacer ou l'annuler.
+ * des membres actuels qui l'ont, avec le statut de chacune une fois réalisée ou non faite (#7).
+ * Chaque séance planifiée reste individuelle : on l'ouvre pour la voir, la déplacer ou l'annuler.
  */
 @Component({
   selector: 'app-group-session-list',
@@ -23,7 +24,15 @@ import { longDay } from '../../planning-dates';
     <ul class="group-sessions__list">
       @for (session of entry().sessions; track session.id) {
         <li class="group-sessions__item">
-          <span class="group-sessions__name">{{ session.lastName }} {{ session.firstName }}</span>
+          <span class="group-sessions__who">
+            <span class="group-sessions__name">{{ session.lastName }} {{ session.firstName }}</span>
+            @if (session.status !== 'UPCOMING') {
+              <p-tag
+                [severity]="statusSeverity(session.status)"
+                [value]="statusLabel(session.status)"
+              />
+            }
+          </span>
           <button
             pButton
             type="button"
@@ -65,7 +74,13 @@ import { longDay } from '../../planning-dates';
       justify-content: space-between;
       gap: var(--ath-space-3);
       padding-block: var(--ath-space-2);
-      border-bottom: 1px solid var(--ath-line);
+      border-bottom: var(--ath-line-width) solid var(--ath-line);
+    }
+    .group-sessions__who {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--ath-space-2);
     }
     .group-sessions__name {
       overflow-wrap: anywhere;
@@ -78,4 +93,6 @@ export class GroupSessionListComponent {
   readonly open = output<Uuid>();
 
   protected readonly dayLabel = computed(() => longDay(this.entry().date));
+  protected readonly statusLabel = sessionStatusLabel;
+  protected readonly statusSeverity = sessionStatusSeverity;
 }

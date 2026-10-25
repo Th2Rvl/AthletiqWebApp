@@ -1,0 +1,49 @@
+@if (notFound()) {
+  <app-empty-state
+    message="Cette séance planifiée n'existe plus"
+    detail="Elle a peut-être été annulée, ou l'athlète n'est plus suivi."
+    actionLabel="Retour au suivi"
+    (action)="backToTracking()"
+  />
+} @else if (loadError(); as error) {
+  <app-error-state [message]="errorText(error)" (retry)="load()" />
+} @else if (review(); as current) {
+  <app-page-header [title]="current.name">
+    <span pageHeaderContext class="review-breadcrumb">
+      <a routerLink="/athletes">Athlètes</a> /
+      <a [routerLink]="['/athletes', current.athleteId, 'suivi']">{{ athleteName() }}</a> / Séance
+    </span>
+    <p pageHeaderSummary class="review-summary">
+      {{ dateLabel() }}
+      <p-tag [severity]="statusSeverity(current.status)" [value]="statusLabel(current.status)" />
+    </p>
+  </app-page-header>
+
+  @if (current.description) {
+    <p class="review-description">{{ current.description }}</p>
+  }
+
+  @if (current.feedback; as feedback) {
+    <section class="review-section" aria-labelledby="review-feedback-title">
+      <h2 id="review-feedback-title" class="section-title">Ressenti</h2>
+      <app-session-feedback [feedback]="feedback" />
+    </section>
+  }
+
+  <section class="review-section" aria-labelledby="review-exercises-title">
+    <h2 id="review-exercises-title" class="section-title">
+      {{ current.status === 'DONE' ? 'Prévu et réalisé' : 'Prévu' }}
+    </h2>
+    @if (plannedOnlyNotice(); as notice) {
+      <p class="review-notice">{{ notice }}</p>
+    }
+    <app-planned-vs-performed [exercises]="current.exercises" [status]="current.status" />
+  </section>
+} @else {
+  <div class="review-skeleton" aria-busy="true" aria-label="Chargement de la séance">
+    <p-skeleton width="12rem" />
+    <p-skeleton width="20rem" height="2.5rem" />
+    <p-skeleton height="6rem" />
+    <p-skeleton height="10rem" />
+  </div>
+}

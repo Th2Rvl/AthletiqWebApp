@@ -42,6 +42,7 @@ const ATHLETE_CALENDAR: AthleteCalendar = {
       setCount: 15,
       groupId: null,
       locked: false,
+      status: 'UPCOMING',
     },
     {
       id: 'ps-2',
@@ -52,6 +53,7 @@ const ATHLETE_CALENDAR: AthleteCalendar = {
       setCount: 3,
       groupId: 'g-1',
       locked: false,
+      status: 'UPCOMING',
     },
   ],
 };
@@ -73,9 +75,27 @@ const GROUP_CALENDAR: GroupCalendar = {
       memberCount: 4,
       locked: false,
       sessions: [
-        { id: 'ps-7', athleteId: 'ath-1', firstName: 'Lucas', lastName: 'Durand' },
-        { id: 'ps-8', athleteId: 'ath-2', firstName: 'Inès', lastName: 'Moreau' },
-        { id: 'ps-9', athleteId: 'ath-3', firstName: 'Karim', lastName: 'Benali' },
+        {
+          id: 'ps-7',
+          athleteId: 'ath-1',
+          firstName: 'Lucas',
+          lastName: 'Durand',
+          status: 'UPCOMING',
+        },
+        {
+          id: 'ps-8',
+          athleteId: 'ath-2',
+          firstName: 'Inès',
+          lastName: 'Moreau',
+          status: 'UPCOMING',
+        },
+        {
+          id: 'ps-9',
+          athleteId: 'ath-3',
+          firstName: 'Karim',
+          lastName: 'Benali',
+          status: 'UPCOMING',
+        },
       ],
     },
   ],
@@ -90,6 +110,7 @@ const DETAIL: PlannedSessionDetail = {
   groupId: null,
   sourceWorkoutId: 'w-1',
   locked: false,
+  status: 'UPCOMING',
   name: 'Haut du corps A',
   description: null,
   exercises: [],
@@ -318,6 +339,30 @@ describe('PlanningPageComponent', () => {
     await fixture.whenStable();
 
     expect(api['get']).toHaveBeenCalledWith('ps-8');
+  });
+
+  it('groupe : la séance passée affiche le nombre de réalisées (#7)', async () => {
+    const [entry] = GROUP_CALENDAR.entries;
+    const past: GroupCalendar = {
+      ...GROUP_CALENDAR,
+      entries: [
+        {
+          ...entry,
+          date: '2026-11-03',
+          locked: true,
+          sessions: [
+            { ...entry.sessions[0], status: 'DONE' },
+            { ...entry.sessions[1], status: 'DONE' },
+            { ...entry.sessions[2], status: 'MISSED' },
+          ],
+        },
+      ],
+    };
+    await setup({ groupId: 'g-1', debut: '2026-11-02' }, of(past));
+
+    const state = element.querySelector('.chip__state')!;
+    expect(state.textContent).toContain('2/3 réalisées');
+    expect(state.classList).toContain('chip__state--missed');
   });
 
   it('annule une séance après une confirmation qui nomme séance, athlète et date', async () => {

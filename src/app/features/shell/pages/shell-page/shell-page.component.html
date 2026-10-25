@@ -6,6 +6,15 @@
       <nav class="shell__nav" aria-label="Navigation principale">
         <a
           class="shell__link"
+          routerLink="/tableau-de-bord"
+          routerLinkActive="shell__link--active"
+          ariaCurrentWhenActive="page"
+        >
+          <ion-icon name="speedometer-outline" aria-hidden="true"></ion-icon>
+          Tableau de bord
+        </a>
+        <a
+          class="shell__link"
           routerLink="/athletes"
           [class.shell__link--active]="athletesActive()"
           [attr.aria-current]="athletesActive() ? 'page' : null"

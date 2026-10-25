@@ -61,7 +61,11 @@
 
     <ng-template #body let-athlete>
       <tr>
-        <td class="athlete-table__name">{{ athlete.lastName }} {{ athlete.firstName }}</td>
+        <td class="athlete-table__name">
+          <a [routerLink]="['/athletes', athlete.id, 'suivi']">
+            {{ athlete.lastName }} {{ athlete.firstName }}
+          </a>
+        </td>
         <td class="athlete-table__email">{{ athlete.email }}</td>
         <td>{{ athlete.joinedAt | date: 'd MMM y' }}</td>
         <td>
@@ -77,6 +81,18 @@
         </td>
         <td class="actions-cell">
           <span class="row-actions">
+            <a
+              pButton
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [routerLink]="['/athletes', athlete.id, 'suivi']"
+              [attr.aria-label]="'Suivi de ' + athlete.firstName + ' ' + athlete.lastName"
+            >
+              <ion-icon name="stats-chart-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Suivi</span>
+            </a>
             <a
               pButton
               size="small"

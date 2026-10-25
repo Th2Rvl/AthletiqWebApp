@@ -1,0 +1,37 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+}
+
+p {
+  margin: 0;
+}
+
+.progression__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-3);
+}
+
+.progression__muted {
+  color: var(--ath-text-muted);
+}
+
+.progression__notice {
+  color: var(--ath-warning-text);
+  font-weight: var(--ath-weight-medium);
+}
+
+// Le graphique est une surface utilitaire : fond surface, sans carte ni ombre.
+.progression__chart {
+  padding: var(--ath-space-4);
+  border-radius: var(--ath-radius-md);
+  background: var(--ath-surface);
+}
+
+.progression__table-title {
+  margin: var(--ath-space-3) 0 0;
+  font-size: var(--ath-text-body);
+}

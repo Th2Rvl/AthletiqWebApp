@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+p {
+  margin: 0;
+}
+
+.pvp__exercises {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pvp__exercise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-2);
+}
+
+.pvp__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ath-space-2) var(--ath-space-5);
+}
+
+.pvp__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--ath-space-2);
+  margin: 0;
+  font-size: var(--ath-text-lead);
+  overflow-wrap: anywhere;
+}
+
+.pvp__muscle {
+  color: var(--ath-text-muted);
+  font-family: var(--ath-font-text);
+  font-size: var(--ath-text-small);
+  font-weight: var(--ath-weight-regular);
+}
+
+// Volumes de l'exercice : chiffres tabulaires, la valeur ressort en 600.
+.pvp__volume {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ath-space-1) var(--ath-space-4);
+  font-size: var(--ath-text-small);
+  font-variant-numeric: tabular-nums;
+
+  strong {
+    font-weight: var(--ath-weight-semibold);
+  }
+}
+
+.pvp__note,
+.pvp__muted {
+  color: var(--ath-text-muted);
+}
+
+.pvp__set {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pvp__missed {
+  color: var(--ath-danger-text);
+  font-weight: var(--ath-weight-medium);
+}

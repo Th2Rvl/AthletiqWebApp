@@ -1,0 +1,113 @@
+<div class="history__toolbar">
+  <p-select
+    class="history__borderless"
+    [options]="statusOptions"
+    optionLabel="label"
+    optionValue="value"
+    [showClear]="true"
+    placeholder="Tous les statuts"
+    ariaLabel="Filtrer par statut"
+    [ngModel]="filters().status"
+    (onChange)="setStatus($event.value ?? null)"
+    (onClear)="setStatus(null)"
+  />
+  <span class="history__check">
+    <p-checkbox
+      inputId="history-with-comment"
+      [binary]="true"
+      [ngModel]="filters().withComment"
+      (ngModelChange)="setWithComment($event)"
+    />
+    <label for="history-with-comment">Avec commentaire</label>
+  </span>
+  <app-period-picker
+    class="history__period"
+    [choices]="weekChoices"
+    [weeks]="filters().weeks"
+    (weeksChange)="setWeeks($event)"
+  />
+</div>
+
+<p-table
+  [value]="loaded() ? sessions() : []"
+  [lazy]="true"
+  [lazyLoadOnInit]="false"
+  [paginator]="totalRecords() > rows()"
+  [first]="first()"
+  [rows]="rows()"
+  [totalRecords]="totalRecords()"
+  [loading]="loading() && loaded()"
+  [showLoader]="false"
+  dataKey="plannedSessionId"
+  (onLazyLoad)="onLazyLoad($event)"
+>
+  <ng-template #header>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Séance</th>
+      <th scope="col">Statut</th>
+      <th scope="col">RPE</th>
+      <th scope="col">Fatigue</th>
+      <th scope="col">Commentaire</th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-session>
+    <tr>
+      <td class="history__date">{{ shortDay(session.date) }}</td>
+      <td class="history__name">
+        <a [routerLink]="['/athletes', athleteId(), 'seances', session.plannedSessionId]">
+          {{ session.name }}
+        </a>
+      </td>
+      <td>
+        <p-tag [severity]="statusSeverity(session.status)" [value]="statusLabel(session.status)" />
+      </td>
+      <td>
+        @if (session.status === 'DONE') {
+          <app-intensity-badge scale="rpe" [value]="session.rpe" />
+        } @else {
+          <span class="history__none">–<span class="visually-hidden">Sans objet</span></span>
+        }
+      </td>
+      <td>
+        @if (session.status === 'DONE') {
+          <app-intensity-badge scale="fatigue" [value]="session.fatigue" />
+        } @else {
+          <span class="history__none">–<span class="visually-hidden">Sans objet</span></span>
+        }
+      </td>
+      <td>
+        @if (session.hasComment) {
+          <span class="history__comment">
+            <ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon>
+            Oui
+          </span>
+        } @else {
+          <span class="history__none">Non</span>
+        }
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    @if (loaded()) {
+      <tr>
+        <td [attr.colspan]="columnCount">
+          <p class="history__empty">{{ emptyMessage() }}</p>
+        </td>
+      </tr>
+    } @else {
+      @for (row of skeletonRows; track row) {
+        <tr aria-hidden="true">
+          <td><p-skeleton width="7rem" /></td>
+          <td><p-skeleton width="12rem" /></td>
+          <td><p-skeleton width="5rem" /></td>
+          <td><p-skeleton width="2rem" /></td>
+          <td><p-skeleton width="2rem" /></td>
+          <td><p-skeleton width="3rem" /></td>
+        </tr>
+      }
+    }
+  </ng-template>
+</p-table>

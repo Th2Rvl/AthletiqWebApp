@@ -24,8 +24,8 @@ import { PageChange } from '../../../../shared/ui/page-change';
 const SKELETON_ROWS = Array.from({ length: 5 }, (_, index) => index);
 
 /**
- * Tableau paginé des athlètes du coach (US11, US12) : recherche, filtre par groupe, lien vers
- * le calendrier de planification (#6) et retrait.
+ * Tableau paginé des athlètes du coach (US11, US12) : recherche, filtre par groupe, liens vers
+ * le suivi (#7, nom et action « Suivi ») et le calendrier de planification (#6), et retrait.
  * Tri (nom puis prénom) et pagination sont faits par l'API (`p-table` en mode `lazy`).
  */
 @Component({

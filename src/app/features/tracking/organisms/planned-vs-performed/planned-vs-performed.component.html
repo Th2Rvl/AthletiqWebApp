@@ -1,0 +1,78 @@
+@if (exercises().length === 0) {
+  <p class="pvp__muted">Cette séance ne contient aucun exercice.</p>
+} @else {
+  <ol class="pvp__exercises">
+    @for (exercise of exercises(); track exercise.snapshotExerciseId) {
+      <li class="pvp__exercise">
+        <div class="pvp__head">
+          <h3 class="pvp__name">
+            {{ exercise.exerciseName }}
+            <span class="pvp__muscle">{{ muscleGroupLabel(exercise.muscleGroup) }}</span>
+          </h3>
+          @if (compare()) {
+            @if (exercise.bodyweight) {
+              <p class="pvp__volume pvp__muted">Poids du corps : comparaison sur les répétitions</p>
+            } @else {
+              <p class="pvp__volume">
+                <span>
+                  Volume prévu
+                  <strong>{{
+                    exercise.plannedVolumeKg === null ? '–' : formatKg(exercise.plannedVolumeKg)
+                  }}</strong>
+                </span>
+                <span>
+                  réalisé
+                  <strong>{{
+                    exercise.performedVolumeKg === null ? '–' : formatKg(exercise.performedVolumeKg)
+                  }}</strong>
+                </span>
+                <span>
+                  écart
+                  <app-delta-value [value]="exercise.volumeDeltaPercent" unit="%" />
+                </span>
+              </p>
+            }
+          }
+        </div>
+        @if (exercise.note) {
+          <p class="pvp__note">{{ exercise.note }}</p>
+        }
+
+        <p-table [value]="exercise.sets" size="small">
+          <ng-template #header>
+            <tr>
+              <th scope="col" class="numeric">Série</th>
+              <th scope="col">Prévu</th>
+              @if (compare()) {
+                <th scope="col">Réalisé</th>
+                <th scope="col" class="numeric">Écart rép.</th>
+                @if (!exercise.bodyweight) {
+                  <th scope="col" class="numeric">Écart charge</th>
+                }
+              }
+            </tr>
+          </ng-template>
+          <ng-template #body let-set>
+            <tr>
+              <td class="numeric">{{ set.position + 1 }}</td>
+              <td class="pvp__set">{{ formatSet(set.plannedReps, set.plannedLoadKg) }}</td>
+              @if (compare()) {
+                <td class="pvp__set">
+                  @if (set.done) {
+                    {{ formatSet(set.performedReps, set.performedLoadKg) }}
+                  } @else {
+                    <span class="pvp__missed">Non faite</span>
+                  }
+                </td>
+                <td class="numeric"><app-delta-value [value]="set.repsDelta" unit="rép." /></td>
+                @if (!exercise.bodyweight) {
+                  <td class="numeric"><app-delta-value [value]="set.loadDeltaKg" unit="kg" /></td>
+                }
+              }
+            </tr>
+          </ng-template>
+        </p-table>
+      </li>
+    }
+  </ol>
+}
