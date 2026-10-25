@@ -3,8 +3,7 @@
 }
 
 .invitation-panel__title {
-  margin: 0 0 var(--ath-space-2);
-  font-size: var(--ath-text-h2);
+  margin-block-end: var(--ath-space-2);
 }
 
 .invitation-panel__help {
@@ -59,7 +58,7 @@
   align-items: center;
   gap: var(--ath-space-2) var(--ath-space-5);
   padding-block: var(--ath-space-3);
-  border-block-start: 1px solid var(--ath-line);
+  border-block-start: var(--ath-line-width) solid var(--ath-line);
 }
 
 .invitation-panel__label {
@@ -71,8 +70,9 @@
 .invitation-panel__code {
   font-family: var(--ath-font-display);
   font-size: var(--ath-text-lead);
+  font-weight: var(--ath-weight-bold);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--ath-tracking-code);
 }
 
 .invitation-panel__expiry {

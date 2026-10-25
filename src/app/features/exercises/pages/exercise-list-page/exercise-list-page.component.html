@@ -1,4 +1,9 @@
-<h1 class="page-title">Exercices</h1>
+<app-page-header title="Exercices" [context]="libraryCountLabel()">
+  <button pButton type="button" (click)="openCreate()">
+    <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+    Créer un exercice
+  </button>
+</app-page-header>
 
 @if (exercises.error() && !exercises.loading()) {
   <app-error-state [message]="errorMessage()" (retry)="exercises.reload()" />
@@ -13,6 +18,7 @@
     [query]="query()"
     [muscleGroup]="muscleGroup()"
     [equipment]="equipment()"
+    [editingId]="dialogVisible() ? (editing()?.id ?? null) : null"
     (pageChange)="onPage($event)"
     (queryChange)="onQueryChange($event)"
     (muscleGroupChange)="onMuscleGroupChange($event)"
@@ -23,13 +29,14 @@
   />
 }
 
-<p-dialog
+<p-drawer
+  position="right"
   [header]="editing() ? 'Modifier l’exercice' : 'Créer un exercice'"
   [visible]="dialogVisible()"
   (visibleChange)="dialogVisible.set($event)"
   [modal]="true"
-  [draggable]="false"
-  [style]="{ width: 'min(36rem, 100vw)' }"
+  [style]="{ width: 'min(28rem, 100vw)' }"
+  closeAriaLabel="Fermer"
 >
   @if (dialogVisible()) {
     <app-exercise-form
@@ -37,7 +44,7 @@
       [saving]="saving()"
       [serverErrors]="serverErrors()"
       (submitted)="save($event)"
-      (cancelled)="closeDialog()"
+      (removeRequested)="confirmRemoveEditing()"
     />
   }
-</p-dialog>
+</p-drawer>

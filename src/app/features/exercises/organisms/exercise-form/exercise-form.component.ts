@@ -26,7 +26,9 @@ export const EXERCISE_EQUIPMENT_MAX = 100;
 export const EXERCISE_VIDEO_URL_MAX = 500;
 
 /**
- * Formulaire de création ou de modification d'un exercice (US15, US16). Valide comme l'API,
+ * Formulaire de création ou de modification d'un exercice (US15, US16), affiché dans le
+ * panneau latéral de la planche W2 (« Supprimer » à gauche en modification, enregistrement
+ * à droite). Valide comme l'API,
  * affiche sous chaque champ l'erreur du serveur (400 de validation, 409 de nom déjà pris),
  * et émet une valeur normalisée : espaces de bord retirés, champ facultatif vide à `null`.
  */
@@ -52,7 +54,8 @@ export class ExerciseFormComponent {
   readonly serverErrors = input<Record<string, string>>({});
 
   readonly submitted = output<ExercisePayload>();
-  readonly cancelled = output<void>();
+  /** « Supprimer » du panneau d'édition : la page demande confirmation. */
+  readonly removeRequested = output<void>();
 
   protected readonly muscleGroupOptions = MUSCLE_GROUP_OPTIONS;
   protected readonly descriptionMax = EXERCISE_DESCRIPTION_MAX;
@@ -74,7 +77,7 @@ export class ExerciseFormComponent {
 
   protected readonly isEdit = computed(() => this.exercise() !== null);
   protected readonly submitLabel = computed(() =>
-    this.isEdit() ? 'Enregistrer les modifications' : "Créer l'exercice",
+    this.isEdit() ? "Enregistrer l'exercice" : "Créer l'exercice",
   );
   protected readonly descriptionLength = computed(() => this.value().description.length);
   protected readonly canSubmit = computed(() => this.status() === 'VALID' && !this.saving());

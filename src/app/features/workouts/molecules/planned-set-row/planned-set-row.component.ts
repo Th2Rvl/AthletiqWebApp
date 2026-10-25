@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -21,6 +28,8 @@ export interface SetRowErrors {
 @Component({
   selector: 'app-planned-set-row',
   imports: [ReactiveFormsModule, ButtonModule, InputNumberModule, MessageModule],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './planned-set-row.component.html',
   styleUrl: './planned-set-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

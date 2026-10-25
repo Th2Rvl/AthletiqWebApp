@@ -1,31 +1,31 @@
 :host {
-  display: block;
-}
-
-.exercise-table__toolbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--ath-space-3);
-  align-items: center;
-  justify-content: space-between;
-  margin-block-end: var(--ath-space-4);
 }
 
 .exercise-table__name {
-  // Pas de token de graisse : le nom se distingue par la police de titre, pas par le gras.
-  font-family: var(--ath-font-display);
+  font-weight: var(--ath-weight-medium);
   overflow-wrap: anywhere;
 }
 
-.exercise-table__none {
+.exercise-table__muted {
   color: var(--ath-text-muted);
 }
 
-.exercise-table__video {
-  color: var(--ath-link);
+// Ligne de l'exercice ouvert dans le panneau : surlignée en primary-soft (planche W2).
+.exercise-table__row--editing > td {
+  background: var(--ath-primary-soft);
 }
 
-.exercise-table__actions {
-  white-space: nowrap;
-  text-align: end;
+.exercise-table__row--editing .exercise-table__name {
+  color: var(--ath-primary-soft-text);
+  font-weight: var(--ath-weight-semibold);
+}
+
+.exercise-table__count {
+  margin: 0;
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
+  font-variant-numeric: tabular-nums;
 }

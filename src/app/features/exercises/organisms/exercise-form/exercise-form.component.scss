@@ -12,6 +12,12 @@ textarea {
 
 .exercise-form__actions {
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--ath-space-2);
+}
+
+// Seul (création), le bouton d'enregistrement reste à droite.
+.exercise-form__submit {
+  margin-inline-start: auto;
 }

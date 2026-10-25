@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -44,6 +45,8 @@ export function formatInvitationCode(code: string): string {
     ErrorStateComponent,
     FormFieldComponent,
   ],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './invitation-panel.component.html',
   styleUrl: './invitation-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

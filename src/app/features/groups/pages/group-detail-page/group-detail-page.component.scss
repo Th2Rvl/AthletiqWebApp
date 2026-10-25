@@ -4,51 +4,15 @@
   gap: var(--ath-space-5);
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ath-space-1);
-  align-self: flex-start;
-  color: var(--ath-link);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.group-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--ath-space-4);
-}
-
-.group-header__identity {
-  min-width: 0;
-}
-
-.group-header__name {
-  margin: 0;
-  font-size: var(--ath-text-h2);
-  overflow-wrap: anywhere;
-}
-
-.group-header__count {
-  margin: var(--ath-space-1) 0 0;
+.group-breadcrumb,
+.group-count {
   color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
   font-variant-numeric: tabular-nums;
-}
-
-.group-header__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ath-space-2);
 }
 
 .group-skeleton {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-3);
+  gap: var(--ath-space-2);
 }

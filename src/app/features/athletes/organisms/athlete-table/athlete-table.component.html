@@ -1,7 +1,9 @@
 @if (noAthleteAtAll()) {
   <app-empty-state
-    message="Aucun athlète pour l'instant."
-    detail="Partagez votre code d'invitation pour qu'un athlète vous rejoigne."
+    message="Aucun athlète pour l'instant"
+    detail="Générez un code et transmettez-le à vos athlètes. Ils apparaîtront ici dès qu'ils l'auront saisi."
+    actionLabel="Inviter un athlète"
+    (action)="invite.emit()"
   />
 } @else {
   <div class="athlete-table__toolbar">
@@ -12,6 +14,7 @@
       <input
         pInputText
         type="search"
+        class="athlete-table__borderless"
         placeholder="Rechercher par nom ou e-mail"
         aria-label="Rechercher un athlète par prénom, nom ou e-mail"
         maxlength="100"
@@ -20,6 +23,7 @@
       />
     </p-iconfield>
     <p-select
+      class="athlete-table__borderless"
       [options]="groups()"
       optionLabel="name"
       optionValue="id"
@@ -71,28 +75,34 @@
             </span>
           }
         </td>
-        <td class="athlete-table__actions">
-          <a
-            pButton
-            size="small"
-            severity="secondary"
-            text
-            [routerLink]="['/planning/athletes', athlete.id]"
-            [attr.aria-label]="'Calendrier de ' + athlete.firstName + ' ' + athlete.lastName"
-          >
-            Calendrier
-          </a>
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="danger"
-            text
-            [attr.aria-label]="'Retirer ' + athlete.firstName + ' ' + athlete.lastName"
-            (click)="remove.emit(athlete)"
-          >
-            Retirer
-          </button>
+        <td class="actions-cell">
+          <span class="row-actions">
+            <a
+              pButton
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [routerLink]="['/planning/athletes', athlete.id]"
+              [attr.aria-label]="'Calendrier de ' + athlete.firstName + ' ' + athlete.lastName"
+            >
+              <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Calendrier</span>
+            </a>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Retirer ' + athlete.firstName + ' ' + athlete.lastName"
+              (click)="remove.emit(athlete)"
+            >
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Retirer</span>
+            </button>
+          </span>
         </td>
       </tr>
     </ng-template>

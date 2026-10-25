@@ -1,5 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+} from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -16,6 +23,8 @@ const SKELETON_ROWS = Array.from({ length: 5 }, (_, index) => index);
 @Component({
   selector: 'app-group-member-table',
   imports: [DatePipe, ButtonModule, SkeletonModule, TableModule, EmptyStateComponent],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './group-member-table.component.html',
   styleUrl: './group-member-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

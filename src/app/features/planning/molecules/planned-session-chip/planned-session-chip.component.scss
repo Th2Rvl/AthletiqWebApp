@@ -2,23 +2,23 @@
   display: block;
 }
 
+// Séance planifiée de la planche W4 : sans bordure, sur surface en retrait ; nom en 13 px 600,
+// état et précision en 12 px.
 .chip {
   display: flex;
   flex-direction: column;
-  gap: var(--ath-space-1);
   width: 100%;
-  padding: var(--ath-space-1) var(--ath-space-2);
-  border: 1px solid var(--ath-line-strong);
+  padding: var(--ath-space-2) var(--ath-space-3);
+  border: var(--ath-line-width) solid transparent;
   border-radius: var(--ath-radius-sm);
-  background: var(--ath-primary-soft);
-  color: var(--ath-primary-soft-text);
+  background: var(--ath-surface-sunken);
+  color: var(--ath-text);
   font: inherit;
-  font-size: var(--ath-text-small);
   text-align: start;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--ath-primary);
+    border-color: var(--ath-line-strong);
   }
 
   &:focus-visible {
@@ -26,21 +26,26 @@
     outline-offset: var(--ath-focus-offset);
   }
 
+  // Séance passée (verrouillée) : sur surface, contour fin, texte secondaire ; ni déplacement
+  // ni annulation dans son détail.
   &--locked {
-    background: var(--ath-surface-sunken);
+    border-color: var(--ath-line);
+    background: var(--ath-surface);
     color: var(--ath-text-muted);
   }
 }
 
 .chip__name {
-  font-family: var(--ath-font-display);
+  font-size: var(--ath-text-small);
+  font-weight: var(--ath-weight-semibold);
   overflow-wrap: anywhere;
 }
 
 .chip__meta {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: var(--ath-space-1);
+  color: var(--ath-text-muted);
+  font-size: var(--ath-text-label);
   font-variant-numeric: tabular-nums;
 }

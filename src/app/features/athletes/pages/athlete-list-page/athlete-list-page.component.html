@@ -1,4 +1,6 @@
-<h1 class="page-title">Athlètes</h1>
+<app-page-header title="Athlètes">
+  <app-section-tabs label="Athlètes et groupes" [tabs]="sectionTabs" />
+</app-page-header>
 
 <app-invitation-panel
   [invitations]="invitations.items()"
@@ -15,7 +17,7 @@
 />
 
 <section aria-labelledby="athlete-list-title">
-  <h2 id="athlete-list-title" class="athlete-list__title">Mes athlètes</h2>
+  <h2 id="athlete-list-title" class="section-title athlete-list__title">Mes athlètes</h2>
   @if (athletes.error() && !athletes.loading()) {
     <app-error-state [message]="athletesErrorMessage()" (retry)="athletes.reload()" />
   } @else {
@@ -33,6 +35,7 @@
       (queryChange)="onQueryChange($event)"
       (groupIdChange)="onGroupChange($event)"
       (remove)="confirmRemove($event)"
+      (invite)="focusInvitation()"
     />
   }
 </section>

@@ -120,7 +120,7 @@ export const routes: Routes = [
       {
         // Planification (#6) : calendrier d'un athlète ou d'un groupe, `?debut=AAAA-MM-JJ`.
         path: 'planning',
-        title: 'Planning · Athletiq',
+        title: 'Planification · Athletiq',
         canActivate: [coachGuard],
         children: [
           { path: '', loadComponent: loadPlanningPage },

@@ -2,23 +2,12 @@
   display: block;
 }
 
-.group-table__toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-block-end: var(--ath-space-4);
-}
-
 .group-table__name {
-  color: var(--ath-link);
+  font-weight: var(--ath-weight-medium);
   text-decoration: none;
   overflow-wrap: anywhere;
 
   &:hover {
     text-decoration: underline;
   }
-}
-
-.group-table__actions {
-  white-space: nowrap;
-  text-align: end;
 }

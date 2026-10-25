@@ -1,16 +1,28 @@
 :host {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ath-space-3);
+  gap: var(--ath-space-2);
   align-items: center;
 }
 
-p-iconfield,
-p-select {
-  flex: 1 1 14rem;
+.exercise-filters__search {
+  flex: 1 1 17.5rem;
 }
 
-input[type='search'] {
-  flex: 1 1 12rem;
+.exercise-filters__search input {
+  width: 100%;
+}
+
+p-select {
+  flex: 0 1 14rem;
+}
+
+.exercise-filters__equipment {
+  flex: 0 1 12rem;
   min-width: 0;
+}
+
+// Recherche et filtres de la planche W2 : champs de 40 px posés sur surface, sans bordure.
+.exercise-filters__borderless {
+  border-color: transparent;
 }

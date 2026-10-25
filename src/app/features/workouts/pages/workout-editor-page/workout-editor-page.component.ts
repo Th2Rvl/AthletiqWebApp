@@ -30,6 +30,7 @@ import { WorkoutApiService } from '../../../../core/api/workout-api.service';
 import { LeaveGuarded } from '../../../../core/navigation/unsaved-changes.guard';
 import { EmptyStateComponent } from '../../../../shared/ui/molecules/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import { ExercisePickerComponent } from '../../organisms/exercise-picker/exercise-picker.component';
 import { WorkoutEditorComponent } from '../../organisms/workout-editor/workout-editor.component';
 import { WORKOUT_EXERCISES_MAX } from '../../workout-form';
@@ -45,7 +46,8 @@ const NOT_FOUND_CODES = ['WORKOUT_NOT_FOUND', 'INVALID_PARAMETER'];
  * Seule à injecter `WorkoutApiService` et `ExerciseApiService` pour l'éditeur : elle charge la
  * séance, vérifie que la bibliothèque n'est pas vide, alimente le sélecteur d'exercices,
  * enregistre (`POST` puis `PUT` complet, Q9) et retient la sortie si la séance n'est pas
- * enregistrée.
+ * enregistrée. Depuis l'en-tête (planche W3), elle duplique (`POST …/duplicate`) ou supprime
+ * la séance ouverte, avec les mêmes messages que la liste des séances.
  */
 @Component({
   selector: 'app-workout-editor-page',
@@ -56,6 +58,7 @@ const NOT_FOUND_CODES = ['WORKOUT_NOT_FOUND', 'INVALID_PARAMETER'];
     EmptyStateComponent,
     ErrorStateComponent,
     ExercisePickerComponent,
+    PageHeaderComponent,
     WorkoutEditorComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -85,6 +88,7 @@ export class WorkoutEditorPageComponent implements LeaveGuarded {
   /** Faux tant qu'on ignore si la bibliothèque est vide : l'ajout reste alors possible. */
   protected readonly libraryEmpty = signal(false);
   protected readonly saving = signal(false);
+  protected readonly duplicating = signal(false);
   protected readonly serverErrors = signal<Record<string, string>>({});
   protected readonly heading = computed(() =>
     this.isNew() ? 'Nouvelle séance' : (this.workout()?.name ?? 'Séance'),
@@ -238,6 +242,74 @@ export class WorkoutEditorPageComponent implements LeaveGuarded {
     const errors = fieldErrors(error);
     if (Object.keys(errors).length > 0) {
       this.serverErrors.set(errors);
+    } else {
+      this.messages.add({ severity: 'error', summary: problemMessage(error) });
+    }
+  }
+
+  // --- Actions de l'en-tête ---
+
+  /** « Dupliquer » : la copie s'ouvre (la garde de sortie protège les modifications en cours). */
+  protected duplicate(): void {
+    const id = this.workoutId();
+    if (!id) {
+      return;
+    }
+    this.duplicating.set(true);
+    this.api
+      .duplicate(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (copy) => {
+          this.duplicating.set(false);
+          this.messages.add({ severity: 'success', summary: 'Séance dupliquée', detail: copy.name });
+          void this.router.navigate(['/seances', copy.id]);
+        },
+        error: (error: unknown) => {
+          this.duplicating.set(false);
+          this.onActionError(error);
+        },
+      });
+  }
+
+  protected confirmRemove(): void {
+    const workout = this.workout();
+    if (!workout) {
+      return;
+    }
+    this.confirmation.confirm({
+      header: `Supprimer « ${workout.name} » ?`,
+      message:
+        'La séance, ses exercices et ses séries sont supprimés. Les séances déjà planifiées ne changent pas. Cette action est définitive.',
+      acceptLabel: 'Supprimer la séance',
+      rejectLabel: 'Annuler',
+      acceptButtonProps: { label: 'Supprimer la séance', severity: 'danger' },
+      rejectButtonProps: { label: 'Annuler', severity: 'secondary', text: true },
+      defaultFocus: 'reject',
+      accept: () => this.remove(workout),
+    });
+  }
+
+  private remove(workout: Workout): void {
+    this.api
+      .delete(workout.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.leaving = true;
+          this.messages.add({ severity: 'success', summary: 'Séance supprimée', detail: workout.name });
+          this.backToList();
+        },
+        error: (error: unknown) => this.onActionError(error),
+      });
+  }
+
+  /** `404 WORKOUT_NOT_FOUND` : supprimée entre-temps, on le dit et on revient à la liste. */
+  private onActionError(error: unknown): void {
+    if (problemCode(error) === 'WORKOUT_NOT_FOUND') {
+      this.leaving = true;
+      this.messages.add({ severity: 'warn', summary: problemMessage(error) });
+      this.backToList();
     } else {
       this.messages.add({ severity: 'error', summary: problemMessage(error) });
     }

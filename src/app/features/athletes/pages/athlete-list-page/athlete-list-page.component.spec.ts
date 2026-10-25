@@ -129,10 +129,10 @@ describe('AthleteListPageComponent', () => {
     await setup(of(pageOf([])));
 
     expect(element.textContent).toContain(
-      "Aucun athlète pour l'instant.",
+      "Aucun athlète pour l'instant",
     );
     expect(element.textContent).toContain(
-      "Partagez votre code d'invitation pour qu'un athlète vous rejoigne.",
+      "Générez un code et transmettez-le à vos athlètes.",
     );
     expect(element.textContent).toContain("Aucun code d'invitation actif");
     expect(buttonByText("Générer un code d'invitation")).toBeTruthy();
@@ -228,7 +228,15 @@ describe('AthleteListPageComponent', () => {
     expect(messages.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success', summary: 'Athlète retiré' }),
     );
-    expect(element.textContent).toContain("Aucun athlète pour l'instant.");
+    expect(element.textContent).toContain("Aucun athlète pour l'instant");
+  });
+
+  it("« Inviter un athlète » de l'état vide mène au champ du code d'invitation", async () => {
+    await setup(of(pageOf([])));
+
+    buttonByText('Inviter un athlète').click();
+
+    expect(document.activeElement?.id).toBe('invitation-label');
   });
 
   it('signale un athlète déjà retiré puis recharge la liste', async () => {
@@ -280,7 +288,7 @@ describe('AthleteListPageComponent', () => {
     await fixture.whenStable();
 
     expect(element.textContent).toContain('Aucun athlète ne correspond à la recherche');
-    expect(element.textContent).not.toContain("Aucun athlète pour l'instant.");
+    expect(element.textContent).not.toContain("Aucun athlète pour l'instant");
   });
 
   it('annuler la confirmation de retrait ne retire rien et ne recharge pas la liste', async () => {

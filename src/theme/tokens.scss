@@ -32,6 +32,30 @@
   --ath-text-body: 1rem;
   --ath-text-small: 0.8rem;
   --ath-line-height-body: 1.5;
+  --ath-line-height-tight: 1.1;
+
+  // Tailles des planches hors échelle (v0.2) : titre d'écran, titre de section, marque,
+  // libellé de champ tonal et chiffres clés (KPI principal, secondaire, d'appui)
+  --ath-text-page-title: 2.25rem;  // 36 px
+  --ath-text-section: 1.375rem;    // 22 px
+  --ath-text-brand: 1.5rem;        // 24 px
+  --ath-text-label: 0.75rem;       // 12 px
+  --ath-text-kpi-1: 4rem;          // 64 px
+  --ath-text-kpi-2: 2.75rem;       // 44 px
+  --ath-text-kpi-3: 1.75rem;       // 28 px
+
+  // Graisses : Manrope 600 (section), 700 (écran), 800 (chiffres clés) ;
+  // Public Sans 400 (texte), 500 (libellés), 600 (ce qui doit ressortir)
+  --ath-weight-regular: 400;
+  --ath-weight-medium: 500;
+  --ath-weight-semibold: 600;
+  --ath-weight-bold: 700;
+  --ath-weight-extrabold: 800;
+
+  // Approche des titres : resserrée
+  --ath-tracking-tight: -0.02em;   // titre d'écran, marque, chiffres clés
+  --ath-tracking-snug: -0.01em;    // titres de section et de bloc
+  --ath-tracking-code: 0.12em;     // code d'invitation
 
   // Arrondis : grandissent avec la taille de l'élément
   --ath-radius-none: 0;     // tableaux, grilles

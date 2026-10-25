@@ -70,21 +70,25 @@
             size="small"
             severity="secondary"
             text
+            iconOnly
             [attr.aria-label]="'Modifier ' + organisation.name"
             (click)="edit.emit(organisation)"
           >
-            Modifier
+            <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+            <span class="visually-hidden">Modifier</span>
           </button>
           <button
             pButton
             type="button"
             size="small"
-            severity="danger"
+            severity="secondary"
             text
+            iconOnly
             [attr.aria-label]="'Supprimer ' + organisation.name"
             (click)="remove.emit(organisation)"
           >
-            Supprimer
+            <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+            <span class="visually-hidden">Supprimer</span>
           </button>
         </td>
       </tr>

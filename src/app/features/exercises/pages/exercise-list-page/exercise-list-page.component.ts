@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { DrawerModule } from 'primeng/drawer';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import {
   fieldErrors,
@@ -13,6 +23,7 @@ import { ExerciseApiService } from '../../../../core/api/exercise-api.service';
 import { Exercise, ExercisePayload, MuscleGroup } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { ExerciseFormComponent } from '../../organisms/exercise-form/exercise-form.component';
 import { ExerciseTableComponent } from '../../organisms/exercise-table/exercise-table.component';
@@ -20,13 +31,24 @@ import { ExerciseTableComponent } from '../../organisms/exercise-table/exercise-
 const SEARCH_DEBOUNCE_MS = 300;
 
 /**
- * Page « Exercices » (US15 à US17) : bibliothèque du coach, avec recherche par nom, filtres
- * par groupe musculaire et matériel, création, modification et suppression confirmée.
+ * Page « Exercices » (US15 à US17), planche W2 : bibliothèque du coach, avec recherche par
+ * nom, filtres par groupe musculaire et matériel, création et modification dans un panneau
+ * latéral (`p-drawer`, décision #70), suppression confirmée.
  */
 @Component({
   selector: 'app-exercise-list-page',
-  imports: [DialogModule, ErrorStateComponent, ExerciseFormComponent, ExerciseTableComponent],
+  imports: [
+    ButtonModule,
+    DrawerModule,
+    ErrorStateComponent,
+    ExerciseFormComponent,
+    ExerciseTableComponent,
+    PageHeaderComponent,
+  ],
+  // `ion-icon` : icône Ionicons enregistrée au démarrage (voir core/icons).
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './exercise-list-page.component.html',
+  styleUrl: './exercise-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExerciseListPageComponent {
@@ -50,7 +72,20 @@ export class ExerciseListPageComponent {
     }),
   );
 
-  /** Dialog de création (exercice `null`) ou de modification. */
+  /**
+   * Taille de la bibliothèque, au-dessus du titre (« 34 exercices ») : relevée sur la dernière
+   * réponse sans recherche ni filtre, pour ne pas la confondre avec un nombre de résultats.
+   */
+  private readonly libraryCount = signal<number | null>(null);
+  protected readonly libraryCountLabel = computed(() => {
+    const count = this.libraryCount();
+    if (count === null) {
+      return null;
+    }
+    return `${count} ${count > 1 ? 'exercices' : 'exercice'}`;
+  });
+
+  /** Panneau de création (exercice `null`) ou de modification. */
   protected readonly dialogVisible = signal(false);
   protected readonly editing = signal<Exercise | null>(null);
   protected readonly saving = signal(false);
@@ -70,6 +105,13 @@ export class ExerciseListPageComponent {
         this.exercises.load(0);
       });
     this.exercises.load(0);
+    effect(() => {
+      const unfiltered =
+        this.query().trim() === '' && this.muscleGroup() === null && this.equipment().trim() === '';
+      if (this.exercises.loaded() && !this.exercises.loading() && unfiltered) {
+        this.libraryCount.set(this.exercises.total());
+      }
+    });
   }
 
   protected errorMessage(): string {
@@ -103,8 +145,12 @@ export class ExerciseListPageComponent {
     this.openDialog(exercise);
   }
 
-  protected closeDialog(): void {
-    this.dialogVisible.set(false);
+  /** « Supprimer » du panneau : même confirmation que depuis la ligne. */
+  protected confirmRemoveEditing(): void {
+    const exercise = this.editing();
+    if (exercise) {
+      this.confirmRemove(exercise);
+    }
   }
 
   protected save(payload: ExercisePayload): void {
@@ -167,6 +213,9 @@ export class ExerciseListPageComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          if (this.editing()?.id === exercise.id) {
+            this.dialogVisible.set(false);
+          }
           this.messages.add({
             severity: 'success',
             summary: 'Exercice supprimé',

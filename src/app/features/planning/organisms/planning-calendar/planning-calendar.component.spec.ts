@@ -61,7 +61,21 @@ describe('PlanningCalendarComponent', () => {
     expect(cells).toHaveLength(28);
     expect(cells[0].getAttribute('aria-label')).toBe('lundi 2 novembre 2026');
     expect(cells[27].getAttribute('aria-label')).toBe('dimanche 29 novembre 2026');
-    expect(element.querySelectorAll('[role="columnheader"]')[0].textContent).toContain('Lundi');
+    expect(element.querySelectorAll('[role="columnheader"]')[1].textContent).toContain('lundi');
+  });
+
+  it('numérote chaque semaine (ISO) et en donne les bornes dans sa colonne', async () => {
+    await render();
+
+    const weeks = [...element.querySelectorAll('[role="rowheader"]')].map((header) =>
+      [...header.querySelectorAll('span')].map((part) => part.textContent!.trim()).join(' '),
+    );
+    expect(weeks).toEqual([
+      'Sem. 45 2 – 8 nov.',
+      'Sem. 46 9 – 15 nov.',
+      'Sem. 47 16 – 22 nov.',
+      'Sem. 48 23 – 29 nov.',
+    ]);
   });
 
   it('empile plusieurs séances dans la même case', async () => {
@@ -79,7 +93,7 @@ describe('PlanningCalendarComponent', () => {
 
     const today = cell('jeudi 5 novembre');
     expect(today.getAttribute('aria-current')).toBe('date');
-    expect(today.textContent).toContain("Aujourd'hui");
+    expect(today.textContent).toContain("aujourd'hui");
     expect(today.querySelector('button.calendar__plan')).not.toBeNull();
     expect(cell('mercredi 4 novembre').querySelector('button.calendar__plan')).toBeNull();
     expect(cell('mardi 3 novembre').textContent).toContain('Passée');

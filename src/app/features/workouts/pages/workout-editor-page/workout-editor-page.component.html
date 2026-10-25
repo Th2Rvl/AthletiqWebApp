@@ -1,7 +1,10 @@
-<a class="back-link" routerLink="/seances">
-  <ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon>
-  Séances
-</a>
+@if (notFound() || loadError() || loading()) {
+  <app-page-header [title]="heading()">
+    <span pageHeaderContext class="breadcrumb">
+      <a routerLink="/seances">Séances</a> / {{ isNew() ? 'Nouvelle' : 'Modifier' }}
+    </span>
+  </app-page-header>
+}
 
 @if (notFound()) {
   <app-empty-state
@@ -14,21 +17,24 @@
   <app-error-state [message]="loadErrorMessage()" (retry)="load()" />
 } @else if (loading()) {
   <div class="editor-skeleton" aria-busy="true" aria-label="Chargement de la séance">
-    <p-skeleton width="18rem" height="2.5rem" />
-    <p-skeleton width="100%" height="2.5rem" />
-    <p-skeleton width="100%" height="10rem" />
-    <p-skeleton width="100%" height="10rem" />
+    <p-skeleton width="100%" height="4rem" />
+    <p-skeleton width="100%" height="12rem" />
+    <p-skeleton width="100%" height="12rem" />
   </div>
 } @else {
-  <h1 class="page-title editor-title">{{ heading() }}</h1>
   <app-workout-editor
     [workout]="workout()"
+    [heading]="heading()"
+    [isNew]="isNew()"
+    [duplicating]="duplicating()"
     [libraryEmpty]="libraryEmpty()"
     [saving]="saving()"
     [serverErrors]="serverErrors()"
     (submitted)="save($event)"
     (cancelled)="backToList()"
     (addRequested)="openPicker()"
+    (duplicate)="duplicate()"
+    (remove)="confirmRemove()"
   />
 }
 

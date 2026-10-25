@@ -1,12 +1,35 @@
-<h1 class="page-title">Planning</h1>
+<app-page-header title="Planification">
+  @if (showCalendar()) {
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      outlined
+      [disabled]="!canPlan()"
+      (click)="openDuplicate()"
+    >
+      <ion-icon name="copy-outline" aria-hidden="true"></ion-icon>
+      Dupliquer une semaine
+    </button>
+    <button pButton type="button" [disabled]="!canPlan()" (click)="openPlan()">
+      <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+      Planifier une séance
+    </button>
+  }
+</app-page-header>
 
 <div class="planning-toolbar">
-  <app-planning-target-picker
-    [athletes]="athletes()"
-    [groups]="groups()"
-    [selected]="target()"
-    (targetChange)="selectTarget($event)"
-  />
+  <div class="planning-toolbar__target">
+    <app-planning-target-picker
+      [athletes]="athletes()"
+      [groups]="groups()"
+      [selected]="target()"
+      (targetChange)="selectTarget($event)"
+    />
+    @if (memberCountText(); as members) {
+      <span class="planning-toolbar__members">{{ members }}</span>
+    }
+  </div>
   @if (target()) {
     <app-week-navigator
       [label]="periodText()"
@@ -39,30 +62,14 @@
   <app-empty-state
     [message]="notFoundMessage()"
     detail="Choisissez un autre athlète ou un autre groupe."
-    actionLabel="Retour au planning"
+    actionLabel="Retour à la planification"
     (action)="goTo('/planning')"
   />
 } @else if (calendarError(); as error) {
   <app-error-state [message]="errorText(error) ?? ''" (retry)="loadCalendar()" />
 } @else {
   <section class="planning" aria-labelledby="planning-target-title">
-    <header class="planning__header">
-      <h2 id="planning-target-title" class="planning__title">{{ targetName() }}</h2>
-      <div class="planning__actions">
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          [disabled]="!canPlan()"
-          (click)="openDuplicate()"
-        >
-          Dupliquer une semaine
-        </button>
-        <button pButton type="button" [disabled]="!canPlan()" (click)="openPlan()">
-          Planifier une séance
-        </button>
-      </div>
-    </header>
+    <h2 id="planning-target-title" class="visually-hidden">Calendrier de {{ targetName() }}</h2>
 
     @if (groupWithoutMembers()) {
       <p-message severity="warn">
@@ -70,7 +77,7 @@
         <a class="planning__link" [routerLink]="['/groupes', target()?.id]">Ouvrir le groupe</a>
       </p-message>
     } @else if (calendarEmpty()) {
-      <p class="planning__empty">
+      <p class="planning__hint">
         Aucune séance planifiée sur cette période. Choisissez « Planifier » dans un jour pour en
         ajouter une.
       </p>
@@ -86,6 +93,8 @@
       (plan)="openPlan($event)"
       (open)="openItem($event)"
     />
+
+    <p class="planning__hint">Ouvrez une séance pour la déplacer ou l'annuler.</p>
   </section>
 }
 

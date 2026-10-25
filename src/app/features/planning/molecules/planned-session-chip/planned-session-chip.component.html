@@ -6,14 +6,10 @@
   (click)="selected.emit()"
 >
   <span class="chip__name">{{ name() }}</span>
-  @if (meta() || locked()) {
-    <span class="chip__meta">
-      @if (meta(); as text) {
-        <span>{{ text }}</span>
-      }
-      @if (locked()) {
-        <p-tag severity="secondary" value="Passée" />
-      }
-    </span>
-  }
+  <span class="chip__meta">
+    <span class="chip__state">{{ locked() ? 'Passée' : 'Planifiée' }}</span>
+    @if (meta(); as text) {
+      <span>· {{ text }}</span>
+    }
+  </span>
 </button>

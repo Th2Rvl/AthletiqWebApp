@@ -1,6 +1,6 @@
 .planned-set-row {
   display: grid;
-  grid-template-columns: minmax(4.5rem, auto) repeat(3, minmax(7rem, 1fr)) auto;
+  grid-template-columns: minmax(4rem, auto) repeat(3, minmax(7rem, 1fr)) auto;
   gap: var(--ath-space-2) var(--ath-space-3);
   align-items: start;
 }
@@ -8,6 +8,7 @@
 .planned-set-row__number {
   padding-block-start: var(--ath-space-6);
   color: var(--ath-text-muted);
+  font-size: var(--ath-text-small);
   font-variant-numeric: tabular-nums;
 }
 
@@ -19,9 +20,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+// Libellé des champs tonals de la planche W3 : 12 px, texte secondaire.
 .planned-set-row__label {
-  font-size: var(--ath-text-small);
   color: var(--ath-text-muted);
+  font-size: var(--ath-text-label);
 }
 
 .planned-set-row__rest {

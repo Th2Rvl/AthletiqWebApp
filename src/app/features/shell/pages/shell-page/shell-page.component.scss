@@ -3,59 +3,164 @@
   min-height: 100vh;
 }
 
-.shell__bar {
+// Barre latérale à gauche ; sous la largeur utile, elle passe au-dessus du contenu
+// (même principe que la planche : deux blocs flexibles qui passent à la ligne).
+.shell {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  min-height: 100vh;
+}
+
+.shell__sidebar {
+  display: flex;
+  flex: 0 0 var(--ath-sidebar-width);
+  flex-direction: column;
   gap: var(--ath-space-6);
-  padding: var(--ath-space-3) var(--ath-space-5);
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: var(--ath-space-5) var(--ath-space-3);
+  border-right: var(--ath-line-width) solid var(--ath-line);
   background: var(--ath-surface);
 }
 
 .shell__brand {
+  align-self: flex-start;
+  padding-inline: var(--ath-space-3);
   color: var(--ath-primary);
   font-family: var(--ath-font-display);
-  font-size: var(--ath-text-lead);
+  font-size: var(--ath-text-brand);
+  font-weight: var(--ath-weight-extrabold);
+  line-height: var(--ath-line-height-tight);
+  letter-spacing: var(--ath-tracking-tight);
   text-decoration: none;
 }
 
 .shell__nav {
   display: flex;
-  gap: var(--ath-space-4);
-  flex: 1;
+  flex-direction: column;
+  gap: var(--ath-space-1);
 }
 
 .shell__link {
-  padding-block: var(--ath-space-1);
-  color: var(--ath-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--ath-space-3);
+  min-height: var(--ath-nav-item-height);
+  padding-inline: var(--ath-space-3);
+  border-radius: var(--ath-radius-sm);
+  color: var(--ath-text);
   text-decoration: none;
 
+  ion-icon {
+    color: var(--ath-text-muted);
+  }
+
   &:hover {
-    color: var(--ath-text);
+    background: var(--ath-surface-sunken);
+  }
+
+  &--active,
+  &--active:hover {
+    background: var(--ath-primary-soft);
+    color: var(--ath-primary-soft-text);
+    font-weight: var(--ath-weight-semibold);
+
+    ion-icon {
+      color: var(--ath-primary-soft-text);
+    }
+  }
+}
+
+.shell__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-3);
+  margin-top: auto;
+  padding: var(--ath-space-3);
+  border-top: var(--ath-line-width) solid var(--ath-line);
+}
+
+.shell__user-name {
+  font-weight: var(--ath-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.shell__account {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ath-space-1);
+  font-size: var(--ath-text-small);
+}
+
+.shell__account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ath-space-2);
+  color: var(--ath-link);
+
+  ion-icon {
+    font-size: var(--ath-text-body);
   }
 
   &--active {
     color: var(--ath-text);
-    text-decoration: underline;
-    text-decoration-color: var(--ath-primary);
-    text-decoration-thickness: var(--ath-focus-width);
-    text-underline-offset: var(--ath-space-2);
+    font-weight: var(--ath-weight-semibold);
   }
 }
 
-.shell__user {
-  display: flex;
-  align-items: center;
-  gap: var(--ath-space-2);
+// « Se déconnecter » : action textuelle à l'allure d'un lien (planche), mais un vrai bouton.
+.shell__logout {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ath-link);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-.shell__user-name {
+.shell__theme {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ath-space-1);
+}
+
+.shell__theme-label {
   color: var(--ath-text-muted);
   font-size: var(--ath-text-small);
 }
 
 .shell__content {
-  max-width: 80rem;
-  margin-inline: auto;
-  padding: var(--ath-space-6) var(--ath-space-5);
+  flex: 999 1 35rem;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--ath-space-6) var(--ath-space-7) var(--ath-space-7);
+}
+
+// Largeur téléphone : la navigation, au-dessus du contenu, s'étale en ligne.
+@media (max-width: 48rem) {
+  .shell__sidebar {
+    flex-basis: 100%;
+    gap: var(--ath-space-4);
+    border-right: 0;
+    border-bottom: var(--ath-line-width) solid var(--ath-line);
+  }
+
+  .shell__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .shell__footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .shell__content {
+    padding: var(--ath-space-5) var(--ath-space-4) var(--ath-space-6);
+  }
 }

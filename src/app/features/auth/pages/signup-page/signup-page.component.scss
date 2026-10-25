@@ -16,12 +16,16 @@
   margin: 0;
   color: var(--ath-primary);
   font-family: var(--ath-font-display);
-  font-size: var(--ath-text-lead);
+  font-size: var(--ath-text-brand);
+  font-weight: var(--ath-weight-extrabold);
+  letter-spacing: var(--ath-tracking-tight);
 }
 
 .account__title {
   margin: var(--ath-space-2) 0 var(--ath-space-6);
-  font-size: var(--ath-text-h2);
+  font-size: var(--ath-text-page-title);
+  line-height: var(--ath-line-height-tight);
+  letter-spacing: var(--ath-tracking-tight);
 }
 
 .account__aside {

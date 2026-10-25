@@ -27,13 +27,12 @@ import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
-import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 import { filter } from 'rxjs';
 import { ExerciseRef, Workout, WorkoutPayload } from '../../../../core/api/models/api.models';
 import { trimmedLength } from '../../../../shared/forms/validators';
 import { FormFieldComponent } from '../../../../shared/ui/molecules/form-field/form-field.component';
-import { muscleGroupLabel } from '../../../exercises/exercise-labels';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
 import { BulkSetsInputComponent } from '../../molecules/bulk-sets-input/bulk-sets-input.component';
 import {
   PlannedSetRowComponent,
@@ -57,7 +56,10 @@ import {
 const EMPTY_SET: SetValues = { reps: null, loadKg: null, restSeconds: null };
 
 /**
- * Éditeur de séance (US18 à US20) : nom, consignes, exercices ordonnés et séries prévues.
+ * Éditeur de séance (US18 à US20), planche W3 : en-tête avec fil « Séances / Modifier », nom
+ * éditable en place à la taille du titre, synthèse (exercices, séries) et actions en haut à
+ * droite ; consignes ; blocs d'exercice sur surface avec poignée, numéro, séries prévues en
+ * champs tonals et consigne pour l'athlète. La saisie reste série par série (décision #70).
  *
  * Organisme présentationnel : la page lui donne la séance, l'état de la bibliothèque et les
  * erreurs de l'API ; il émet une séance normalisée (`WorkoutPayload`, positions implicites).
@@ -77,9 +79,9 @@ const EMPTY_SET: SetValues = { reps: null, loadKg: null, restSeconds: null };
     ButtonModule,
     InputTextModule,
     MessageModule,
-    TagModule,
     TextareaModule,
     FormFieldComponent,
+    PageHeaderComponent,
     PlannedSetRowComponent,
     BulkSetsInputComponent,
   ],
@@ -100,16 +102,22 @@ export class WorkoutEditorComponent {
   readonly saving = input(false);
   /** Erreurs renvoyées par l'API, par chemin JSON (`name`, `exercises[0].sets[1].reps`…). */
   readonly serverErrors = input<Record<string, string>>({});
+  /** Titre lu par les lecteurs d'écran : « Nouvelle séance » ou le nom enregistré. */
+  readonly heading = input('Séance');
+  /** Vrai sur `/seances/nouvelle` : ni « Dupliquer » ni « Supprimer ». */
+  readonly isNew = input(true);
+  readonly duplicating = input(false);
 
   readonly submitted = output<WorkoutPayload>();
   readonly cancelled = output<void>();
   readonly addRequested = output<void>();
+  readonly duplicate = output<void>();
+  readonly remove = output<void>();
 
   protected readonly nameMax = WORKOUT_NAME_MAX;
   protected readonly descriptionMax = WORKOUT_DESCRIPTION_MAX;
   protected readonly exercisesMax = WORKOUT_EXERCISES_MAX;
   protected readonly setsMax = WORKOUT_SETS_MAX;
-  protected readonly muscleGroupLabel = muscleGroupLabel;
 
   protected readonly form = new FormGroup({
     name: new FormControl('', {
@@ -154,6 +162,16 @@ export class WorkoutEditorComponent {
   /** Vrai si le coach a modifié la séance depuis son chargement ou son dernier enregistrement. */
   isDirty(): boolean {
     return this.form.dirty;
+  }
+
+  /** Synthèse sous le titre : « 4 exercices · 14 séries ». */
+  protected summary(): string {
+    const exercises = this.exercises.length;
+    const sets = this.exercises.controls.reduce(
+      (total, exercise) => total + exercise.controls.sets.length,
+      0,
+    );
+    return `${exercises} ${exercises > 1 ? 'exercices' : 'exercice'} · ${sets} ${sets > 1 ? 'séries' : 'série'}`;
   }
 
   /** Nombre d'exercices de la séance en cours d'édition (30 au plus). */

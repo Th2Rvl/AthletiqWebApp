@@ -1,5 +1,5 @@
 <section aria-labelledby="invitation-panel-title">
-  <h2 id="invitation-panel-title" class="invitation-panel__title">Codes d'invitation</h2>
+  <h2 id="invitation-panel-title" class="section-title invitation-panel__title">Codes d'invitation</h2>
   <p class="invitation-panel__help">
     Un code est valable pour un seul athlète. Transmettez-le-lui : il le saisira dans l'application
     mobile pour rejoindre vos athlètes.
@@ -47,9 +47,11 @@
               type="button"
               size="small"
               severity="secondary"
+              outlined
               [attr.aria-label]="'Copier le code de ' + invitation.label"
               (click)="copy.emit(invitation)"
             >
+              <ion-icon name="copy-outline" aria-hidden="true"></ion-icon>
               Copier le code
             </button>
             <button
@@ -68,7 +70,7 @@
               type="button"
               size="small"
               severity="danger"
-              text
+              outlined
               [attr.aria-label]="'Révoquer le code de ' + invitation.label"
               (click)="revoke.emit(invitation)"
             >

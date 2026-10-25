@@ -3,20 +3,18 @@
     message="Aucun exercice pour l'instant"
     detail="Créez vos exercices : vous les retrouverez ensuite dans vos séances."
     actionLabel="Créer un exercice"
+    actionIcon="add-outline"
     (action)="create.emit()"
   />
 } @else {
-  <div class="exercise-table__toolbar">
-    <app-exercise-filters
-      [query]="query()"
-      [muscleGroup]="muscleGroup()"
-      [equipment]="equipment()"
-      (queryChange)="queryChange.emit($event)"
-      (muscleGroupChange)="muscleGroupChange.emit($event)"
-      (equipmentChange)="equipmentChange.emit($event)"
-    />
-    <button pButton type="button" (click)="create.emit()">Créer un exercice</button>
-  </div>
+  <app-exercise-filters
+    [query]="query()"
+    [muscleGroup]="muscleGroup()"
+    [equipment]="equipment()"
+    (queryChange)="queryChange.emit($event)"
+    (muscleGroupChange)="muscleGroupChange.emit($event)"
+    (equipmentChange)="equipmentChange.emit($event)"
+  />
 
   <p-table
     [value]="loaded() ? exercises() : []"
@@ -29,6 +27,7 @@
     [loading]="loading() && loaded()"
     [showLoader]="false"
     dataKey="id"
+    [tableStyle]="{ 'min-width': '40rem' }"
     (onLazyLoad)="onLazyLoad($event)"
   >
     <ng-template #header>
@@ -42,22 +41,20 @@
     </ng-template>
 
     <ng-template #body let-exercise>
-      <tr>
+      @let editing = exercise.id === editingId();
+      <tr [class.exercise-table__row--editing]="editing">
         <td class="exercise-table__name">{{ exercise.name }}</td>
-        <td>
-          <p-tag severity="secondary" [value]="muscleGroupLabel(exercise.muscleGroup)" />
-        </td>
-        <td>
+        <td class="exercise-table__muted">{{ muscleGroupLabel(exercise.muscleGroup) }}</td>
+        <td class="exercise-table__muted">
           @if (exercise.equipment) {
             {{ exercise.equipment }}
           } @else {
-            <span class="exercise-table__none">Non renseigné</span>
+            Non renseigné
           }
         </td>
         <td>
           @if (exercise.videoUrl; as url) {
             <a
-              class="exercise-table__video"
               [href]="url"
               target="_blank"
               rel="noopener noreferrer"
@@ -66,32 +63,39 @@
               Voir la vidéo
             </a>
           } @else {
-            <span class="exercise-table__none">Aucune</span>
+            <span class="exercise-table__muted">Aucune</span>
           }
         </td>
-        <td class="exercise-table__actions">
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="secondary"
-            text
-            [attr.aria-label]="'Modifier ' + exercise.name"
-            (click)="edit.emit(exercise)"
-          >
-            Modifier
-          </button>
-          <button
-            pButton
-            type="button"
-            size="small"
-            severity="danger"
-            text
-            [attr.aria-label]="'Supprimer ' + exercise.name"
-            (click)="remove.emit(exercise)"
-          >
-            Supprimer
-          </button>
+        <td class="actions-cell">
+          <span class="row-actions">
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Modifier ' + exercise.name"
+              [attr.aria-pressed]="editing"
+              (click)="edit.emit(exercise)"
+            >
+              <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Modifier</span>
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              severity="secondary"
+              text
+              iconOnly
+              [attr.aria-label]="'Supprimer ' + exercise.name"
+              (click)="remove.emit(exercise)"
+            >
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              <span class="visually-hidden">Supprimer</span>
+            </button>
+          </span>
         </td>
       </tr>
     </ng-template>
@@ -113,10 +117,14 @@
             <td><p-skeleton width="7rem" /></td>
             <td><p-skeleton width="6rem" /></td>
             <td><p-skeleton width="5rem" /></td>
-            <td><p-skeleton width="9rem" /></td>
+            <td><p-skeleton width="5rem" /></td>
           </tr>
         }
       }
     </ng-template>
   </p-table>
+
+  @if (loaded() && totalRecords() > 0) {
+    <p class="exercise-table__count">{{ countLabel() }}</p>
+  }
 }

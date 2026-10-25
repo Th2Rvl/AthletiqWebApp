@@ -1,11 +1,12 @@
-<p-iconfield>
+<p-iconfield class="exercise-filters__search">
   <p-inputicon>
     <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
   </p-inputicon>
   <input
     pInputText
     type="search"
-    placeholder="Rechercher par nom"
+    class="exercise-filters__borderless"
+    placeholder="Rechercher un exercice"
     aria-label="Rechercher un exercice par nom"
     maxlength="100"
     [value]="query()"
@@ -13,11 +14,12 @@
   />
 </p-iconfield>
 <p-select
+  class="exercise-filters__borderless"
   [options]="muscleGroupOptions"
   optionLabel="label"
   optionValue="value"
   [showClear]="true"
-  placeholder="Tous les groupes musculaires"
+  placeholder="Groupe musculaire"
   ariaLabel="Filtrer par groupe musculaire"
   [ngModel]="muscleGroup()"
   (onChange)="muscleGroupChange.emit($event.value ?? null)"
@@ -26,6 +28,7 @@
 <input
   pInputText
   type="search"
+  class="exercise-filters__borderless exercise-filters__equipment"
   placeholder="Matériel (ex. barre)"
   aria-label="Filtrer par matériel"
   maxlength="100"

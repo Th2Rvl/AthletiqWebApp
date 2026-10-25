@@ -13,7 +13,10 @@ import {
 } from '../../../../core/api/models/api.models';
 import { PagedList } from '../../../../core/api/paged-list';
 import { PlanningApiService } from '../../../../core/api/planning-api.service';
+import { ATHLETES_AND_GROUPS_TABS } from '../../../../core/navigation/sections';
 import { ErrorStateComponent } from '../../../../shared/ui/molecules/error-state/error-state.component';
+import { PageHeaderComponent } from '../../../../shared/ui/molecules/page-header/page-header.component';
+import { SectionTabsComponent } from '../../../../shared/ui/molecules/section-tabs/section-tabs.component';
 import { PageChange } from '../../../../shared/ui/page-change';
 import { AthleteTableComponent } from '../../organisms/athlete-table/athlete-table.component';
 import {
@@ -31,12 +34,20 @@ const INVITATION_PAGE_SIZE = 100;
  */
 @Component({
   selector: 'app-athlete-list-page',
-  imports: [AthleteTableComponent, ErrorStateComponent, InvitationPanelComponent],
+  imports: [
+    AthleteTableComponent,
+    ErrorStateComponent,
+    InvitationPanelComponent,
+    PageHeaderComponent,
+    SectionTabsComponent,
+  ],
   templateUrl: './athlete-list-page.component.html',
   styleUrl: './athlete-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AthleteListPageComponent {
+  protected readonly sectionTabs = ATHLETES_AND_GROUPS_TABS;
+
   private readonly api = inject(AthleteApiService);
   private readonly groupApi = inject(GroupApiService);
   private readonly planningApi = inject(PlanningApiService);
@@ -287,6 +298,13 @@ export class AthleteListPageComponent {
           this.groups.set(page.content.map((group) => ({ id: group.id, name: group.name }))),
         error: () => this.groups.set([]),
       });
+  }
+
+  /** « Inviter un athlète » (état vide) : le champ du libellé de code prend le focus. */
+  protected focusInvitation(): void {
+    const field = document.getElementById('invitation-label');
+    field?.scrollIntoView?.({ block: 'center' });
+    field?.focus();
   }
 }
 
