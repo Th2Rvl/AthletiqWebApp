@@ -39,12 +39,20 @@ function signedInAs(role: 'COACH' | 'ADMIN'): Router {
 }
 
 describe('routes', () => {
-  it('redirige un coach de / vers /athletes', async () => {
+  it('redirige un coach de / vers /tableau-de-bord (#7, Q15)', async () => {
     const router = signedInAs('COACH');
 
     await router.navigateByUrl('/');
 
-    expect(router.url).toBe('/athletes');
+    expect(router.url).toBe('/tableau-de-bord');
+  });
+
+  it('réserve le tableau de bord au coach : un administrateur arrive sur « Accès refusé »', async () => {
+    const router = signedInAs('ADMIN');
+
+    await router.navigateByUrl('/tableau-de-bord');
+
+    expect(router.url).toBe('/acces-refuse');
   });
 
   it('redirige un administrateur de / vers /organisations', async () => {

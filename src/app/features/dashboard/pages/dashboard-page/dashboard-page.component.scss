@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ath-space-5);
+}
+
+.dashboard-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ath-space-3) var(--ath-space-4);
+}
+
+// Filtre sur surface, sans bordure, comme ceux des listes.
+.dashboard-borderless {
+  min-width: min(16rem, 100%);
+  border-color: transparent;
+}
+
+.dashboard,
+.dashboard-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard {
+  gap: var(--ath-space-6);
+}
+
+.dashboard-section {
+  gap: var(--ath-space-3);
+}
+
+.dashboard-hint {
+  margin: 0;
+  color: var(--ath-text-muted);
+}

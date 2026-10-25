@@ -539,3 +539,125 @@ export interface SessionReview {
   feedback: SessionFeedback | null;
   exercises: ReviewedExercise[];
 }
+
+// --- Suivi (contrat #7, lot 2 : endpoints 4 à 7) ---
+
+/** Exercice réalisé au moins une fois par l'athlète dans une séance de ce coach (US30). */
+export interface PerformedExercise {
+  exerciseId: Uuid;
+  exerciseName: string;
+  muscleGroup: MuscleGroup;
+  sessionCount: number;
+  lastPerformedOn: IsoDate;
+}
+
+/** Périodes de la progression, en semaines (12 par défaut). */
+export type ProgressionWeeks = 4 | 12 | 26 | 52;
+
+/** Une séance réalisée de l'exercice ; plusieurs occurrences dans la séance sont agrégées. */
+export interface ProgressionPoint {
+  plannedSessionId: Uuid;
+  date: IsoDate;
+  /** `null` si aucune série chargée dans la séance. */
+  maxLoadKg: number | null;
+  maxReps: number;
+  /** Σ répétitions × charge des séries réalisées chargées, `null` au poids du corps. */
+  volumeKg: number | null;
+}
+
+/** `GET /athletes/{id}/exercises/{exerciseId}/progression?weeks=` (US30). */
+export interface Progression {
+  athleteId: Uuid;
+  exerciseId: Uuid;
+  exerciseName: string;
+  muscleGroup: MuscleGroup;
+  /** Aucune série réalisée chargée sur la période : on suit les répétitions max. */
+  bodyweight: boolean;
+  weeks: ProgressionWeeks;
+  from: IsoDate;
+  today: IsoDate;
+  /** Triés par date croissante ; vide si l'exercice n'a pas été réalisé sur la période. */
+  points: ProgressionPoint[];
+}
+
+/**
+ * Record personnel d'un exercice (US31) : meilleure charge réalisée et répétitions de cette
+ * série ; au poids du corps (`bodyweight`, `loadKg` `null`), le maximum de répétitions.
+ */
+export interface PersonalRecord {
+  exerciseId: Uuid;
+  exerciseName: string;
+  muscleGroup: MuscleGroup;
+  bodyweight: boolean;
+  loadKg: number | null;
+  reps: number;
+  date: IsoDate;
+  plannedSessionId: Uuid;
+}
+
+/** `GET /athletes/{id}/personal-records`, trié par groupe musculaire puis nom. */
+export interface PersonalRecords {
+  athleteId: Uuid;
+  records: PersonalRecord[];
+}
+
+/** Périodes du tableau de bord, en semaines (4 par défaut). */
+export type KpiWeeks = 4 | 12;
+
+export interface KpiQuery {
+  weeks: KpiWeeks;
+  groupId?: Uuid | null;
+}
+
+/** Agrégats du coach sur la période ; taux et RPE moyen `null` sans séance passée. */
+export interface KpiTotals {
+  athleteCount: number;
+  doneCount: number;
+  missedCount: number;
+  /** Entier, réalisées / (réalisées + non faites). */
+  completionRate: number | null;
+  /** Une décimale, sur les séances réalisées avec RPE. */
+  averageRpe: number | null;
+}
+
+export interface AthleteKpi {
+  athleteId: Uuid;
+  firstName: string;
+  lastName: string;
+  doneCount: number;
+  missedCount: number;
+  completionRate: number | null;
+  averageRpe: number | null;
+  missedLast7Days: number;
+  watch: boolean;
+}
+
+/** Motif d'alerte : non faite récente, ou taux de réalisation sous le seuil. */
+export type WatchReason = 'MISSED_RECENTLY' | 'LOW_COMPLETION';
+
+export interface WatchlistEntry {
+  athleteId: Uuid;
+  firstName: string;
+  lastName: string;
+  missedCount: number;
+  missedLast7Days: number;
+  completionRate: number | null;
+  reasons: WatchReason[];
+}
+
+/**
+ * `GET /dashboard/kpis` (US32) : période `[from, to]` = les `weeks` semaines qui finissent
+ * la veille de `today` (aujourd'hui exclu).
+ */
+export interface CoachKpis {
+  today: IsoDate;
+  from: IsoDate;
+  to: IsoDate;
+  weeks: KpiWeeks;
+  groupId: Uuid | null;
+  totals: KpiTotals;
+  /** Triés par nom puis prénom, athlètes sans séance compris. */
+  athletes: AthleteKpi[];
+  /** « À surveiller », triés par nombre de non faites décroissant. */
+  watchlist: WatchlistEntry[];
+}

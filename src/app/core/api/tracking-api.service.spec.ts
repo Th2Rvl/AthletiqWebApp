@@ -2,7 +2,15 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import { Page, SessionHistoryItem, SessionReview, TrackingOverview } from './models/api.models';
+import {
+  Page,
+  PerformedExercise,
+  PersonalRecords,
+  Progression,
+  SessionHistoryItem,
+  SessionReview,
+  TrackingOverview,
+} from './models/api.models';
 import { TrackingApiService } from './tracking-api.service';
 
 const API = environment.apiUrl;
@@ -79,6 +87,36 @@ describe('TrackingApiService', () => {
     expect(request.request.method).toBe('GET');
     request.flush({ plannedSessionId: 'ps-1', status: 'MISSED', feedback: null, exercises: [] });
     expect(review?.status).toBe('MISSED');
+  });
+
+  it('liste les exercices réalisés par l’athlète', () => {
+    let exercises: PerformedExercise[] | undefined;
+    api.performedExercises('ath-1').subscribe((value) => (exercises = value));
+    const request = http.expectOne(`${API}/athletes/ath-1/performed-exercises`);
+    expect(request.request.method).toBe('GET');
+    request.flush([]);
+    expect(exercises).toEqual([]);
+  });
+
+  it("lit la progression d'un exercice avec weeks", () => {
+    let progression: Progression | undefined;
+    api.progression('ath-1', 'ex-1', 26).subscribe((value) => (progression = value));
+    const request = http.expectOne(
+      (req) => req.url === `${API}/athletes/ath-1/exercises/ex-1/progression`,
+    );
+    expect(request.request.method).toBe('GET');
+    expect(request.request.params.get('weeks')).toBe('26');
+    request.flush({ weeks: 26, points: [] });
+    expect(progression?.weeks).toBe(26);
+  });
+
+  it('lit les records personnels', () => {
+    let records: PersonalRecords | undefined;
+    api.personalRecords('ath-1').subscribe((value) => (records = value));
+    const request = http.expectOne(`${API}/athletes/ath-1/personal-records`);
+    expect(request.request.method).toBe('GET');
+    request.flush({ athleteId: 'ath-1', records: [] });
+    expect(records?.records).toEqual([]);
   });
 
   it("encode l'identifiant dans l'URL", () => {

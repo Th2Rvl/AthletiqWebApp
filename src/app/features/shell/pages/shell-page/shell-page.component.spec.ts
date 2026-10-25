@@ -22,7 +22,9 @@ async function render(role: Role): Promise<HTMLElement> {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([
+        { path: 'tableau-de-bord', component: BlankComponent },
         { path: 'athletes', component: BlankComponent },
+        { path: 'athletes/:athleteId/suivi', component: BlankComponent },
         { path: 'groupes', component: BlankComponent },
         { path: 'planning', component: BlankComponent },
       ]),
@@ -55,6 +57,7 @@ describe('ShellPageComponent', () => {
     expect(element.textContent).not.toContain('Séances');
     expect(element.textContent).not.toContain('Planification');
     expect(element.textContent).not.toContain('Athlètes et groupes');
+    expect(element.textContent).not.toContain('Tableau de bord');
   });
 
   it("cache l'entrée « Organisations » à un coach et montre son nom", async () => {
@@ -66,14 +69,35 @@ describe('ShellPageComponent', () => {
   it('montre les entrées de la planche à un coach, avec leurs icônes', async () => {
     const element = await render('COACH');
     const nav = mainNav(element);
+    expect(nav).toContain('Tableau de bord');
     expect(nav).toContain('Athlètes et groupes');
     expect(nav).toContain('Exercices');
     expect(nav).toContain('Séances');
     expect(nav).toContain('Planification');
-    expect(nav).not.toContain('Tableau de bord');
+    expect(nav.indexOf('Tableau de bord')).toBeLessThan(nav.indexOf('Athlètes et groupes'));
     expect(
       element.querySelectorAll('nav[aria-label="Navigation principale"] ion-icon'),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
+  });
+
+  it('marque « Tableau de bord » active sur l’accueil du coach (#7)', async () => {
+    const element = await render('COACH');
+    await TestBed.inject(Router).navigateByUrl('/tableau-de-bord');
+    TestBed.tick();
+
+    expect(element.querySelector('[aria-current="page"]')?.textContent).toContain(
+      'Tableau de bord',
+    );
+  });
+
+  it('garde « Athlètes et groupes » active sur le suivi d’un athlète (#7)', async () => {
+    const element = await render('COACH');
+    await TestBed.inject(Router).navigateByUrl('/athletes/ath-1/suivi');
+    TestBed.tick();
+
+    expect(element.querySelector('[aria-current="page"]')?.textContent).toContain(
+      'Athlètes et groupes',
+    );
   });
 
   it('montre « Mon profil » et « Se déconnecter » dans le pied de barre', async () => {
@@ -103,7 +127,11 @@ describe('ShellPageComponent', () => {
     const element = await render('COACH');
     const theme = TestBed.inject(ThemeService);
     const dark = element.querySelector<HTMLElement>('[aria-label="Sombre"], [data-p-value="dark"]');
-    const buttons = [...element.querySelectorAll<HTMLElement>('.shell__theme button, .shell__theme [role="button"]')];
+    const buttons = [
+      ...element.querySelectorAll<HTMLElement>(
+        '.shell__theme button, .shell__theme [role="button"]',
+      ),
+    ];
     const target = dark ?? buttons.find((button) => button.textContent?.includes('Sombre'))!;
 
     target.click();

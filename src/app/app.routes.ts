@@ -55,17 +55,27 @@ export const routes: Routes = [
       ),
     children: [
       {
-        // Accueil par rôle : le coach arrive sur ses athlètes (jusqu'au tableau de bord, #43),
+        // Accueil par rôle : le coach arrive sur son tableau de bord (#7, Q15),
         // l'administrateur sur ses organisations.
         path: '',
         pathMatch: 'full',
         redirectTo: () => {
           const auth = inject(AuthService);
           if (auth.isCoach()) {
-            return '/athletes';
+            return '/tableau-de-bord';
           }
           return auth.isAdmin() ? '/organisations' : '/acces-refuse';
         },
+      },
+      {
+        // Tableau de bord des KPI (#7, US32).
+        path: 'tableau-de-bord',
+        title: 'Tableau de bord · Athletiq',
+        canActivate: [coachGuard],
+        loadComponent: () =>
+          import('./features/dashboard/pages/dashboard-page/dashboard-page.component').then(
+            (m) => m.DashboardPageComponent,
+          ),
       },
       {
         path: 'athletes',

@@ -33,25 +33,107 @@
         (action)="goTo(['/planning/athletes', current.athleteId])"
       />
     } @else {
-      <section class="tracking-section" aria-labelledby="tracking-history-title">
-        <h2 id="tracking-history-title" class="section-title">Historique</h2>
-        @if (history.error() && !history.loading()) {
-          <app-error-state [message]="errorText(history.error())" (retry)="history.reload()" />
-        } @else {
-          <app-session-history-table
-            [athleteId]="current.athleteId"
-            [sessions]="history.items()"
-            [totalRecords]="history.total()"
-            [loading]="history.loading()"
-            [loaded]="history.loaded()"
-            [first]="history.first()"
-            [rows]="history.rows()"
-            [filters]="filters()"
-            (pageChange)="onPage($event)"
-            (filtersChange)="onFiltersChange($event)"
-          />
-        }
-      </section>
+      <p-tabs [value]="tab()" (valueChange)="selectTab($event)">
+        <p-tablist>
+          <p-tab value="historique">Historique</p-tab>
+          <p-tab value="progression">Progression</p-tab>
+          <p-tab value="records">Records</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="historique">
+            @if (tab() === 'historique') {
+              @if (history.error() && !history.loading()) {
+                <app-error-state
+                  [message]="errorText(history.error())"
+                  (retry)="history.reload()"
+                />
+              } @else {
+                <app-session-history-table
+                  [athleteId]="current.athleteId"
+                  [sessions]="history.items()"
+                  [totalRecords]="history.total()"
+                  [loading]="history.loading()"
+                  [loaded]="history.loaded()"
+                  [first]="history.first()"
+                  [rows]="history.rows()"
+                  [filters]="filters()"
+                  (pageChange)="onPage($event)"
+                  (filtersChange)="onFiltersChange($event)"
+                />
+              }
+            }
+          </p-tabpanel>
+
+          <p-tabpanel value="progression">
+            @if (tab() === 'progression') {
+              @if (exercisesError(); as error) {
+                <app-error-state [message]="errorText(error)" (retry)="loadExercises()" />
+              } @else if (exercises(); as list) {
+                @if (list.length === 0) {
+                  <app-empty-state
+                    message="Aucune séance réalisée pour cet athlète"
+                    detail="La progression s'affiche dès qu'il a validé une séance que vous lui avez planifiée."
+                  />
+                } @else {
+                  <div class="tracking-panel">
+                    <div class="tracking-toolbar">
+                      <p-select
+                        class="tracking-borderless"
+                        [options]="exerciseOptions()"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="list.length > 8"
+                        filterBy="label"
+                        ariaLabel="Exercice"
+                        [ngModel]="exerciseId()"
+                        (onChange)="onExerciseChange($event.value)"
+                      />
+                      <app-period-picker
+                        [choices]="progressionWeekChoices"
+                        [weeks]="progressionWeeks()"
+                        (weeksChange)="onProgressionWeeksChange($event)"
+                      />
+                    </div>
+                    @if (progressionError(); as error) {
+                      <app-error-state [message]="errorText(error)" (retry)="loadProgression()" />
+                    } @else if (progression() && !progressionLoading()) {
+                      <app-progression-chart [progression]="progression()!" [dark]="dark()" />
+                    } @else {
+                      <div aria-busy="true" aria-label="Chargement de la progression">
+                        <p-skeleton height="18rem" />
+                      </div>
+                    }
+                  </div>
+                }
+              } @else {
+                <div class="tracking-panel" aria-busy="true" aria-label="Chargement des exercices">
+                  <p-skeleton width="16rem" height="2.5rem" />
+                  <p-skeleton height="18rem" />
+                </div>
+              }
+            }
+          </p-tabpanel>
+
+          <p-tabpanel value="records">
+            @if (tab() === 'records') {
+              @if (recordsError(); as error) {
+                <app-error-state [message]="errorText(error)" (retry)="loadRecords()" />
+              } @else if (records(); as result) {
+                <app-personal-records-table
+                  [athleteId]="current.athleteId"
+                  [records]="result.records"
+                />
+              } @else {
+                <div class="tracking-panel" aria-busy="true" aria-label="Chargement des records">
+                  <p-skeleton height="2.5rem" />
+                  <p-skeleton height="2.5rem" />
+                  <p-skeleton height="2.5rem" />
+                </div>
+              }
+            }
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     }
   } @else {
     <div class="tracking-skeleton" aria-busy="true" aria-label="Chargement du suivi">
