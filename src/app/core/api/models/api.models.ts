@@ -332,8 +332,15 @@ export interface WorkoutListQuery extends PageQuery {
 export type IsoDate = string;
 
 /**
+ * Statut de lecture d'une séance planifiée (contrat #7) : `DONE` = réalisation validée par
+ * l'athlète, quelle que soit la date ; `MISSED` = date passée sans réalisation validée ;
+ * `UPCOMING` sinon. Un brouillon de l'athlète n'est jamais `DONE`.
+ */
+export type SessionStatus = 'UPCOMING' | 'DONE' | 'MISSED';
+
+/**
  * Séance planifiée dans le calendrier d'un athlète. `name` est celui de l'instantané ;
- * `locked` (passée ou réalisée) masque Déplacer et Annuler.
+ * `locked` (passée ou réalisée, #7) masque Déplacer et Annuler.
  */
 export interface PlannedSessionSummary {
   id: Uuid;
@@ -344,6 +351,7 @@ export interface PlannedSessionSummary {
   setCount: number;
   groupId: Uuid | null;
   locked: boolean;
+  status: SessionStatus;
 }
 
 /** `GET /athletes/{id}/planned-sessions` : `today` est « aujourd'hui » à Paris, donné par l'API. */
@@ -361,6 +369,7 @@ export interface GroupCalendarSession {
   athleteId: Uuid;
   firstName: string;
   lastName: string;
+  status: SessionStatus;
 }
 
 /** Séances d'un même instantané le même jour : « Haut du corps A, 3/4 athlètes ». */
@@ -395,6 +404,7 @@ export interface PlannedSessionDetail {
   groupId: Uuid | null;
   sourceWorkoutId: Uuid | null;
   locked: boolean;
+  status: SessionStatus;
   name: string;
   description: string | null;
   exercises: WorkoutExercise[];
@@ -425,4 +435,107 @@ export interface CreatedCount {
 
 export interface UpcomingCount {
   count: number;
+}
+
+// --- Suivi (contrat #7, lot 1 : endpoints 1 à 3) ---
+
+/** `GET /athletes/{id}/tracking` : en-tête de l'écran « Suivi ». */
+export interface TrackingOverview {
+  athleteId: Uuid;
+  firstName: string;
+  lastName: string;
+  today: IsoDate;
+  /** Vrai si au moins une séance de ce coach est réalisée ou non faite, toutes périodes. */
+  hasPastSessions: boolean;
+}
+
+/** Statuts listés dans l'historique : réalisées et non faites (Q11). */
+export type PastSessionStatus = Exclude<SessionStatus, 'UPCOMING'>;
+
+/** Ligne de `GET /athletes/{id}/session-history` (US27, US29). Champs absents = `null`. */
+export interface SessionHistoryItem {
+  plannedSessionId: Uuid;
+  date: IsoDate;
+  name: string;
+  status: PastSessionStatus;
+  /** 1 à 10, `null` = non renseigné (jamais 0). */
+  rpe: number | null;
+  /** 1 à 5, `null` = non renseignée. */
+  fatigue: number | null;
+  hasComment: boolean;
+  validatedAt: IsoInstant | null;
+  correctedAt: IsoInstant | null;
+}
+
+/**
+ * Paramètres de l'historique : `from` et `to` inclus (défaut : les 28 jours qui finissent
+ * aujourd'hui, 364 jours d'écart au plus), `status` absent = les deux, tri fixe date décroissante.
+ */
+export interface SessionHistoryQuery extends PageQuery {
+  from?: IsoDate;
+  to?: IsoDate;
+  status?: PastSessionStatus;
+  withComment?: boolean;
+}
+
+/** Ressenti d'une séance réalisée (US29), `null` hors `DONE`. */
+export interface SessionFeedback {
+  rpe: number | null;
+  fatigue: number | null;
+  comment: string | null;
+  /** Première validation par l'athlète. */
+  validatedAt: IsoInstant;
+  /** Dernière correction après validation, source de « Modifiée le … ». */
+  correctedAt: IsoInstant | null;
+}
+
+/**
+ * Série prévue (lue dans l'instantané) et son réalisé. Hors `DONE`, tout le réalisé est `null`
+ * et `done` faux. `loadDeltaKg` est `null` dès qu'une des deux charges est vide.
+ */
+export interface ReviewedSet {
+  snapshotSetId: Uuid;
+  position: number;
+  plannedReps: number;
+  plannedLoadKg: number | null;
+  restSeconds: number | null;
+  done: boolean;
+  performedReps: number | null;
+  performedLoadKg: number | null;
+  repsDelta: number | null;
+  loadDeltaKg: number | null;
+}
+
+/**
+ * Exercice de la séance : volumes (Σ répétitions × charge) en kg, `null` au poids du corps ;
+ * `volumeDeltaPercent` entier, `null` si le volume prévu est `null` ou nul.
+ */
+export interface ReviewedExercise {
+  snapshotExerciseId: Uuid;
+  exerciseId: Uuid;
+  exerciseName: string;
+  muscleGroup: MuscleGroup;
+  position: number;
+  note: string | null;
+  /** Toutes les charges prévues sont vides. */
+  bodyweight: boolean;
+  plannedVolumeKg: number | null;
+  performedVolumeKg: number | null;
+  volumeDeltaPercent: number | null;
+  sets: ReviewedSet[];
+}
+
+/** `GET /planned-sessions/{id}/review` : prévu / réalisé et ressenti (US28, US29). */
+export interface SessionReview {
+  plannedSessionId: Uuid;
+  athleteId: Uuid;
+  athleteFirstName: string;
+  athleteLastName: string;
+  date: IsoDate;
+  today: IsoDate;
+  name: string;
+  description: string | null;
+  status: SessionStatus;
+  feedback: SessionFeedback | null;
+  exercises: ReviewedExercise[];
 }

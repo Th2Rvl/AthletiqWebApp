@@ -15,6 +15,7 @@ const DETAIL: PlannedSessionDetail = {
   groupId: null,
   sourceWorkoutId: 'w-1',
   locked: false,
+  status: 'UPCOMING',
   name: 'Haut du corps A',
   description: null,
   exercises: [],

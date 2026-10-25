@@ -49,6 +49,8 @@
                         [name]="item.name"
                         [meta]="item.meta"
                         [locked]="item.locked"
+                        [status]="item.status"
+                        [stateLabel]="item.stateLabel ?? null"
                         [ariaLabel]="chipLabel(item, day)"
                         (selected)="open.emit(item.key)"
                       />

@@ -26,8 +26,8 @@
     outline-offset: var(--ath-focus-offset);
   }
 
-  // Séance passée (verrouillée) : sur surface, contour fin, texte secondaire ; ni déplacement
-  // ni annulation dans son détail.
+  // Séance passée ou réalisée (verrouillée) : sur surface, contour fin, texte secondaire ; ni
+  // déplacement ni annulation dans son détail.
   &--locked {
     border-color: var(--ath-line);
     background: var(--ath-surface);
@@ -48,4 +48,15 @@
   color: var(--ath-text-muted);
   font-size: var(--ath-text-label);
   font-variant-numeric: tabular-nums;
+}
+
+// Statut (#7) : mêmes couleurs que le badge « Réalisée » / « Non faite » (succès, danger).
+.chip__state--done {
+  color: var(--ath-success-text);
+  font-weight: var(--ath-weight-semibold);
+}
+
+.chip__state--missed {
+  color: var(--ath-danger-text);
+  font-weight: var(--ath-weight-semibold);
 }

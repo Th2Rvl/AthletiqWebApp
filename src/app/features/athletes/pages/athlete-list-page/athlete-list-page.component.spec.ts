@@ -334,4 +334,15 @@ describe('AthleteListPageComponent', () => {
     const link = element.querySelector<HTMLAnchorElement>('a[aria-label="Calendrier de Marion Lefèvre"]');
     expect(link?.getAttribute('href')).toBe('/planning/athletes/ath-1');
   });
+
+  it('mène au suivi de chaque athlète par son nom et par l’action « Suivi » (#7)', async () => {
+    await setup(of(pageOf([MARION])));
+
+    const action = element.querySelector<HTMLAnchorElement>('a[aria-label="Suivi de Marion Lefèvre"]');
+    expect(action?.getAttribute('href')).toBe('/athletes/ath-1/suivi');
+    const name = [...element.querySelectorAll<HTMLAnchorElement>('td a')].find((link) =>
+      link.textContent?.includes('Lefèvre Marion'),
+    );
+    expect(name?.getAttribute('href')).toBe('/athletes/ath-1/suivi');
+  });
 });

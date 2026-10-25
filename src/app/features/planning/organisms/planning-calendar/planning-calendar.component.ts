@@ -10,7 +10,8 @@ import {
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
-import { IsoDate } from '../../../../core/api/models/api.models';
+import { IsoDate, SessionStatus } from '../../../../core/api/models/api.models';
+import { sessionStatusLabel } from '../../../../shared/ui/session-status';
 import { PlannedSessionChipComponent } from '../../molecules/planned-session-chip/planned-session-chip.component';
 import {
   CALENDAR_WEEKS,
@@ -32,6 +33,10 @@ export interface CalendarItem {
   /** Précision courte : « 5 exercices, 15 séries » ou « 3/4 athlètes ». */
   meta: string | null;
   locked: boolean;
+  /** Statut de la séance (#7) ; pour un groupe, celui de l'ensemble de ses séances. */
+  status: SessionStatus;
+  /** État affiché à la place du statut (groupe : « 2/3 réalisées »). */
+  stateLabel?: string | null;
 }
 
 interface CalendarDay {
@@ -133,7 +138,8 @@ export class PlanningCalendarComponent {
   }
 
   protected chipLabel(item: CalendarItem, day: CalendarDay): string {
-    return [item.name, day.longLabel, item.meta, item.locked ? 'passée' : null]
+    const state = item.stateLabel ?? sessionStatusLabel(item.status);
+    return [item.name, day.longLabel, item.meta, state.toLowerCase()]
       .filter((part) => part)
       .join(', ');
   }

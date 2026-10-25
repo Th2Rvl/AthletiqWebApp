@@ -58,6 +58,14 @@ p {
   font-size: var(--ath-text-small);
 }
 
+.detail__locked {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ath-space-3);
+}
+
 .detail__move {
   display: flex;
   flex-direction: column;

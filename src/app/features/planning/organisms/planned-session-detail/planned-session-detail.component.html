@@ -4,9 +4,7 @@
   <div class="detail__summary">
     <p class="detail__when">
       {{ current.athleteFirstName }} {{ current.athleteLastName }}, {{ dateLabel() }}
-      @if (current.locked) {
-        <p-tag severity="secondary" value="Passée" />
-      }
+      <p-tag [severity]="statusSeverity(current.status)" [value]="statusLabel(current.status)" />
     </p>
     @if (current.description) {
       <p class="detail__description">{{ current.description }}</p>
@@ -56,9 +54,22 @@
   }
 
   @if (current.locked) {
-    <p class="detail__muted">
-      Séance passée ou réalisée : elle ne peut plus être déplacée ni annulée.
-    </p>
+    <div class="detail__locked">
+      <p class="detail__muted">
+        {{ current.status === 'DONE' ? 'Séance réalisée' : 'Séance passée' }} : elle ne peut plus
+        être déplacée ni annulée.
+      </p>
+      @if (current.status === 'DONE') {
+        <a
+          pButton
+          severity="secondary"
+          outlined
+          [routerLink]="['/athletes', current.athleteId, 'seances', current.id]"
+        >
+          Voir le réalisé
+        </a>
+      }
+    </div>
   } @else if (moving()) {
     <div class="detail__move">
       <app-form-field

@@ -29,6 +29,7 @@ import {
   IsoDate,
   PlanSessionPayload,
   PlannedSessionDetail,
+  SessionStatus,
   Uuid,
 } from '../../../../core/api/models/api.models';
 import { PlanningApiService } from '../../../../core/api/planning-api.service';
@@ -187,6 +188,7 @@ export class PlanningPageComponent {
         name: session.name,
         meta: `${plural(session.exerciseCount, 'exercice', 'exercices')}, ${plural(session.setCount, 'série', 'séries')}`,
         locked: session.locked,
+        status: session.status,
       }));
     }
     return (this.groupCalendar()?.entries ?? []).map((entry) => ({
@@ -195,6 +197,7 @@ export class PlanningPageComponent {
       name: entry.name,
       meta: `${entry.athleteCount}/${entry.memberCount} ${entry.memberCount > 1 ? 'athlètes' : 'athlète'}`,
       locked: entry.locked,
+      ...groupEntryState(entry),
     }));
   });
   protected readonly calendarLoaded = computed(
@@ -678,6 +681,27 @@ export class PlanningPageComponent {
       },
     });
   }
+}
+
+/**
+ * État d'une séance de groupe d'après les séances individuelles (#7) : « Planifiée » tant
+ * qu'aucune n'est réalisée ni non faite, sinon « 2/3 réalisées ». Le statut colore l'état :
+ * réalisée si toutes le sont, non faite dès qu'une ne l'est pas.
+ */
+function groupEntryState(entry: GroupCalendarEntry): {
+  status: SessionStatus;
+  stateLabel: string | null;
+} {
+  const done = entry.sessions.filter((session) => session.status === 'DONE').length;
+  const missed = entry.sessions.filter((session) => session.status === 'MISSED').length;
+  if (done === 0 && missed === 0) {
+    return { status: 'UPCOMING', stateLabel: null };
+  }
+  const total = entry.sessions.length;
+  return {
+    status: missed > 0 ? 'MISSED' : done === total ? 'DONE' : 'UPCOMING',
+    stateLabel: `${done}/${total} ${done > 1 ? 'réalisées' : 'réalisée'}`,
+  };
 }
 
 function entryKey(entry: GroupCalendarEntry): string {

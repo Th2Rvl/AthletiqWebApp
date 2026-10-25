@@ -7,7 +7,12 @@
 >
   <span class="chip__name">{{ name() }}</span>
   <span class="chip__meta">
-    <span class="chip__state">{{ locked() ? 'Passée' : 'Planifiée' }}</span>
+    <span
+      class="chip__state"
+      [class.chip__state--done]="status() === 'DONE'"
+      [class.chip__state--missed]="status() === 'MISSED'"
+      >{{ state() }}</span
+    >
     @if (meta(); as text) {
       <span>· {{ text }}</span>
     }

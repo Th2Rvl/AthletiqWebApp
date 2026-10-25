@@ -1,0 +1,63 @@
+@if (athleteGone()) {
+  <app-empty-state
+    message="Cet athlète n'est plus suivi"
+    detail="Il a peut-être été retiré de vos athlètes, ou le lien est incorrect."
+    actionLabel="Retour aux athlètes"
+    (action)="goTo(['/athletes'])"
+  />
+} @else if (overviewError(); as error) {
+  <app-error-state [message]="errorText(error)" (retry)="loadOverview()" />
+} @else {
+  @if (overview(); as current) {
+    <app-page-header [title]="fullName()">
+      <span pageHeaderContext class="tracking-breadcrumb">
+        <a routerLink="/athletes">Athlètes</a> / Suivi
+      </span>
+      <a
+        pButton
+        severity="secondary"
+        outlined
+        [routerLink]="['/planning/athletes', current.athleteId]"
+      >
+        <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+        Calendrier
+      </a>
+    </app-page-header>
+
+    @if (!current.hasPastSessions) {
+      <app-empty-state
+        message="Aucune séance passée pour cet athlète"
+        detail="Ses séances réalisées et non faites apparaîtront ici dès la première date passée."
+        actionLabel="Planifier"
+        actionIcon="add-outline"
+        (action)="goTo(['/planning/athletes', current.athleteId])"
+      />
+    } @else {
+      <section class="tracking-section" aria-labelledby="tracking-history-title">
+        <h2 id="tracking-history-title" class="section-title">Historique</h2>
+        @if (history.error() && !history.loading()) {
+          <app-error-state [message]="errorText(history.error())" (retry)="history.reload()" />
+        } @else {
+          <app-session-history-table
+            [athleteId]="current.athleteId"
+            [sessions]="history.items()"
+            [totalRecords]="history.total()"
+            [loading]="history.loading()"
+            [loaded]="history.loaded()"
+            [first]="history.first()"
+            [rows]="history.rows()"
+            [filters]="filters()"
+            (pageChange)="onPage($event)"
+            (filtersChange)="onFiltersChange($event)"
+          />
+        }
+      </section>
+    }
+  } @else {
+    <div class="tracking-skeleton" aria-busy="true" aria-label="Chargement du suivi">
+      <p-skeleton width="8rem" />
+      <p-skeleton width="16rem" height="2.5rem" />
+      <p-skeleton height="12rem" />
+    </div>
+  }
+}

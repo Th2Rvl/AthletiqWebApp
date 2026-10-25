@@ -69,12 +69,35 @@ export const routes: Routes = [
       },
       {
         path: 'athletes',
-        title: 'Athlètes · Athletiq',
         canActivate: [coachGuard],
-        loadComponent: () =>
-          import('./features/athletes/pages/athlete-list-page/athlete-list-page.component').then(
-            (m) => m.AthleteListPageComponent,
-          ),
+        children: [
+          {
+            path: '',
+            title: 'Athlètes · Athletiq',
+            loadComponent: () =>
+              import('./features/athletes/pages/athlete-list-page/athlete-list-page.component').then(
+                (m) => m.AthleteListPageComponent,
+              ),
+          },
+          {
+            // Suivi d'un athlète (#7, Q15).
+            path: ':athleteId/suivi',
+            title: 'Suivi · Athletiq',
+            loadComponent: () =>
+              import('./features/tracking/pages/athlete-tracking-page/athlete-tracking-page.component').then(
+                (m) => m.AthleteTrackingPageComponent,
+              ),
+          },
+          {
+            // Prévu / réalisé et ressenti d'une séance (#7, Q15).
+            path: ':athleteId/seances/:plannedSessionId',
+            title: 'Séance de l’athlète · Athletiq',
+            loadComponent: () =>
+              import('./features/tracking/pages/session-review-page/session-review-page.component').then(
+                (m) => m.SessionReviewPageComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'exercices',

@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.history__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ath-space-3) var(--ath-space-4);
+  margin-block-end: var(--ath-space-3);
+}
+
+// Filtres sur surface, sans bordure (planche « Composants »), comme la liste des athlètes.
+.history__borderless {
+  border-color: transparent;
+}
+
+.history__check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ath-space-2);
+}
+
+.history__period {
+  margin-inline-start: auto;
+}
+
+.history__date {
+  white-space: nowrap;
+}
+
+.history__name {
+  font-weight: var(--ath-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.history__comment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ath-space-1);
+
+  ion-icon {
+    font-size: var(--ath-icon-size-sm);
+  }
+}
+
+.history__none {
+  color: var(--ath-text-muted);
+}
+
+.history__empty {
+  margin: 0;
+  padding-block: var(--ath-space-4);
+  color: var(--ath-text-muted);
+}
